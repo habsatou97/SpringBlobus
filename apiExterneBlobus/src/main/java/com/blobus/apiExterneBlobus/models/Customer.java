@@ -12,10 +12,8 @@ import java.util.Set;
 @Entity
 @Table(name = "customers")
 @Data
-@RequiredArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
+@NoArgsConstructor
 public class Customer {
     @Id
     @GeneratedValue
