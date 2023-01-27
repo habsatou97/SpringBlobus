@@ -26,4 +26,5 @@ public class TransferAccount {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
+
 }
