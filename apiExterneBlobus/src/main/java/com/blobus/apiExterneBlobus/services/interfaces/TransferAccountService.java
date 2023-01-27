@@ -1,4 +1,4 @@
-package com.blobus.apiExterneBlobus.services;
+package com.blobus.apiExterneBlobus.services.interfaces;
 
 
 import com.blobus.apiExterneBlobus.models.TransferAccount;

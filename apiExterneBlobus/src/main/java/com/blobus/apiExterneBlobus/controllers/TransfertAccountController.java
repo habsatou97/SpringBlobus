@@ -1,7 +1,7 @@
 package com.blobus.apiExterneBlobus.controllers;
 
 import com.blobus.apiExterneBlobus.models.TransferAccount;
-import com.blobus.apiExterneBlobus.services.TransferAccountServiceImpl.TransferAccountServiceImpl;
+import com.blobus.apiExterneBlobus.services.implementations.TransferAccountServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

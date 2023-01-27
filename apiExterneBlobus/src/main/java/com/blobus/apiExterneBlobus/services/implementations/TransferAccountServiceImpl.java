@@ -1,8 +1,8 @@
-package com.blobus.apiExterneBlobus.services.TransferAccountServiceImpl;
+package com.blobus.apiExterneBlobus.services.implementations;
 
 import com.blobus.apiExterneBlobus.models.TransferAccount;
 import com.blobus.apiExterneBlobus.repositories.TransferAccountRepository;
-import com.blobus.apiExterneBlobus.services.TransferAccountService;
+import com.blobus.apiExterneBlobus.services.interfaces.TransferAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
