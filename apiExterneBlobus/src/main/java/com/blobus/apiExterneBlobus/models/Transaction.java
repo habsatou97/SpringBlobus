@@ -4,9 +4,7 @@ import com.blobus.apiExterneBlobus.models.enums.TransactionCurrency;
 import com.blobus.apiExterneBlobus.models.enums.TransactionStatus;
 import com.blobus.apiExterneBlobus.models.enums.TransactionType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
 @Entity
@@ -14,6 +12,8 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -26,4 +26,11 @@ public class Transaction {
     private TransactionType type;
     private Double montant;
     private TransactionCurrency currency;
+
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+
 }
