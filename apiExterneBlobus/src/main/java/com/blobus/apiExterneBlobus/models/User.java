@@ -30,6 +30,7 @@ public class User {
     )
     private String email;
     private List<Role> roles;
+    private String ninea;
 
     @Column(
             name = "phone_number",
