@@ -21,6 +21,8 @@ public class TransferAccount {
     @Column(nullable = false, unique = true)
     private String encryptedPinCode;
     private WalletType walletType;
+    @Column(nullable = false,unique = true)
+    private String phoneNumber;
     boolean is_active;
     @ManyToOne
     @JoinColumn(name = "customer_id")
