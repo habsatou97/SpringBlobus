@@ -27,6 +27,8 @@ public class Transaction {
     private Double montant;
     private TransactionCurrency currency;
 
+
+
     @ManyToOne
     @JoinColumn(name = "customer_id")
     private Customer customer;
