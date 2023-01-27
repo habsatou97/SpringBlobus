@@ -19,8 +19,20 @@ public class User {
     private Long id;
     private String firstName;
     private String lastName;
+
+    @Column(
+            name = "email",
+            unique = true,
+            nullable = false
+    )
     private String email;
     private List<Role> roles;
+
+    @Column(
+            name = "phone_number",
+            unique = true,
+            nullable = false
+    )
     private String phoneNumber;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
