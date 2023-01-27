@@ -18,7 +18,8 @@ public class Customer {
     private String firstName;
     private String lastName;
     @NonNull
+    @Column(nullable = false, unique = true)
     private String email;
-    @Column(nullable = false, unique = false)
+    @Column(nullable = false, unique = true)
     private String phoneNumber;
 }
