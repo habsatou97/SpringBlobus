@@ -1,10 +1,9 @@
 package com.blobus.apiExterneBlobus.models;
 
-import com.blobus.apiExterneBlobus.models.enumerations.WalletType;
+import com.blobus.apiExterneBlobus.models.enums.WalletType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @Entity
@@ -19,7 +18,8 @@ public class TransferAccount {
     @GeneratedValue
     private Long id;
     private double balance;
-    private int encryptedPinCode;
+    @Column(nullable = false, unique = true)
+    private String encryptedPinCode;
     private WalletType walletType;
     boolean is_active;
 
