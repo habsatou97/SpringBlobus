@@ -22,6 +22,8 @@ public class TransferAccount {
     private int encryptedPinCode;
     private WalletType walletType;
     boolean is_active;
-
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
 
 }
