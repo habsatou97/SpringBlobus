@@ -25,11 +25,6 @@ public class Customer {
     private String email;
     @Column(nullable = false, unique = true)
     private String phoneNumber;
-
     @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<TransferAccount> transferAccounts = new ArrayList<>();
-
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Transaction> transactions = new ArrayList<>();
-
 }

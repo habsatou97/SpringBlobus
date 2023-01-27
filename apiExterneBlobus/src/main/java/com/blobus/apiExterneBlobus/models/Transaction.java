@@ -26,15 +26,8 @@ public class Transaction {
     private TransactionType type;
     private Double montant;
     private TransactionCurrency currency;
-
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-
-    @ManyToOne(cascade = {CascadeType.REMOVE, CascadeType.REFRESH})
-    @JoinColumn(name = "customer_id")
-    private Customer customer;
-
 
 }
