@@ -1,4 +1,4 @@
-package com.blobus.apiExterneBlobus.models.enumerations;
+package com.blobus.apiExterneBlobus.models.enums;
 
 public enum WalletType {
     BONUS,
