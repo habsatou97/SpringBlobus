@@ -1,6 +1,6 @@
 package com.blobus.apiExterneBlobus.models;
 
-import com.blobus.apiExterneBlobus.models.enumerations.WalletType;
+import com.blobus.apiExterneBlobus.models.enums.WalletType;
 import jakarta.persistence.*;
 import lombok.*;
 
