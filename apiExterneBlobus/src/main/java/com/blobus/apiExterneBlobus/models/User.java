@@ -33,9 +33,7 @@ public class User {
     private String ninea;
 
     @Column(
-            name = "phone_number",
-            unique = true,
-            nullable = false
+            name = "phone_number"
     )
     private String phoneNumber;
 
