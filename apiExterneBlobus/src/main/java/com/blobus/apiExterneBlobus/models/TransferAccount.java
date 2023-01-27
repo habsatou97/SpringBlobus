@@ -2,18 +2,15 @@ package com.blobus.apiExterneBlobus.models;
 
 import com.blobus.apiExterneBlobus.models.enumerations.WalletType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "transferAccounts")
 @Data
 @RequiredArgsConstructor
 @AllArgsConstructor
-
-
+@Getter
+@Setter
 public class TransferAccount {
     @Id
     @GeneratedValue
@@ -25,5 +22,9 @@ public class TransferAccount {
     @ManyToOne
     @JoinColumn(name = "customer_id")
     private Customer customer;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User retailer;
 
 }
