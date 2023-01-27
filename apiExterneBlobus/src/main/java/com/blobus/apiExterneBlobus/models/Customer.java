@@ -16,7 +16,6 @@ import java.util.Set;
 @AllArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
 public class Customer {
     @Id
     @GeneratedValue
@@ -31,5 +30,8 @@ public class Customer {
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<TransferAccount> transferAccounts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Transaction> transactions = new ArrayList<>();
 
 }

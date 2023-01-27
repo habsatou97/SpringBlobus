@@ -12,8 +12,6 @@ import lombok.RequiredArgsConstructor;
 @Data
 @RequiredArgsConstructor
 @AllArgsConstructor
-
-
 public class TransferAccount {
     @Id
     @GeneratedValue
