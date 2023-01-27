@@ -6,6 +6,7 @@ import com.blobus.apiExterneBlobus.services.implementations.UserServiceImpl;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,13 +34,13 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public User addUser(@RequestBody User user){
-        return userService.addSingleUser(user);
+    public ResponseEntity<User> addUser(@RequestBody User user){
+        return ResponseEntity.ok(userService.addSingleUser(user));
     }
 
     @PutMapping("/users/{id}")
-    public User updateUser(@RequestBody User user, @PathVariable("id") Long id){
-        return userService.updateSingleUser(user,id);
+    public ResponseEntity<User> updateUser(@RequestBody User user, @PathVariable("id") Long id){
+        return ResponseEntity.ok(userService.updateSingleUser(user,id));
     }
 
     @DeleteMapping("/users/{id}")

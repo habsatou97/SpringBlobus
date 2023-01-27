@@ -33,9 +33,7 @@ public class User {
     private String ninea;
 
     @Column(
-            name = "phone_number",
-            unique = true,
-            nullable = false
+            name = "phone_number"
     )
     private String phoneNumber;
 
@@ -47,13 +45,9 @@ public class User {
     private List<TransferAccount> transferAccounts = new ArrayList<>();
 
 
-    @OneToMany(mappedBy = "user", cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
-    private List<Transaction> transactions = new ArrayList<>();
 
 
-    public void addTransactions(Transaction transaction) {
-       transactions.add(transaction);
-    }
+
 
     public void addTransferAccounts(TransferAccount transferAccount) {
         transferAccounts.add(transferAccount);
