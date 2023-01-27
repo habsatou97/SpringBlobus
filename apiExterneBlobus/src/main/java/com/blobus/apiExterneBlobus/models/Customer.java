@@ -1,10 +1,7 @@
 package com.blobus.apiExterneBlobus.models;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
@@ -20,6 +17,8 @@ public class Customer {
     private Long id;
     private String firstName;
     private String lastName;
+    @NonNull
     private String email;
+    @Column(nullable = false, unique = false)
     private String phoneNumber;
 }
