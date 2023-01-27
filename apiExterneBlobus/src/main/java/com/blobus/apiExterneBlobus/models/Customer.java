@@ -11,6 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Setter
+@NoArgsConstructor
 public class Customer {
     @Id
     @GeneratedValue
