@@ -1,7 +1,9 @@
 package com.blobus.apiExterneBlobus.services.implementations;
 
+import com.blobus.apiExterneBlobus.dto.RequestBodyUserProfileDto;
 import com.blobus.apiExterneBlobus.exception.ResourceNotFoundException;
 import com.blobus.apiExterneBlobus.models.User;
+import com.blobus.apiExterneBlobus.models.enums.CustomerType;
 import com.blobus.apiExterneBlobus.models.enums.Role;
 import com.blobus.apiExterneBlobus.repositories.UserRepository;
 import com.blobus.apiExterneBlobus.services.interfaces.UserService;
@@ -94,7 +96,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserProfileByMsisdn(String phoneNumber) {
+    public RequestBodyUserProfileDto getUserProfileByMsisdn(String phoneNumber, RequestBodyUserProfileDto userProfileDto) {
+
+
         return null;
     }
 }

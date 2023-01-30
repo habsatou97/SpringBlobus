@@ -42,14 +42,11 @@ public class User {
     private UserAccount userAccount;
 
     @OneToMany(mappedBy = "retailer", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<TransferAccount> transferAccounts = new ArrayList<>();
+    private List<Account> accounts = new ArrayList<>();
 
 
 
-
-
-
-    public void addTransferAccounts(TransferAccount transferAccount) {
-        transferAccounts.add(transferAccount);
+    public void addTransferAccounts(Account transferAccount) {
+        accounts.add(transferAccount);
     }
 }

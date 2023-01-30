@@ -1,5 +1,6 @@
 package com.blobus.apiExterneBlobus.services.interfaces;
 
+import com.blobus.apiExterneBlobus.dto.RequestBodyUserProfileDto;
 import com.blobus.apiExterneBlobus.models.User;
 
 import java.util.List;
@@ -12,5 +13,5 @@ public interface UserService {
     public List<User> getAllUsers();
     public Optional<User> getOneUser(Long id);
     public void deleteUser(Long id);
-    public User getUserProfileByMsisdn(String phoneNumber);
+    public RequestBodyUserProfileDto getUserProfileByMsisdn(String phoneNumber, RequestBodyUserProfileDto userProfileDto);
 }

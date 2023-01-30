@@ -28,5 +28,15 @@ public class Account {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
+    @ManyToOne
+    @JoinColumn(name = "retailer_id")
+    private User retailer;
 
+    public User getRetailer() {
+        return retailer;
+    }
+
+    public void setRetailer(User retailer) {
+        this.retailer = retailer;
+    }
 }
