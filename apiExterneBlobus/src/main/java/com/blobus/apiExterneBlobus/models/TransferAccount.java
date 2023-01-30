@@ -20,7 +20,7 @@ public class TransferAccount {
     @GeneratedValue
     private Long id;
     private double balance;
-    private int encryptedPinCode;
+    private String encryptedPinCode;
     private WalletType walletType;
     boolean is_active;
     @ManyToOne
@@ -38,5 +38,13 @@ public class TransferAccount {
     @OneToMany(mappedBy = "customerTransferAccount")
     @JsonIgnore
     List<Transaction> customerTransactions = new ArrayList<>();
+
+    public void addRetailerTransactions(Transaction transaction){
+        retailerTransactions.add(transaction);
+    }
+
+    public void addCustomerTransactions(Transaction transaction){
+        customerTransactions.add(transaction);
+    }
 
 }
