@@ -19,6 +19,7 @@ public class TransferAccount {
     @Id
     @GeneratedValue
     private Long id;
+    private String phoneNumber;
     private double balance;
     private String encryptedPinCode;
     private WalletType walletType;
