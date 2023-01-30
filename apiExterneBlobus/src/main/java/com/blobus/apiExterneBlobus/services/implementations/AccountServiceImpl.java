@@ -1,8 +1,8 @@
 package com.blobus.apiExterneBlobus.services.implementations;
 
-import com.blobus.apiExterneBlobus.models.TransferAccount;
+import com.blobus.apiExterneBlobus.models.Account;
 import com.blobus.apiExterneBlobus.repositories.TransferAccountRepository;
-import com.blobus.apiExterneBlobus.services.interfaces.TransferAccountService;
+import com.blobus.apiExterneBlobus.services.interfaces.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,22 +12,22 @@ import java.util.Optional;
 import static java.lang.Boolean.TRUE;
 @Service
 
-public class TransferAccountServiceImpl implements TransferAccountService {
+public class AccountServiceImpl implements AccountService {
     @Autowired
     private TransferAccountRepository transferAccountRepository;
     @Override
-    public TransferAccount createTransfertAccount(TransferAccount transferAccount) {
+    public Account createTransfertAccount(Account transferAccount) {
         return transferAccountRepository.save(transferAccount);
     }
 
     @Override
-    public List<TransferAccount> getAllTransfertAccount() {
+    public List<Account> getAllTransfertAccount() {
 
         return transferAccountRepository.findAll();
     }
 
     @Override
-    public Optional<TransferAccount> getTransfertAccountById(Long id) {
+    public Optional<Account> getTransfertAccountById(Long id) {
         return transferAccountRepository.findById(id);
     }
 /*
@@ -37,8 +37,8 @@ public class TransferAccountServiceImpl implements TransferAccountService {
     }*/
 
     @Override
-    public TransferAccount updateTranfertAccount(TransferAccount transferAccount, Long id) {
-        Optional<TransferAccount> existingAccount= transferAccountRepository.findById(id);
+    public Account updateTranfertAccount(Account transferAccount, Long id) {
+        Optional<Account> existingAccount= transferAccountRepository.findById(id);
         if(existingAccount.isPresent())
         {
            existingAccount.get().setBalance(transferAccount.getBalance());
@@ -51,7 +51,7 @@ public class TransferAccountServiceImpl implements TransferAccountService {
 
     @Override
     public Boolean deleteTransfertAccountById(Long id) {
-        Optional<TransferAccount> existingAccount=transferAccountRepository.findById(id);
+        Optional<Account> existingAccount=transferAccountRepository.findById(id);
         if(existingAccount.isPresent())
             transferAccountRepository.deleteById(id);
         return TRUE;
