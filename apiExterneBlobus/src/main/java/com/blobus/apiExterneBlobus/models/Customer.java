@@ -5,9 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "customers")
@@ -30,6 +28,6 @@ public class Customer {
     private String phoneNumber;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<TransferAccount> transferAccounts = new ArrayList<>();
+    private List<Account> transferAccounts = new ArrayList<>();
 
 }

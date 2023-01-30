@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 
 
-public class TransferAccount {
+public class Account {
     @Id
     @GeneratedValue
     private Long id;
