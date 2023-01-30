@@ -22,7 +22,11 @@ public class AccountController {
     public Optional<Account> getAccount(@PathVariable Long id){
         return transferAccountService.getTransfertAccountById(id);
     }
-
+    @RequestMapping(value = "accounts/phoneNumber/{id}",method = RequestMethod.GET)
+    public String getPhoneNumber(@PathVariable Long id)
+    {
+        return transferAccountService.GetAccountPhoneNumber(id);
+    }
     @PostMapping("/accounts")
     public Account save(@RequestBody Account transferAccount){
         return transferAccountService.createTransfertAccount(transferAccount);
@@ -31,7 +35,17 @@ public class AccountController {
     public Account update(@RequestBody Account transferAccount, @PathVariable Long id){
         return transferAccountService.updateTranfertAccount(transferAccount,id);
     }
-    @RequestMapping("/accounts/{id}")
+    @RequestMapping(value = "/accounts/enable/{id}",method = RequestMethod.PUT)
+    public Account enable(@PathVariable Long id)
+   {
+    return transferAccountService.EnableTransfertAccount(id);
+   }
+    @RequestMapping( value = "/accounts/disable/{id}",method = RequestMethod.PUT)
+     public Account disable(@PathVariable Long id)
+    {
+       return transferAccountService.DiseableTranfertAccount(id);
+    }
+    @RequestMapping(value = "/accounts/{id}",method = RequestMethod.DELETE)
     public boolean delete(@PathVariable Long id)
     {
         return transferAccountService.deleteTransfertAccountById(id);

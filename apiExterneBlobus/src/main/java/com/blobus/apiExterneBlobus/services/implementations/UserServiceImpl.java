@@ -96,7 +96,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public RequestBodyUserProfileDto getUserProfileByMsisdn(String phoneNumber, RequestBodyUserProfileDto userProfileDto) {
+    public RequestBodyUserProfileDto getUserProfileByMsisdn(String phoneNumber) {
 
 
         return null;
