@@ -18,10 +18,16 @@ public class Account {
     @GeneratedValue
     private Long id;
     private double balance;
-    @Column(nullable = false, unique = true)
+    @Column(
+            nullable = false,
+            unique = true)
+
     private String encryptedPinCode;
     private WalletType walletType;
-    @Column(nullable = false,unique = true)
+    @Column(
+            nullable = false,
+            unique = true)
+
     private String phoneNumber;
     boolean is_active;
     @ManyToOne
