@@ -12,8 +12,6 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -26,11 +24,11 @@ public class Transaction {
     private TransactionType type;
     private Double montant;
     private TransactionCurrency currency;
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-    @ManyToOne
-    @JoinColumn(name = "customer_id")
-    private Customer customer;
 
+    @ManyToOne
+    @JoinColumn(name = "retailer_transfert_account_id")
+    private TransferAccount retailerTransferAccount;
+    @ManyToOne
+    @JoinColumn(name = "customer_transfert_account_id")
+    private TransferAccount customerTransferAccount;
 }

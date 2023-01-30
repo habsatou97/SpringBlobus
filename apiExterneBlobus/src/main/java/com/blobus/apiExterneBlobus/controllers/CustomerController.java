@@ -15,27 +15,27 @@ public class CustomerController {
     private final CustomerService customerService;
 
 
-    @GetMapping("all")
+    @GetMapping
     public ResponseEntity<List<Customer>> findAll(){
         return ResponseEntity.ok().body(customerService.findAll());
     }
 
-    @GetMapping("findOne/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<Customer> findOne(@PathVariable Long id){
         return ResponseEntity.ok().body(customerService.findOne(id));
     }
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("{id}")
     public void delete(@PathVariable Long id){
         customerService.delete(id);
     }
 
-    @PostMapping("save")
+    @PostMapping
     public ResponseEntity<Customer> save(@RequestBody Customer customer){
         return ResponseEntity.ok().body(customerService.save(customer));
     }
 
-    @PutMapping("edit")
+    @PutMapping
     public ResponseEntity<Customer> edit(@RequestBody Customer customer){
         return ResponseEntity.ok().body(customerService.edit(customer));
     }

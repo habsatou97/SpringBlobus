@@ -4,9 +4,6 @@ import com.blobus.apiExterneBlobus.models.Customer;
 import com.blobus.apiExterneBlobus.repositories.CustomerRepository;
 import com.blobus.apiExterneBlobus.services.interfaces.CustomerService;
 import jakarta.persistence.EntityNotFoundException;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
