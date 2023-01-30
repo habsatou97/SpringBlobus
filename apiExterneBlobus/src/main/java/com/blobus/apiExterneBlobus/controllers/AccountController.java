@@ -1,7 +1,7 @@
 package com.blobus.apiExterneBlobus.controllers;
 
-import com.blobus.apiExterneBlobus.models.TransferAccount;
-import com.blobus.apiExterneBlobus.services.implementations.TransferAccountServiceImpl;
+import com.blobus.apiExterneBlobus.models.Account;
+import com.blobus.apiExterneBlobus.services.implementations.AccountServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,25 +10,25 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/ewallet/v1")
-public class TransferAccountController {
+public class AccountController {
     @Autowired
-    private TransferAccountServiceImpl transferAccountService;
+    private AccountServiceImpl transferAccountService;
     @GetMapping("/accounts")
-    public List<TransferAccount> get()
+    public List<Account> get()
     {
         return transferAccountService.getAllTransfertAccount();
     }
     @GetMapping("/accounts/{id}")
-    public Optional<TransferAccount> getAccount(@PathVariable Long id){
+    public Optional<Account> getAccount(@PathVariable Long id){
         return transferAccountService.getTransfertAccountById(id);
     }
 
     @PostMapping("/accounts")
-    public TransferAccount save(@RequestBody TransferAccount transferAccount){
+    public Account save(@RequestBody Account transferAccount){
         return transferAccountService.createTransfertAccount(transferAccount);
     }
     @RequestMapping(value = "/accounts/{id}",method = RequestMethod.PUT)
-    public TransferAccount update(@RequestBody TransferAccount transferAccount,@PathVariable Long id){
+    public Account update(@RequestBody Account transferAccount, @PathVariable Long id){
         return transferAccountService.updateTranfertAccount(transferAccount,id);
     }
     @RequestMapping("/accounts/{id}")
