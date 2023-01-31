@@ -22,7 +22,7 @@ public class Transaction {
     private Date requestDate;
     private TransactionStatus status;
     private TransactionType type;
-    private Double montant;
+    private Double amount;
     private TransactionCurrency currency;
 
     @ManyToOne
