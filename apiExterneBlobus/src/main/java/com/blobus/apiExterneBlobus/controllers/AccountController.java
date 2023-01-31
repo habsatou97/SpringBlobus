@@ -25,7 +25,9 @@ public class AccountController {
     public ResponseEntity<List<Account>>get()
     {
 
-        return ResponseEntity.ok().body(transferAccountService.getAllTransfertAccount());
+        return ResponseEntity
+                .ok(transferAccountService.getAllTransfertAccount());
+
     }
     @GetMapping("{id}")
     public ResponseEntity<Account> get(@PathVariable Long id){
