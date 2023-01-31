@@ -66,4 +66,9 @@ public class AccountController {
     }
 
 
+
+    @DeleteMapping("deleteByPhoneNumber/{phoneNumber}")
+    void deleteByPhoneNumber(String phoneNumber){
+        transferAccountService.deleteByPhoneNumber(phoneNumber);
+    }
 }

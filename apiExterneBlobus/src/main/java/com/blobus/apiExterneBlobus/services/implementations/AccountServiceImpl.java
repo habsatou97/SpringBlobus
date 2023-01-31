@@ -132,4 +132,10 @@ public class AccountServiceImpl implements AccountService {
         }
         throw new IllegalStateException("This user don't have a retailer role");
     }
+
+    @Override
+    public void deleteByPhoneNumber(String phoneNumber) {
+        Account account = transferAccountRepository.getAccountByPhoneNumber(phoneNumber).orElseThrow();
+        transferAccountRepository.delete(account);
+    }
 }
