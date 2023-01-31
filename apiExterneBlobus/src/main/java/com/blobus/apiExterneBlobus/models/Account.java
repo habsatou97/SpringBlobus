@@ -1,6 +1,7 @@
 package com.blobus.apiExterneBlobus.models;
 
 import com.blobus.apiExterneBlobus.models.enums.WalletType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -19,10 +20,7 @@ public class Account {
     @GeneratedValue
     private Long id;
     private double balance;
-    @Column(
-            nullable = false,
-            unique = true)
-
+    @Column(nullable = false)
     private String encryptedPinCode;
     private WalletType walletType;
     @Column(
@@ -30,15 +28,18 @@ public class Account {
             unique = true)
 
     private String phoneNumber;
+    @Column(
+            nullable = true)
     boolean is_active;
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "customer_id")
-    //@Nullable
+    @Nullable
     private Customer customer;
 
     @ManyToOne
     @JoinColumn(name = "retailer_id")
-    //@Nullable
+    @Nullable
     private User retailer;
 
     public User getRetailer() {
