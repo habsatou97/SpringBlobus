@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "transferAccounts")
 @Data
@@ -18,15 +21,24 @@ public class Account {
     @GeneratedValue
     private Long id;
     private double balance;
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String encryptedPinCode;
     private WalletType walletType;
     @Column(nullable = false,unique = true)
     private String phoneNumber;
     boolean is_active;
     @ManyToOne
-    @JoinColumn(name = "customer_id")
+    @JoinColumn(name = "customer_id" ,referencedColumnName = "id",nullable = true)
     private Customer customer;
 
+    @ManyToOne
+    @JoinColumn(name = "retailer_id" ,referencedColumnName = "id",nullable = true)
+    private User retailer;
+
+    @OneToMany(mappedBy = "customerTransferAccount")
+    List<Transaction> customerTransactions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "retailerTransferAccount")
+    List<Transaction> retailerTransactions = new ArrayList<>();
 
 }
