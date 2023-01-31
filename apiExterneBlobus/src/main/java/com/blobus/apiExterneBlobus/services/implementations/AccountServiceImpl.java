@@ -6,7 +6,7 @@ import com.blobus.apiExterneBlobus.models.Customer;
 import com.blobus.apiExterneBlobus.models.User;
 import com.blobus.apiExterneBlobus.models.enums.Role;
 import com.blobus.apiExterneBlobus.repositories.CustomerRepository;
-import com.blobus.apiExterneBlobus.repositories.TransferAccountRepository;
+import com.blobus.apiExterneBlobus.repositories.AccountRepository;
 import com.blobus.apiExterneBlobus.repositories.UserRepository;
 import com.blobus.apiExterneBlobus.services.interfaces.AccountService;
 import jakarta.persistence.EntityNotFoundException;
@@ -23,7 +23,7 @@ import static java.lang.Boolean.TRUE;
 
 public class AccountServiceImpl implements AccountService {
     @Autowired
-    private TransferAccountRepository transferAccountRepository;
+    private AccountRepository transferAccountRepository;
     @Autowired
     private CustomerRepository customerRepository;
     @Autowired
@@ -121,5 +121,16 @@ public class AccountServiceImpl implements AccountService {
 
     public Account addCustomerAccount(Account account, Long id) {
  return null;
+    }
+
+    @Override
+    public Account getBalance(String encryptedPinCode, String phoneNumber, Long idUser) {
+        boolean userExiste = userRepository.existsById(idUser);
+        if(!userExiste) throw new IllegalStateException("This user don't existe");
+        User user = userRepository.findById(idUser).orElseThrow();
+        if (user.getRoles().contains(Role.RETAILER)){
+            return transferAccountRepository.findByEncryptedPinCodeAndPhoneNumberAndRetailer(encryptedPinCode,phoneNumber,user).orElseThrow();
+        }
+        throw new IllegalStateException("This user don't have a retailer role");
     }
 }
