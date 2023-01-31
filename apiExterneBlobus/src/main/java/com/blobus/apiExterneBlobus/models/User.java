@@ -29,7 +29,7 @@ public class User {
             nullable = false
     )
     private String email;
-    private List<Role> roles;
+    private List<Role> roles = new ArrayList<>();
     private String ninea;
 
     @Column(
@@ -48,4 +48,6 @@ public class User {
     public void addTransferAccounts(Account transferAccount) {
         accounts.add(transferAccount);
     }
+
+    public void addRoles(Role role){ roles.add(role);}
 }
