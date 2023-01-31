@@ -22,13 +22,13 @@ public class Transaction {
     private Date requestDate;
     private TransactionStatus status;
     private TransactionType type;
-    private Double montant;
+    private Double amount;
     private TransactionCurrency currency;
 
     @ManyToOne
     @JoinColumn(name = "retailer_transfert_account_id")
-    private TransferAccount retailerTransferAccount;
+    private Account retailerTransferAccount;
     @ManyToOne
     @JoinColumn(name = "customer_transfert_account_id")
-    private TransferAccount customerTransferAccount;
+    private Account customerTransferAccount;
 }
