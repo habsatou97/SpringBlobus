@@ -8,5 +8,6 @@ import java.util.Optional;
 
 public interface TransferAccountRepository extends JpaRepository<Account,Long> {
     // pour recuperer un compte via le numero de telephone et le type de compte
+
     Optional<Account> findByPhoneNumberAndWalletType(String phoneNumbber, WalletType walletType);
 }
