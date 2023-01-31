@@ -17,7 +17,7 @@ public class AccountController {
     private AccountServiceImpl transferAccountService;
 
     @GetMapping("balanceRetailer/{encryptedPinCode}/{phoneNumber}/{idUser}")
-    public Double getBalance(@PathVariable String encryptedPinCode, String phoneNumber, Long idUser){
+    public Double getBalance(@PathVariable String encryptedPinCode,@PathVariable String phoneNumber,@PathVariable Long idUser){
         return transferAccountService.getBalance(encryptedPinCode, phoneNumber, idUser).getBalance();
     }
 
