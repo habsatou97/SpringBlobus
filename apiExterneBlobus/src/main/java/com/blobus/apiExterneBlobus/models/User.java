@@ -22,10 +22,6 @@ public class User {
     private Long id;
     private String firstName;
     private String lastName;
-    @Column(name = "secret_id")
-    private String secretId;
-    @Column(name = "secret_client")
-    private String secretClient;
 
     @Column(
             name = "email",
@@ -33,18 +29,25 @@ public class User {
             nullable = false
     )
     private String email;
-    private List<Role> roles = new ArrayList<>();
+    private List<Role> roles;
     private String ninea;
 
     @Column(
             name = "phone_number"
     )
     private String phoneNumber;
+    @Column(unique = true)
+    private String userId;
+    private String userSecret;
+
+   
+
     @OneToMany(mappedBy = "retailer", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Account> transferAccounts = new ArrayList<>();
+    private List<Account> accounts = new ArrayList<>();
+
+
 
     public void addTransferAccounts(Account transferAccount) {
-        transferAccounts.add(transferAccount);
+        accounts.add(transferAccount);
     }
-    public void addRoles(Role role){ roles.add(role); }
 }

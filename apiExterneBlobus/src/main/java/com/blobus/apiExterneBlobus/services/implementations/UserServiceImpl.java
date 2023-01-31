@@ -2,9 +2,11 @@ package com.blobus.apiExterneBlobus.services.implementations;
 
 import com.blobus.apiExterneBlobus.dto.RequestBodyUserProfileDto;
 import com.blobus.apiExterneBlobus.exception.ResourceNotFoundException;
+import com.blobus.apiExterneBlobus.models.Account;
 import com.blobus.apiExterneBlobus.models.User;
 import com.blobus.apiExterneBlobus.models.enums.CustomerType;
 import com.blobus.apiExterneBlobus.models.enums.Role;
+import com.blobus.apiExterneBlobus.repositories.AccountRepository;
 import com.blobus.apiExterneBlobus.repositories.UserRepository;
 import com.blobus.apiExterneBlobus.services.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import java.util.*;
 public class UserServiceImpl implements UserService {
     @Autowired
     private final UserRepository userRepository;
+    private final AccountRepository transferAccountRepository;
 
     @Override
     public User addSingleUser(User user) {
@@ -96,7 +99,25 @@ public class UserServiceImpl implements UserService {
     @Override
     public RequestBodyUserProfileDto getUserProfileByMsisdn(String phoneNumber) {
 
-        return null;
+        RequestBodyUserProfileDto userProfileDto = new RequestBodyUserProfileDto();
+        Account account = transferAccountRepository.getAccountByPhoneNumber(phoneNumber).orElseThrow(() ->
+                new ResourceNotFoundException("msisdn invalid"));
+        userProfileDto.setMsisdn(account.getPhoneNumber());
+        userProfileDto.setBalance(account.getBalance());
+        userProfileDto.setSuspended(account.is_active());
+        userProfileDto.setWalletType(account.getWalletType());
+        if(account.getCustomer()!=null){
+            userProfileDto.setType(String.valueOf(CustomerType.CUSTOMER));
+            userProfileDto.setLastName(account.getCustomer().getLastName());
+            userProfileDto.setFirstName(account.getCustomer().getFirstName());
+        }
+        else if(account.getRetailer()!=null){
+            userProfileDto.setType(String.valueOf(CustomerType.RETAILER));
+            userProfileDto.setLastName(account.getRetailer().getLastName());
+            userProfileDto.setFirstName(account.getRetailer().getFirstName());
+            userProfileDto.setUserId(account.getRetailer().getUserId());
+        }
+        return userProfileDto;
     }
 
     @Override

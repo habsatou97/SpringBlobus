@@ -26,19 +26,19 @@ public class UserController {
     private final UserRepository userRepository;
 
     @GetMapping
-    public List<User> getAllUsers(){
-        return userService.getAllUsers();
+    public ResponseEntity<List<User>> getAllUsers(){
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @GetMapping("{id}")
-    public Optional<User> getOne(@PathVariable("id") Long id){
-        return userService.getOneUser(id);
+    public ResponseEntity<Optional<User>> getOne(@PathVariable("id") Long id){
+        return ResponseEntity.ok(userService.getOneUser(id));
     }
 
 
     @GetMapping("retailers")
-    public List<User> getAllRetailer(){
-        return userService.getAllRetailer();
+    public ResponseEntity<List<User>> getAllRetailer(){
+        return ResponseEntity.ok(userService.getAllRetailer());
     }
 
 
