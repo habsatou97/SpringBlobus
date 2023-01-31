@@ -5,6 +5,6 @@ import lombok.Data;
 
 @Data
 public class CustomerDto {
-    private String customerTransferAccountPhoneNumber;
-    private WalletType customerTransferAccountWalletType;
+    private String phoneNumber;
+    private WalletType walletType;
 }

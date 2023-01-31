@@ -5,6 +5,6 @@ import lombok.Data;
 
 @Data
 public class AmountDto {
-    private Double amount;
+    private Double value;
     private TransactionCurrency currency;
 }

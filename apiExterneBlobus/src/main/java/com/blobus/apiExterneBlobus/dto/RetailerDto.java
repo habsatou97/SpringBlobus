@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 public class RetailerDto {
-    private String retailerTransferAccountPhoneNumber;
-    private String retailerTransferAccountEncryptedPinCode;
-    private WalletType retailerTransferAccountWalletType;
+    private String phoneNumber;
+    private String encryptedPinCode;
+    private WalletType walletType;
 }
