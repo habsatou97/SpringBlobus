@@ -27,8 +27,8 @@ public class Transaction {
 
     @ManyToOne
     @JoinColumn(name = "retailer_transfert_account_id")
-    private TransferAccount retailerTransferAccount;
+    private Account retailerTransferAccount;
     @ManyToOne
     @JoinColumn(name = "customer_transfert_account_id")
-    private TransferAccount customerTransferAccount;
+    private Account customerTransferAccount;
 }

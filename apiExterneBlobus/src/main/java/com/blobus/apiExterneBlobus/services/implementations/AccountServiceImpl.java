@@ -3,6 +3,7 @@ package com.blobus.apiExterneBlobus.services.implementations;
 import com.blobus.apiExterneBlobus.models.Account;
 import com.blobus.apiExterneBlobus.repositories.TransferAccountRepository;
 import com.blobus.apiExterneBlobus.services.interfaces.AccountService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,20 +19,21 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private TransferAccountRepository transferAccountRepository;
 
+
     @Override
     public Account createTransfertAccount(Account transferAccount) {
         return transferAccountRepository.save(transferAccount);
     }
 
     @Override
-    public List<Account> getAllTransfertAccount() {
+    public List <Account> getAllTransfertAccount() {
 
         return transferAccountRepository.findAll();
     }
 
     @Override
-    public Optional<Account> getTransfertAccountById(Long id) {
-        return transferAccountRepository.findById(id);
+    public Account getTransfertAccountById(Long id) {
+        return transferAccountRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Account with id"+": "+id+ " don't exist"));
     }
 
     @Override
@@ -41,7 +43,7 @@ public class AccountServiceImpl implements AccountService {
             existingAccount.get().set_active(TRUE);
             return transferAccountRepository.save(existingAccount.get());
         }
-        return null;
+        else throw new EntityNotFoundException("Account with id"+": "+id+ " don't exist");
     }
 
     @Override
@@ -51,7 +53,7 @@ public class AccountServiceImpl implements AccountService {
             existingAccount.get().set_active(FALSE);
             return transferAccountRepository.save(existingAccount.get());
         }
-        return  null;
+        else throw new EntityNotFoundException("Account with id"+": "+id+ " don't exist");
     }
 
     @Override
@@ -59,7 +61,7 @@ public class AccountServiceImpl implements AccountService {
         Optional<Account> existingAccount = transferAccountRepository.findById(id);
         if (existingAccount.isPresent())
             return existingAccount.get().getPhoneNumber();
-        return null;
+        else throw new EntityNotFoundException("Account with id"+": "+id+ " don't exist");
     }
 
     @Override
@@ -72,17 +74,19 @@ public class AccountServiceImpl implements AccountService {
             existingAccount.get().setEncryptedPinCode(transferAccount.getEncryptedPinCode());
             return transferAccountRepository.save(existingAccount.get());
         }
-        return null;
+        else throw new EntityNotFoundException("Account with id"+": "+id+ " don't exist");
+
+        //return null;
 
     }
 
     @Override
-    public Boolean deleteTransfertAccountById(Long id) {
+    public void deleteTransfertAccountById(Long id) {
         Optional<Account> existingAccount = transferAccountRepository.findById(id);
         if (existingAccount.isPresent()) {
             transferAccountRepository.deleteById(id);
-            return TRUE;
         }
-        return FALSE;
+        else throw new EntityNotFoundException("Account with id"+": "+id+ " don't exist");
+
     }
 }
