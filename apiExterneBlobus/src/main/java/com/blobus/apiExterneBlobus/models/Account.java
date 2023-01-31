@@ -35,8 +35,10 @@ public class Account {
     @JoinColumn(name = "retailer_id" ,referencedColumnName = "id",nullable = true)
     private User retailer;
 
+
     @OneToMany(mappedBy = "customerTransferAccount")
     List<Transaction> customerTransactions = new ArrayList<>();
+
 
     @OneToMany(mappedBy = "retailerTransferAccount")
     List<Transaction> retailerTransactions = new ArrayList<>();
