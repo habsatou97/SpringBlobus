@@ -11,6 +11,14 @@ import lombok.Setter;
 public class RequestBodyUserProfileDto {
     private CustomerType customerType;
     private WalletType walletType;
-    private String phoneNumber;
+    private String msisdn;
+    private String type;
+    private String firstName;
+    private String lastName;
+    private String userId;
+    private double balance;
+    private boolean suspended;
+
+
 
 }

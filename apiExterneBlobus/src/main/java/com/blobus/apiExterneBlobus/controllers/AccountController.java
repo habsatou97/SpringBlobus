@@ -34,6 +34,18 @@ public class AccountController {
     public ResponseEntity<Account>save(@RequestBody Account transferAccount){
         return ResponseEntity.ok().body(transferAccountService.createTransfertAccount(transferAccount));
     }
+
+    /**
+     * @author Bibi
+     * @param account
+     * @param id
+     * @return
+     */
+    @PostMapping("/accounts/customer/{id}")
+     public Account addAccountCustomer(@RequestBody Account account, @PathVariable("id") Long id){
+        return transferAccountService.addCustomerAccount(account,id);
+}
+
     @RequestMapping(value = "/accounts/{id}",method = RequestMethod.PUT)
     public ResponseEntity<Account> update(@RequestBody Account transferAccount, @PathVariable Long id){
         return ResponseEntity.ok().body(transferAccountService.updateTranfertAccount(transferAccount,id));

@@ -35,6 +35,13 @@ public class UserController {
         return userService.getOneUser(id);
     }
 
+
+    @GetMapping("retailers")
+    public List<User> getAllRetailer(){
+        return userService.getAllRetailer();
+    }
+
+
     @PostMapping
     public ResponseEntity<User> addUser(@RequestBody User user){
         return ResponseEntity.ok(userService.addSingleUser(user));
@@ -54,8 +61,8 @@ public class UserController {
     }
 
 
-    @ResponseStatus
-    @GetMapping("{phoneNumber}")
+
+    @GetMapping("find/{phoneNumber}")
     public  ResponseEntity<RequestBodyUserProfileDto> getUserProfileByMsisdn(@PathVariable("phoneNumber") String phoneNumber){
 
         return ResponseEntity.ok(userService.getUserProfileByMsisdn(phoneNumber));
