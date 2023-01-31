@@ -7,7 +7,7 @@ public enum TransactionType {
     CASHOUT_ONE_STEP("CASHOUT_ONE_STEP"),
     MERCHANT_PAYMENT("MERCHANT_PAYMENT"),
     TRANSFERT_WITH_CODE("TRANSFERT_WITH_CODE"),
-    WEB_PAYMENT(" WEB_PAYMENT");
+    WEB_PAYMENT("WEB_PAYMENT");
     private String type;
 
     TransactionType(String type) {
