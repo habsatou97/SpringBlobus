@@ -11,56 +11,49 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/ewallet/v1")
+@RequestMapping("/api/ewallet/v1/accounts/")
 public class AccountController {
     @Autowired
     private AccountServiceImpl transferAccountService;
-    @GetMapping("/accounts")
+    @GetMapping
     public ResponseEntity<List<Account>>get()
     {
 
         return ResponseEntity.ok().body(transferAccountService.getAllTransfertAccount());
     }
-    @GetMapping("/accounts/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<Account> get(@PathVariable Long id){
         return ResponseEntity.ok().body(transferAccountService.getTransfertAccountById(id));
     }
-    @RequestMapping(value = "accounts/phoneNumber/{id}",method = RequestMethod.GET)
+    @RequestMapping(value = "phoneNumber/{id}",method = RequestMethod.GET)
     public String getPhoneNumber(@PathVariable Long id)
     {
         return transferAccountService.GetAccountPhoneNumber(id);
     }
-    @PostMapping("/accounts")
-    public ResponseEntity<Account>save(@RequestBody Account transferAccount){
-        return ResponseEntity.ok().body(transferAccountService.createTransfertAccount(transferAccount));
+
+    @PostMapping("customer/{id}")
+    public ResponseEntity<Account>saveCustomer(@RequestBody Account transferAccount,@PathVariable Long id){
+        return ResponseEntity.ok().body(transferAccountService.createCustomerTransfertAccount(transferAccount,id));
     }
-
-    /**
-     * @author Bibi
-     * @param account
-     * @param id
-     * @return
-     */
-    @PostMapping("/accounts/customer/{id}")
-     public Account addAccountCustomer(@RequestBody Account account, @PathVariable("id") Long id){
-        return transferAccountService.addCustomerAccount(account,id);
-}
-
-    @RequestMapping(value = "/accounts/{id}",method = RequestMethod.PUT)
+    @PostMapping("/retailer/{id}")
+    public ResponseEntity<Account>saveRetailer(@RequestBody Account transferAccount,@PathVariable Long id){
+        return ResponseEntity.ok().body(transferAccountService.createRetailerTransfertAccount(transferAccount,id));
+    }
+    @RequestMapping(value = "{id}",method = RequestMethod.PUT)
     public ResponseEntity<Account> update(@RequestBody Account transferAccount, @PathVariable Long id){
         return ResponseEntity.ok().body(transferAccountService.updateTranfertAccount(transferAccount,id));
     }
-    @RequestMapping(value = "/accounts/enable/{id}",method = RequestMethod.PUT)
+    @RequestMapping(value = "enable/{id}",method = RequestMethod.PUT)
     public ResponseEntity<Account> enable(@PathVariable Long id)
    {
     return ResponseEntity.ok().body(transferAccountService.EnableTransfertAccount(id));
    }
-    @RequestMapping( value = "/accounts/disable/{id}",method = RequestMethod.PUT)
+    @RequestMapping( value = "disable/{id}",method = RequestMethod.PUT)
      public ResponseEntity<Account> disable(@PathVariable Long id)
     {
        return ResponseEntity.ok().body(transferAccountService.DiseableTranfertAccount(id));
     }
-    @RequestMapping(value = "/accounts/{id}",method = RequestMethod.DELETE)
+    @RequestMapping(value = "{id}",method = RequestMethod.DELETE)
     public void delete(@PathVariable Long id)
     {
         transferAccountService.deleteTransfertAccountById(id);

@@ -1,7 +1,13 @@
 package com.blobus.apiExterneBlobus.services.implementations;
 
+import com.blobus.apiExterneBlobus.exception.ResourceNotFoundException;
 import com.blobus.apiExterneBlobus.models.Account;
+import com.blobus.apiExterneBlobus.models.Customer;
+import com.blobus.apiExterneBlobus.models.User;
+import com.blobus.apiExterneBlobus.models.enums.Role;
+import com.blobus.apiExterneBlobus.repositories.CustomerRepository;
 import com.blobus.apiExterneBlobus.repositories.TransferAccountRepository;
+import com.blobus.apiExterneBlobus.repositories.UserRepository;
 import com.blobus.apiExterneBlobus.services.interfaces.AccountService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +24,34 @@ import static java.lang.Boolean.TRUE;
 public class AccountServiceImpl implements AccountService {
     @Autowired
     private TransferAccountRepository transferAccountRepository;
-
+    @Autowired
+    private CustomerRepository customerRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
-    public Account createTransfertAccount(Account transferAccount) {
-        return transferAccountRepository.save(transferAccount);
+    public Account createRetailerTransfertAccount(Account transferAccount,Long id) {
+
+            User retailer=userRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("User not found"));
+            if(retailer.getRoles().contains(Role.RETAILER)) {
+                transferAccount.setRetailer(retailer);
+                transferAccount.set_active(true);
+                Account compte = transferAccountRepository.save(transferAccount);
+                retailer.addTransferAccounts(compte);
+                return compte;
+            }
+            else throw new EntityNotFoundException("Retailer with id"+": "+id+ " don't exist");
+    }
+
+    @Override
+    public Account createCustomerTransfertAccount(Account transferAccount,Long id) {
+
+        Customer customer=customerRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Customer not found"));
+        transferAccount.setCustomer(customer);
+        transferAccount.set_active(true);
+        Account compte=transferAccountRepository.save(transferAccount);
+        customer.addTransferAccounts(compte);
+        return compte;
     }
 
     @Override

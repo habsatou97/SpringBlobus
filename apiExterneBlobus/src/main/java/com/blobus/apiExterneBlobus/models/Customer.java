@@ -1,6 +1,7 @@
 package com.blobus.apiExterneBlobus.models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,11 +28,13 @@ public class Customer {
     @Column(nullable = false, unique = true)
     private String phoneNumber;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Account> transferAccounts = new ArrayList<>();
 
-    public void addTransferAccounts(Account account){
-        transferAccounts.add(account);
-    }
+    public void addTransferAccounts(Account compte) {
+        transferAccounts.add(compte);
 
+
+    }
 }

@@ -6,7 +6,8 @@ import com.blobus.apiExterneBlobus.models.Account;
 import java.util.List;
 
 public interface AccountService {
-  public Account createTransfertAccount(Account transferAccount);
+  public Account createCustomerTransfertAccount(Account transferAccount,Long id);
+  public Account createRetailerTransfertAccount(Account transferAccount,Long id);
   public List<Account> getAllTransfertAccount();
   public Account getTransfertAccountById(Long id);
   public Account EnableTransfertAccount(Long id);
