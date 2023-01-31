@@ -6,7 +6,7 @@ import com.blobus.apiExterneBlobus.models.Account;
 import com.blobus.apiExterneBlobus.models.User;
 import com.blobus.apiExterneBlobus.models.enums.CustomerType;
 import com.blobus.apiExterneBlobus.models.enums.Role;
-import com.blobus.apiExterneBlobus.repositories.TransferAccountRepository;
+import com.blobus.apiExterneBlobus.repositories.AccountRepository;
 import com.blobus.apiExterneBlobus.repositories.UserRepository;
 import com.blobus.apiExterneBlobus.services.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ import java.util.*;
 public class UserServiceImpl implements UserService {
     @Autowired
     private final UserRepository userRepository;
-    private final TransferAccountRepository transferAccountRepository;
+    private final AccountRepository transferAccountRepository;
 
     @Override
     public User addSingleUser(User user) {
