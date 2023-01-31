@@ -1,12 +1,13 @@
 package com.blobus.apiExterneBlobus.models;
 
 import com.blobus.apiExterneBlobus.models.enums.WalletType;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "transferAccounts")
@@ -23,30 +24,21 @@ public class Account {
     @Column(nullable = false)
     private String encryptedPinCode;
     private WalletType walletType;
-    @Column(
-            nullable = false,
-            unique = true)
-
+    @Column(nullable = false,unique = true)
     private String phoneNumber;
-    @Column(
-            nullable = true)
     boolean is_active;
-    @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "customer_id")
-    @Nullable
+    @JoinColumn(name = "customer_id" ,referencedColumnName = "id",nullable = true)
     private Customer customer;
 
     @ManyToOne
-    @JoinColumn(name = "retailer_id")
-    @Nullable
+    @JoinColumn(name = "retailer_id" ,referencedColumnName = "id",nullable = true)
     private User retailer;
 
-    public User getRetailer() {
-        return retailer;
-    }
+    @OneToMany(mappedBy = "customerTransferAccount")
+    List<Transaction> customerTransactions = new ArrayList<>();
 
-    public void setRetailer(User retailer) {
-        this.retailer = retailer;
-    }
+    @OneToMany(mappedBy = "retailerTransferAccount")
+    List<Transaction> retailerTransactions = new ArrayList<>();
+
 }
