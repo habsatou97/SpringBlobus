@@ -2,9 +2,11 @@ package com.blobus.apiExterneBlobus.services.implementations;
 
 import com.blobus.apiExterneBlobus.dto.RequestBodyUserProfileDto;
 import com.blobus.apiExterneBlobus.exception.ResourceNotFoundException;
+import com.blobus.apiExterneBlobus.models.Account;
 import com.blobus.apiExterneBlobus.models.User;
 import com.blobus.apiExterneBlobus.models.enums.CustomerType;
 import com.blobus.apiExterneBlobus.models.enums.Role;
+import com.blobus.apiExterneBlobus.repositories.TransferAccountRepository;
 import com.blobus.apiExterneBlobus.repositories.UserRepository;
 import com.blobus.apiExterneBlobus.services.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
@@ -22,13 +24,15 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private final UserRepository userRepository;
 
+    @Autowired final TransferAccountRepository accountRepository;
+
     @Override
     public User addSingleUser(User user) {
         if(
                 user.getFirstName()!=null &&
                 user.getLastName()!=null &&
-                user.getEmail() != null &&
-                user.getPhoneNumber() !=null)
+                user.getEmail() != null
+                )
         {
             Optional<User> userOptional = userRepository.findUserByEmail(user.getEmail());
             Optional<User> userOptional1 = userRepository.findUserByPhoneNumber(user.getPhoneNumber());
@@ -91,14 +95,24 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(Long id) {
-       userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("deleted failled ,user_id not founc"));
+       userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("deleted failled ,user_id not found"));
        userRepository.deleteById(id);
     }
 
     @Override
-    public RequestBodyUserProfileDto getUserProfileByMsisdn(String phoneNumber, RequestBodyUserProfileDto userProfileDto) {
+    public RequestBodyUserProfileDto getUserProfileByMsisdn(String phoneNumber) {
+        RequestBodyUserProfileDto userProfileDto = new RequestBodyUserProfileDto();
 
-
-        return null;
+        Account account =  accountRepository.getAccountByPhoneNumber(phoneNumber).orElseThrow(() ->
+                new ResourceNotFoundException("le numero de telephone est invalide"));
+        userProfileDto.setPhoneNumber(account.getPhoneNumber());
+        userProfileDto.setWalletType(account.getWalletType());
+        if(account.getRetailer() !=null){
+            userProfileDto.setCustomerType(CustomerType.RETAILER);
+        }
+        else if( account.getCustomer()!= null){
+            userProfileDto.setCustomerType(CustomerType.CUSTOMER);
+        }
+        return userProfileDto;
     }
 }

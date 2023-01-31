@@ -31,15 +31,15 @@ public class User {
     private String email;
     private List<Role> roles;
     private String ninea;
+    private String userId;
+
+    private String userSecret;
 
     @Column(
             name = "phone_number"
     )
     private String phoneNumber;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "user_account_id")
-    private UserAccount userAccount;
 
     @OneToMany(mappedBy = "retailer", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Account> accounts = new ArrayList<>();

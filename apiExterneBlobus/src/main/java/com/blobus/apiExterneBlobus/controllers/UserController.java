@@ -1,5 +1,6 @@
 package com.blobus.apiExterneBlobus.controllers;
 
+import com.blobus.apiExterneBlobus.dto.RequestBodyUserProfileDto;
 import com.blobus.apiExterneBlobus.models.User;
 import com.blobus.apiExterneBlobus.repositories.UserRepository;
 import com.blobus.apiExterneBlobus.services.implementations.UserServiceImpl;
@@ -54,6 +55,12 @@ public class UserController {
     }
 
 
+    @ResponseStatus
+    @GetMapping("/users/{phoneNumber}")
+    public  ResponseEntity<RequestBodyUserProfileDto> getUserProfileByMsisdn(@PathVariable("phoneNumber") String phoneNumber){
+
+        return ResponseEntity.ok(userService.getUserProfileByMsisdn(phoneNumber));
+  }
 
 
 }
