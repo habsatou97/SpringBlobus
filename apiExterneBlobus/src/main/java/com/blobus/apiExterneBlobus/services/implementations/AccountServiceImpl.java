@@ -1,8 +1,12 @@
 package com.blobus.apiExterneBlobus.services.implementations;
 
+import com.blobus.apiExterneBlobus.exception.ResourceNotFoundException;
 import com.blobus.apiExterneBlobus.models.Account;
+import com.blobus.apiExterneBlobus.models.Customer;
+import com.blobus.apiExterneBlobus.repositories.CustomerRepository;
 import com.blobus.apiExterneBlobus.repositories.TransferAccountRepository;
 import com.blobus.apiExterneBlobus.services.interfaces.AccountService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,12 +15,14 @@ import java.util.Optional;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
+@RequiredArgsConstructor
 @Service
-
-
 public class AccountServiceImpl implements AccountService {
     @Autowired
     private TransferAccountRepository transferAccountRepository;
+
+    @Autowired
+  private  final   CustomerRepository customerRepository;
 
     @Override
     public Account createTransfertAccount(Account transferAccount) {
@@ -84,5 +90,15 @@ public class AccountServiceImpl implements AccountService {
             return TRUE;
         }
         return FALSE;
+    }
+
+    @Override
+    public Account addCustomerAccount(Account account, Long id) {
+
+        Customer customer = customerRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("customer not found"));
+        account.setCustomer(customer);
+         Account account1 = transferAccountRepository.save(account);
+         customer.addTransferAccounts(account1);
+        return account1;
     }
 }

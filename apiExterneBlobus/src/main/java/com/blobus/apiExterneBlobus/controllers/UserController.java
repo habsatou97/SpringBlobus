@@ -26,7 +26,6 @@ public class UserController {
     private final UserRepository userRepository;
 
     @GetMapping
-
     public List<User> getAllUsers(){
         return userService.getAllUsers();
     }
@@ -34,6 +33,15 @@ public class UserController {
     @GetMapping("{id}")
     public Optional<User> getOne(@PathVariable("id") Long id){
         return userService.getOneUser(id);
+    }
+
+    /**
+     * @author Bibi
+     * Cette methode affiche la listes de tous les retailers
+     */
+    @GetMapping("retailers")
+    public List<User> getAllRetailer(){
+        return userService.getAllRetailer();
     }
 
     @PostMapping
@@ -56,7 +64,7 @@ public class UserController {
 
 
     @ResponseStatus
-    @GetMapping("{phoneNumber}")
+    @GetMapping("find/{phoneNumber}")
     public  ResponseEntity<RequestBodyUserProfileDto> getUserProfileByMsisdn(@PathVariable("phoneNumber") String phoneNumber){
 
         return ResponseEntity.ok(userService.getUserProfileByMsisdn(phoneNumber));

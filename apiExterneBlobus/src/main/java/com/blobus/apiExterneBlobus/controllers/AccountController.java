@@ -31,6 +31,18 @@ public class AccountController {
     public Account save(@RequestBody Account transferAccount){
         return transferAccountService.createTransfertAccount(transferAccount);
     }
+
+    /**
+     * @author Bibi
+     * @param account
+     * @param id
+     * @return
+     */
+    @PostMapping("/accounts/customer/{id}")
+     public Account addAccountCustomer(@RequestBody Account account, @PathVariable("id") Long id){
+        return transferAccountService.addCustomerAccount(account,id);
+}
+
     @RequestMapping(value = "/accounts/{id}",method = RequestMethod.PUT)
     public Account update(@RequestBody Account transferAccount, @PathVariable Long id){
         return transferAccountService.updateTranfertAccount(transferAccount,id);

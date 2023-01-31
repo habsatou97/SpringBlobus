@@ -14,10 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+
 @RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
@@ -100,18 +98,39 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<User> getAllRetailer() {
+        List<User> users = new ArrayList<>();
+        List<User> users1 = userRepository.findAll();
+       for (User user:users1){
+          if(user.getRoles().contains(Role.RETAILER)){
+              users.add(user);
+          }
+       }
+
+        return users;
+    }
+
+    @Override
     public RequestBodyUserProfileDto getUserProfileByMsisdn(String phoneNumber) {
         RequestBodyUserProfileDto userProfileDto = new RequestBodyUserProfileDto();
 
         Account account =  accountRepository.getAccountByPhoneNumber(phoneNumber).orElseThrow(() ->
                 new ResourceNotFoundException("le numero de telephone est invalide"));
-        userProfileDto.setPhoneNumber(account.getPhoneNumber());
+        userProfileDto.setMsisdn(account.getPhoneNumber());
         userProfileDto.setWalletType(account.getWalletType());
+        userProfileDto.setBalance(account.getBalance());
+        userProfileDto.setSuspended(account.is_active());
         if(account.getRetailer() !=null){
-            userProfileDto.setCustomerType(CustomerType.RETAILER);
+            userProfileDto.setType(String.valueOf(CustomerType.RETAILER));
+            userProfileDto.setFirstName(account.getRetailer().getFirstName());
+            userProfileDto.setLastName(account.getRetailer().getLastName());
+            userProfileDto.setUserId(account.getRetailer().getUserId());
+
         }
         else if( account.getCustomer()!= null){
-            userProfileDto.setCustomerType(CustomerType.CUSTOMER);
+            userProfileDto.setType(String.valueOf(CustomerType.CUSTOMER));
+            userProfileDto.setFirstName(account.getCustomer().getFirstName());
+            userProfileDto.setLastName(account.getCustomer().getLastName());
         }
         return userProfileDto;
     }

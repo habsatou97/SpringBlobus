@@ -15,5 +15,6 @@ public interface AccountService {
   public String GetAccountPhoneNumber(Long id);
   public Account updateTranfertAccount(Account transferAccount, Long id);
   public Boolean deleteTransfertAccountById(Long id);
+  public Account addCustomerAccount(Account account, Long id);
 
 }
