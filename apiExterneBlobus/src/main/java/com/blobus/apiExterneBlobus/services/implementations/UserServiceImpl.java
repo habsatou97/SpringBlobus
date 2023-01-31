@@ -1,7 +1,9 @@
 package com.blobus.apiExterneBlobus.services.implementations;
 
+import com.blobus.apiExterneBlobus.dto.RequestBodyUserProfileDto;
 import com.blobus.apiExterneBlobus.exception.ResourceNotFoundException;
 import com.blobus.apiExterneBlobus.models.User;
+import com.blobus.apiExterneBlobus.models.enums.CustomerType;
 import com.blobus.apiExterneBlobus.models.enums.Role;
 import com.blobus.apiExterneBlobus.repositories.UserRepository;
 import com.blobus.apiExterneBlobus.services.interfaces.UserService;
@@ -10,10 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+
 @RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
@@ -94,7 +94,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserProfileByMsisdn(String phoneNumber) {
+    public RequestBodyUserProfileDto getUserProfileByMsisdn(String phoneNumber) {
+
         return null;
+    }
+
+    @Override
+    public List<User> getAllRetailer() {
+        List<User> users = new ArrayList<>();
+        List<User> users1 = userRepository.findAll();
+        for (User user: users1){
+            if (user.getRoles().contains(Role.RETAILER)){
+                users.add(user);
+            }
+        }
+        return users;
     }
 }
