@@ -15,6 +15,12 @@ import java.util.Optional;
 public class AccountController {
     @Autowired
     private AccountServiceImpl transferAccountService;
+
+    @GetMapping("balanceRetailer/{encryptedPinCode}/{phoneNumber}/{idUser}")
+    public Double getBalance(@PathVariable String encryptedPinCode, String phoneNumber, Long idUser){
+        return transferAccountService.getBalance(encryptedPinCode, phoneNumber, idUser).getBalance();
+    }
+
     @GetMapping
     public ResponseEntity<List<Account>>get()
     {
