@@ -17,7 +17,7 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/ewallet/v1/user")
+@RequestMapping("/api/ewallet/v1/users/")
 public class UserController {
 
     @Autowired
@@ -25,28 +25,28 @@ public class UserController {
     @Resource
     private final UserRepository userRepository;
 
-    @GetMapping("/users")
+    @GetMapping
 
     public List<User> getAllUsers(){
         return userService.getAllUsers();
     }
 
-    @GetMapping("/users/{id}")
+    @GetMapping("{id}")
     public Optional<User> getOne(@PathVariable("id") Long id){
         return userService.getOneUser(id);
     }
 
-    @PostMapping("/users")
+    @PostMapping
     public ResponseEntity<User> addUser(@RequestBody User user){
         return ResponseEntity.ok(userService.addSingleUser(user));
     }
 
-    @PutMapping("/users/{id}")
+    @PutMapping("{id}")
     public ResponseEntity<User> updateUser(@RequestBody User user, @PathVariable("id") Long id){
         return ResponseEntity.ok(userService.updateSingleUser(user,id));
     }
 
-    @DeleteMapping("/users/{id}")
+    @DeleteMapping("{id}")
     public  ResponseEntity<Map<String,Boolean>> deleteUser(@PathVariable("id") Long id){
         Map<String,Boolean> response = new HashMap<>();
         userService.deleteUser(id);
@@ -56,7 +56,7 @@ public class UserController {
 
 
     @ResponseStatus
-    @GetMapping("/users/{phoneNumber}")
+    @GetMapping("{phoneNumber}")
     public  ResponseEntity<RequestBodyUserProfileDto> getUserProfileByMsisdn(@PathVariable("phoneNumber") String phoneNumber){
 
         return ResponseEntity.ok(userService.getUserProfileByMsisdn(phoneNumber));
