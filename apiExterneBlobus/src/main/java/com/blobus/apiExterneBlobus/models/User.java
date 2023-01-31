@@ -36,6 +36,9 @@ public class User {
             name = "phone_number"
     )
     private String phoneNumber;
+    @Column(unique = true)
+    private String userId;
+    private String userSecret;
 
    
 

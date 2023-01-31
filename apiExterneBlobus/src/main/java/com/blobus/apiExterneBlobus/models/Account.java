@@ -38,6 +38,7 @@ public class Account {
     private Customer customer;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "retailer_id")
     @Nullable
     private User retailer;
