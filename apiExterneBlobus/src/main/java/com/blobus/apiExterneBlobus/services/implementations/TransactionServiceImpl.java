@@ -4,12 +4,10 @@ import com.blobus.apiExterneBlobus.dto.RequestBodyTransactionDto;
 import com.blobus.apiExterneBlobus.dto.ResponseCashInTransactionDto;
 import com.blobus.apiExterneBlobus.models.Account;
 import com.blobus.apiExterneBlobus.models.Transaction;
-import com.blobus.apiExterneBlobus.models.enums.TransactionStatus;
 import com.blobus.apiExterneBlobus.repositories.TransactionRepository;
-import com.blobus.apiExterneBlobus.repositories.TransferAccountRepository;
+import com.blobus.apiExterneBlobus.repositories.AccountRepository;
 import com.blobus.apiExterneBlobus.services.interfaces.TransactionService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +20,7 @@ import static com.blobus.apiExterneBlobus.models.enums.TransactionStatus.*;
 @Service
 @RequiredArgsConstructor
 public class TransactionServiceImpl implements TransactionService {
-    private final TransferAccountRepository transferAccountRepository;
+    private final AccountRepository transferAccountRepository;
     private final TransactionRepository transactionRepository;
     @Override
     public Transaction convertDtoToEntityTransaction(RequestBodyTransactionDto requestBodyTransactionDto) {
