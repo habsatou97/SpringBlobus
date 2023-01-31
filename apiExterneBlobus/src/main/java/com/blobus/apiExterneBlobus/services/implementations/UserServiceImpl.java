@@ -1,11 +1,13 @@
 package com.blobus.apiExterneBlobus.services.implementations;
 
+import com.blobus.apiExterneBlobus.dto.AmountDto;
 import com.blobus.apiExterneBlobus.dto.RequestBodyUserProfileDto;
 import com.blobus.apiExterneBlobus.exception.ResourceNotFoundException;
 import com.blobus.apiExterneBlobus.models.Account;
 import com.blobus.apiExterneBlobus.models.User;
 import com.blobus.apiExterneBlobus.models.enums.CustomerType;
 import com.blobus.apiExterneBlobus.models.enums.Role;
+import com.blobus.apiExterneBlobus.models.enums.TransactionCurrency;
 import com.blobus.apiExterneBlobus.repositories.AccountRepository;
 import com.blobus.apiExterneBlobus.repositories.UserRepository;
 import com.blobus.apiExterneBlobus.services.interfaces.UserService;
@@ -100,12 +102,14 @@ public class UserServiceImpl implements UserService {
     public RequestBodyUserProfileDto getUserProfileByMsisdn(String phoneNumber) {
 
         RequestBodyUserProfileDto userProfileDto = new RequestBodyUserProfileDto();
+        AmountDto amountDto= new AmountDto();
         Account account = transferAccountRepository.getAccountByPhoneNumber(phoneNumber).orElseThrow(() ->
                 new ResourceNotFoundException("msisdn invalid"));
+        amountDto.setCurrency(TransactionCurrency.XOF);
+        amountDto.setValue(account.getBalance());
         userProfileDto.setMsisdn(account.getPhoneNumber());
-        userProfileDto.setBalance(account.getBalance());
+        userProfileDto.setBalance(amountDto);
         userProfileDto.setSuspended(account.is_active());
-        userProfileDto.setWalletType(account.getWalletType());
         if(account.getCustomer()!=null){
             userProfileDto.setType(String.valueOf(CustomerType.CUSTOMER));
             userProfileDto.setLastName(account.getCustomer().getLastName());
