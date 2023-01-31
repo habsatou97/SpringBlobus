@@ -45,8 +45,6 @@ public class User {
     @OneToMany(mappedBy = "retailer", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Account> accounts = new ArrayList<>();
 
-
-
     public void addTransferAccounts(Account transferAccount) {
         accounts.add(transferAccount);
     }

@@ -2,13 +2,11 @@ package com.blobus.apiExterneBlobus.controllers;
 
 import com.blobus.apiExterneBlobus.dto.RequestBodyTransactionDto;
 import com.blobus.apiExterneBlobus.dto.ResponseCashInTransactionDto;
+import com.blobus.apiExterneBlobus.dto.TransactionDto;
 import com.blobus.apiExterneBlobus.services.interfaces.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,4 +19,15 @@ public class TransactionController {
                 transactionService.CashInTransaction(requestBodyTransactionDto)
                 );
     }
+
+    /**
+     * Cette methodeb retoune le status d'une transaction
+     * @param transactionId
+     * @return
+     */
+    @GetMapping("transactions/{transactionId}/status")
+    public TransactionDto getTransactionStatus(@PathVariable("transactionId") Long transactionId){
+        return  transactionService.getTransactionStatus(transactionId);
+    }
+
 }

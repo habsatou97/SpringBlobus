@@ -118,10 +118,6 @@ public class AccountServiceImpl implements AccountService {
 
     }
 
-    public Account addCustomerAccount(Account account, Long id) {
- return null;
-    }
-
     @Override
     public Account getBalance(String encryptedPinCode, String phoneNumber, Long idUser) {
         boolean userExiste = userRepository.existsById(idUser);
@@ -132,4 +128,6 @@ public class AccountServiceImpl implements AccountService {
         }
         throw new IllegalStateException("This user don't have a retailer role");
     }
+
+
 }

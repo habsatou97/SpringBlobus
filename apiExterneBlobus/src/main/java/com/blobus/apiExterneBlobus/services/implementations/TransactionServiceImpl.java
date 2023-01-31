@@ -2,6 +2,7 @@ package com.blobus.apiExterneBlobus.services.implementations;
 
 import com.blobus.apiExterneBlobus.dto.RequestBodyTransactionDto;
 import com.blobus.apiExterneBlobus.dto.ResponseCashInTransactionDto;
+import com.blobus.apiExterneBlobus.dto.TransactionDto;
 import com.blobus.apiExterneBlobus.models.Account;
 import com.blobus.apiExterneBlobus.models.Transaction;
 import com.blobus.apiExterneBlobus.repositories.TransactionRepository;
@@ -53,6 +54,19 @@ public class TransactionServiceImpl implements TransactionService {
     public ResponseCashInTransactionDto CashInTransaction(RequestBodyTransactionDto requestBodyTransactionDto) {
         return TransactionIsSuccess(requestBodyTransactionDto);
     }
+
+    @Override
+    @Transactional
+    public TransactionDto getTransactionStatus(Long transactionId) {
+        Optional<Transaction> transaction = transactionRepository.findById(transactionId);
+        TransactionDto dto= new TransactionDto();
+        if(transaction.isPresent()){
+            dto.setStatus(transaction.get().getStatus());
+            return dto;
+        }
+        return null;
+    }
+
     @Transactional
     // pour effectuer une transaction CashIn (operation intermediaire)
     private ResponseCashInTransactionDto TransactionIsSuccess(RequestBodyTransactionDto requestBodyTransactionDto){

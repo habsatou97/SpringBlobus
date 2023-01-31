@@ -45,6 +45,8 @@ public class AccountController {
     public ResponseEntity<Account>saveRetailer(@RequestBody Account transferAccount,@PathVariable Long id){
         return ResponseEntity.ok().body(transferAccountService.createRetailerTransfertAccount(transferAccount,id));
     }
+
+
     @RequestMapping(value = "{id}",method = RequestMethod.PUT)
     public ResponseEntity<Account> update(@RequestBody Account transferAccount, @PathVariable Long id){
         return ResponseEntity.ok().body(transferAccountService.updateTranfertAccount(transferAccount,id));
@@ -54,11 +56,13 @@ public class AccountController {
    {
     return ResponseEntity.ok().body(transferAccountService.EnableTransfertAccount(id));
    }
+
     @RequestMapping( value = "disable/{id}",method = RequestMethod.PUT)
      public ResponseEntity<Account> disable(@PathVariable Long id)
     {
        return ResponseEntity.ok().body(transferAccountService.DiseableTranfertAccount(id));
     }
+
     @RequestMapping(value = "{id}",method = RequestMethod.DELETE)
     public void delete(@PathVariable Long id)
     {

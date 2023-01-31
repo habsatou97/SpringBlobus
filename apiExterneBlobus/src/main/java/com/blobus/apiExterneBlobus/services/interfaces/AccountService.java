@@ -15,8 +15,6 @@ public interface AccountService {
   public String GetAccountPhoneNumber(Long id);
   public Account updateTranfertAccount(Account transferAccount, Long id);
   public void deleteTransfertAccountById(Long id);
-  public Account addCustomerAccount(Account account, Long id);
-
   public Account getBalance(String encryptedPinCode, String phoneNumber, Long idUser);
 
 }
