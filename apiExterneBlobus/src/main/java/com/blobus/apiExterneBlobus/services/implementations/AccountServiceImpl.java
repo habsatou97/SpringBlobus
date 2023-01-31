@@ -45,7 +45,6 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account createCustomerTransfertAccount(Account transferAccount,Long id) {
-
         Customer customer=customerRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Customer not found"));
         transferAccount.setCustomer(customer);
         transferAccount.set_active(true);
