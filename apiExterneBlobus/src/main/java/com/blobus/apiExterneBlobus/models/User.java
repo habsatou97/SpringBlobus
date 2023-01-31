@@ -40,7 +40,7 @@ public class User {
     private String userId;
     private String userSecret;
 
-   
+   // hello
 
     @OneToMany(mappedBy = "retailer", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Account> accounts = new ArrayList<>();
