@@ -89,4 +89,8 @@ public class AccountServiceImpl implements AccountService {
         else throw new EntityNotFoundException("Account with id"+": "+id+ " don't exist");
 
     }
+
+    public Account addCustomerAccount(Account account, Long id) {
+ return null;
+    }
 }

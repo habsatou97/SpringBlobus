@@ -15,5 +15,5 @@ public interface UserService {
     public void deleteUser(Long id);
     public RequestBodyUserProfileDto getUserProfileByMsisdn(String phoneNumber);
 
-    List<User> getAllRetailer();
+   public List<User> getAllRetailer();
 }
