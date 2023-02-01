@@ -14,6 +14,8 @@ public interface TransactionService {
     Transaction convertDtoToEntityTransaction(RequestBodyTransactionDto requestBodyTransactionDto);
     // pour effectuer une transaction CashIn
     ResponseCashInTransactionDto CashInTransaction(RequestBodyTransactionDto requestBodyTransactionDto);
+    // pour effectuer une transaction BulkCashIn
+    ResponseCashInTransactionDto BulkCashInTransaction(RequestBodyTransactionDto[] requestBodyTransactionDto);
 
     public TransactionDto getTransactionStatus(Long transactionId);
 }

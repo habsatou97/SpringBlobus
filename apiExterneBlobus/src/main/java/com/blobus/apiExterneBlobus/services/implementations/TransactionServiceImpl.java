@@ -4,6 +4,7 @@ import com.blobus.apiExterneBlobus.dto.RequestBodyTransactionDto;
 import com.blobus.apiExterneBlobus.dto.ResponseCashInTransactionDto;
 import com.blobus.apiExterneBlobus.dto.TransactionDto;
 import com.blobus.apiExterneBlobus.models.Account;
+import com.blobus.apiExterneBlobus.models.Bulk;
 import com.blobus.apiExterneBlobus.models.Transaction;
 import com.blobus.apiExterneBlobus.repositories.TransactionRepository;
 import com.blobus.apiExterneBlobus.repositories.AccountRepository;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Optional;
 
@@ -53,6 +55,22 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public ResponseCashInTransactionDto CashInTransaction(RequestBodyTransactionDto requestBodyTransactionDto) {
         return TransactionIsSuccess(requestBodyTransactionDto);
+    }
+    @Override
+    public ResponseCashInTransactionDto BulkCashInTransaction(RequestBodyTransactionDto[] requestBodyTransactionDto){
+        double montantTotalAEnvoyer = Arrays.stream(requestBodyTransactionDto)
+                .map(requestBodyTransactionDto1 -> requestBodyTransactionDto1.getAmount().getValue())
+                .reduce(0.0,Double::sum);
+
+        Optional<Account> retailerAccount = transferAccountRepository
+                .findByPhoneNumberAndWalletType(
+                        requestBodyTransactionDto[0].getRetailer().getPhoneNumber(),
+                        requestBodyTransactionDto[0].getRetailer().getWalletType()
+                );
+
+
+
+        return null;
     }
 
     @Override
@@ -135,6 +153,12 @@ public class TransactionServiceImpl implements TransactionService {
                     .errorMessage("retailer account does not exist")
                     .build();
         }
+    }
+
+    @Transactional
+    // pour effectuer une transaction BulkCashIn (operation intermediaire)
+    private ResponseCashInTransactionDto BulkTransactionIsSuccess(RequestBodyTransactionDto requestBodyTransactionDto, Bulk bulk){
+        return null;
     }
 
     //pour verifier si le solde du compte est suffisant
