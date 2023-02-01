@@ -8,7 +8,8 @@ public enum TransactionStatus {
     INITIATED("INITIATED"),
     PENDING("PENDING"),
     PRE_INITIATED("PRE_INITIATED"),
-    SUCCESS("SUCCESS");
+    SUCCESS("SUCCESS"),
+    TERMINATED("TERMINATED");
     private String status;
 
 
