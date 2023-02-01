@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -138,9 +139,7 @@ public class AccountServiceImpl implements AccountService {
             return transferAccountRepository.save(existingAccount.get());
         }
         else throw new EntityNotFoundException("Account with id"+": "+id+ " don't exist");
-
         //return null;
-
     }
 
     @Override
@@ -150,7 +149,6 @@ public class AccountServiceImpl implements AccountService {
             transferAccountRepository.deleteById(id);
         }
         else throw new EntityNotFoundException("Account with id"+": "+id+ " don't exist");
-
     }
 
     @Override
@@ -164,5 +162,24 @@ public class AccountServiceImpl implements AccountService {
         throw new IllegalStateException("This user don't have a retailer role");
     }
 
-
+    /**
+     * Cette methode permet a un administrateur de mettre à jour le compte de tranfert d'un retailer
+     * @param id
+     * @param account
+     * @param role
+     * @return
+     */
+    @Override
+    public Account modifyTransferAccountRetailer(Long id, Account account, Role role) {
+        Account account1 = transferAccountRepository.findById(id).orElseThrow(()->
+                new ResourceNotFoundException("Account not found"));
+        if(account1.getRetailer().getRoles().contains(Role.RETAILER)){
+            account1.setBalance(account.getBalance());
+            account1.setPhoneNumber(account.getPhoneNumber());
+            account1.setWalletType(account1.getWalletType());
+            account1.setEncryptedPinCode(account.getEncryptedPinCode());
+            return transferAccountRepository.saveAndFlush(account1);
+        }
+        return null;
+    }
 }

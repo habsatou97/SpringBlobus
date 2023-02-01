@@ -2,6 +2,7 @@ package com.blobus.apiExterneBlobus.controllers;
 
 import com.blobus.apiExterneBlobus.models.Account;
 import com.blobus.apiExterneBlobus.models.Customer;
+import com.blobus.apiExterneBlobus.models.enums.Role;
 import com.blobus.apiExterneBlobus.services.implementations.AccountServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -71,5 +72,16 @@ public class AccountController {
         transferAccountService.deleteTransfertAccountById(id);
     }
 
+    /**
+     * Cette methode permet de modifier le compte de transfert d'un retailer
+     * @param id
+     * @param account
+     * @param role
+     * @return
+     */
+    @PutMapping("/retailer/edit/{id}")
+    public Account modifyTransferAccountRetailer(@PathVariable("id") Long id, @RequestBody Account account, @RequestParam() Role role){
+        return transferAccountService.modifyTransferAccountRetailer(id,account,role);
+    }
 
 }
