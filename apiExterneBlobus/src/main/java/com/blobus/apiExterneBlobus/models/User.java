@@ -45,9 +45,13 @@ public class User {
     @OneToMany(mappedBy = "retailer", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Account> accounts = new ArrayList<>();
 
+    @OneToMany(mappedBy = "retailer")
+    private List<Bulk> bulks = new ArrayList<>();
+
     public void addTransferAccounts(Account transferAccount) {
         accounts.add(transferAccount);
     }
 
     public void addRoles(Role role){ roles.add(role);}
+    public void addBulks(Bulk bulk){ bulks.add(bulk); }
 }
