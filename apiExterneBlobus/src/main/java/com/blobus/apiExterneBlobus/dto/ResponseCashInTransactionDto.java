@@ -15,4 +15,7 @@ public class ResponseCashInTransactionDto {
     private Long transactionId;
     private String errorCode;
     private String errorMessage;
+    // pour la reponse de BulkCashIn
+    private Long bulkId;
+    private String description;
 }
