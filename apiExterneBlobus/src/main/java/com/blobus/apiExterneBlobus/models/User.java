@@ -3,11 +3,11 @@ package com.blobus.apiExterneBlobus.models;
 import com.blobus.apiExterneBlobus.models.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -16,7 +16,8 @@ import java.util.Set;
 @AllArgsConstructor
 @Getter
 @Setter
-public class User {
+@Builder
+public class User implements UserDetails {
     @Id
     @GeneratedValue
     private Long id;
@@ -50,4 +51,39 @@ public class User {
     }
 
     public void addRoles(Role role){ roles.add(role);}
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(Role.RETAILER.name()));
+    }
+
+    @Override
+    public String getPassword() {
+        return userSecret;
+    }
+
+    @Override
+    public String getUsername() {
+        return userId;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
