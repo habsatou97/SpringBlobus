@@ -3,6 +3,7 @@ package com.blobus.apiExterneBlobus.models;
 import com.blobus.apiExterneBlobus.models.enums.TransactionCurrency;
 import com.blobus.apiExterneBlobus.models.enums.TransactionStatus;
 import com.blobus.apiExterneBlobus.models.enums.TransactionType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,9 +27,11 @@ public class Transaction {
     private TransactionCurrency currency;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "retailer_transfert_account_id")
     private Account retailerTransferAccount;
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "customer_transfert_account_id")
     private Account customerTransferAccount;
 }

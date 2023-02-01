@@ -69,7 +69,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     @Transactional
-    public GetTransactionDto getTransaction(Long transactionId) throws GetTransactionException {
+    public GetTransactionDto getTransaction(Long transactionId) {
         Optional<Transaction> transaction = transactionRepository.findById(transactionId);
         GetTransactionDto transactionDto= new GetTransactionDto();
         AmountDto amountDto= new AmountDto();
@@ -88,9 +88,7 @@ public class TransactionServiceImpl implements TransactionService {
             transactionDto.setAmount(amountDto);
             return transactionDto;
         }
-        else{
-            throw new GetTransactionException("Transaction not found");
-        }
+       return null;
     }
 
     @Transactional

@@ -1,5 +1,6 @@
 package com.blobus.apiExterneBlobus.controllers;
 
+import com.blobus.apiExterneBlobus.dto.GetTransactionDto;
 import com.blobus.apiExterneBlobus.dto.RequestBodyTransactionDto;
 import com.blobus.apiExterneBlobus.dto.ResponseCashInTransactionDto;
 import com.blobus.apiExterneBlobus.dto.TransactionDto;
@@ -25,9 +26,19 @@ public class TransactionController {
      * @param transactionId
      * @return
      */
-    @GetMapping("transactions/{transactionId}/status")
+    @GetMapping("/transactions/{transactionId}/status")
     public TransactionDto getTransactionStatus(@PathVariable("transactionId") Long transactionId){
         return  transactionService.getTransactionStatus(transactionId);
+    }
+
+    /**
+     * Cette methode affiche les information d'une transaction
+     * @param transactionId
+     * @return
+     */
+    @GetMapping("/transactions/{transactionId}")
+    public GetTransactionDto getTransaction(@PathVariable("transactionId") Long transactionId){
+        return transactionService.getTransaction(transactionId);
     }
 
 }
