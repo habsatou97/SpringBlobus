@@ -88,7 +88,8 @@ public class TransactionServiceImpl implements TransactionService {
             transactionDto.setAmount(amountDto);
             return transactionDto;
         }
-       return null;
+       else
+           throw new GetTransactionException("Transaction not allowed");
     }
 
     @Transactional
