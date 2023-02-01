@@ -18,7 +18,5 @@ public interface AccountService {
   public Account addCustomerAccount(Account account, Long id);
 
   public Account getBalance(String encryptedPinCode, String phoneNumber, Long idUser);
-
-
-  public  void deleteByPhoneNumber(String phoneNumber);
+  public void deleteByPhoneNumber(String phoneNumber);
 }

@@ -135,7 +135,13 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void deleteByPhoneNumber(String phoneNumber) {
-        Account account = transferAccountRepository.getAccountByPhoneNumber(phoneNumber).orElseThrow();
-        transferAccountRepository.delete(account);
+        Optional<Account> account = transferAccountRepository.getAccountByPhoneNumber(phoneNumber);
+        if (account.isPresent()){
+            Long id = transferAccountRepository.getAccountByPhoneNumber(phoneNumber).get().getId();
+            transferAccountRepository.deleteById(id);
+        }
+
     }
+
+
 }
