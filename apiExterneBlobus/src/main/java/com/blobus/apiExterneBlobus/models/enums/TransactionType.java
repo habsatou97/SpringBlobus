@@ -3,6 +3,7 @@ package com.blobus.apiExterneBlobus.models.enums;
 
 public enum TransactionType {
     CASHIN("CASHIN"),
+    BULKCASHIN("BULKCASHIN"),
     CASHOUT("CASHOUT"),
     CASHOUT_ONE_STEP("CASHOUT_ONE_STEP"),
     MERCHANT_PAYMENT("MERCHANT_PAYMENT"),

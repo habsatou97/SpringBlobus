@@ -28,12 +28,10 @@ public class Account {
     @Column(nullable = false,unique = true)
     private String phoneNumber;
     boolean is_active;
-
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "customer_id" ,referencedColumnName = "id",nullable = true)
     private Customer customer;
-
 
     @ManyToOne
     @JsonIgnore
