@@ -1,5 +1,6 @@
 package com.blobus.apiExterneBlobus.services.interfaces;
 
+import com.blobus.apiExterneBlobus.dto.GetTransactionDto;
 import com.blobus.apiExterneBlobus.dto.RequestBodyTransactionDto;
 import com.blobus.apiExterneBlobus.dto.ResponseCashInTransactionDto;
 import com.blobus.apiExterneBlobus.dto.TransactionDto;
@@ -16,4 +17,6 @@ public interface TransactionService {
     ResponseCashInTransactionDto CashInTransaction(RequestBodyTransactionDto requestBodyTransactionDto);
 
     public TransactionDto getTransactionStatus(Long transactionId);
+
+    public GetTransactionDto getTransaction(Long transactionId);
 }

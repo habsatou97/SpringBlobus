@@ -21,7 +21,7 @@ public class TransactionController {
     }
 
     /**
-     * Cette methodeb retoune le status d'une transaction
+     * Cette methode retoune le status d'une transaction
      * @param transactionId
      * @return
      */

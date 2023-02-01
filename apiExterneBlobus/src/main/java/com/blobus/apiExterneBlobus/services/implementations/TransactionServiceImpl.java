@@ -1,8 +1,7 @@
 package com.blobus.apiExterneBlobus.services.implementations;
 
-import com.blobus.apiExterneBlobus.dto.RequestBodyTransactionDto;
-import com.blobus.apiExterneBlobus.dto.ResponseCashInTransactionDto;
-import com.blobus.apiExterneBlobus.dto.TransactionDto;
+import com.blobus.apiExterneBlobus.dto.*;
+import com.blobus.apiExterneBlobus.exception.GetTransactionException;
 import com.blobus.apiExterneBlobus.models.Account;
 import com.blobus.apiExterneBlobus.models.Transaction;
 import com.blobus.apiExterneBlobus.repositories.TransactionRepository;
@@ -11,6 +10,7 @@ import com.blobus.apiExterneBlobus.services.interfaces.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.time.Instant;
 import java.util.Date;
@@ -65,6 +65,32 @@ public class TransactionServiceImpl implements TransactionService {
             return dto;
         }
         return null;
+    }
+
+    @Override
+    @Transactional
+    public GetTransactionDto getTransaction(Long transactionId) throws GetTransactionException {
+        Optional<Transaction> transaction = transactionRepository.findById(transactionId);
+        GetTransactionDto transactionDto= new GetTransactionDto();
+        AmountDto amountDto= new AmountDto();
+        if (transaction.isPresent()){
+            transactionDto.setTransactionId(transaction.get().getId());
+            transactionDto.setCreatedAt(transaction.get().getCreatedDate());
+            transactionDto.setReceiveNotification(transaction.get().getReceiveNotificatiion());
+            transactionDto.setRequestDate(transaction.get().getRequestDate());
+            transactionDto.setReference(transaction.get().getReference());
+            transactionDto.setType(String.valueOf(transaction.get().getType()));
+            transactionDto.setStatus(String.valueOf(transaction.get().getStatus()));
+            transactionDto.setCustomer(transaction.get().getCustomerTransferAccount().getCustomer());
+            transactionDto.setPartner(transaction.get().getRetailerTransferAccount().getRetailer());
+            amountDto.setValue(transaction.get().getAmount());
+            amountDto.setCurrency(transaction.get().getCurrency());
+            transactionDto.setAmount(amountDto);
+            return transactionDto;
+        }
+        else{
+            throw new GetTransactionException("Transaction not found");
+        }
     }
 
     @Transactional
