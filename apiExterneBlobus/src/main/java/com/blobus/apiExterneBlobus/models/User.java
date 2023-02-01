@@ -5,9 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -44,6 +43,18 @@ public class User {
 
     @OneToMany(mappedBy = "retailer", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Account> accounts = new ArrayList<>();
+
+    public User(String firstName, String lastName, String email, Role role, String ninea, String phoneNumber, String userId, String userSecret) {
+        this.firstName=firstName;
+        this.lastName=lastName;
+        this.email=email;
+        this.roles= Collections.singletonList(Role.valueOf(String.valueOf(role)));
+        this.ninea=ninea;
+        this.phoneNumber=phoneNumber;
+        this.userId=userId;
+        this.userSecret=userSecret;
+
+    }
 
     public void addTransferAccounts(Account transferAccount) {
         accounts.add(transferAccount);
