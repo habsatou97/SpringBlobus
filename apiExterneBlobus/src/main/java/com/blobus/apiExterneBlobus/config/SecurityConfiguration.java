@@ -25,7 +25,8 @@ public class SecurityConfiguration {
             .csrf()
             .disable()
             .authorizeHttpRequests()
-            .requestMatchers("/api/ewallet/v1/auth/**")
+            .requestMatchers("/api/ewallet/v1/auth/**","/swagger-ui/**","/v3/api-docs/**")
+
             .permitAll()
             .anyRequest()
             .authenticated()
