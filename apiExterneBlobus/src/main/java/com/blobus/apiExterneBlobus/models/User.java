@@ -44,7 +44,8 @@ public class User {
     @OneToMany(mappedBy = "retailer", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Account> accounts = new ArrayList<>();
 
-    public User(String firstName, String lastName, String email, Role role, String ninea, String phoneNumber, String userId, String userSecret) {
+    public User(Long id,String firstName, String lastName, String email, Role role, String ninea, String phoneNumber, String userId, String userSecret) {
+        this.id=id;
         this.firstName=firstName;
         this.lastName=lastName;
         this.email=email;
@@ -53,9 +54,8 @@ public class User {
         this.phoneNumber=phoneNumber;
         this.userId=userId;
         this.userSecret=userSecret;
-
-
     }
+  //  public User(){}
 
     public void addTransferAccounts(Account transferAccount) {
         accounts.add(transferAccount);
