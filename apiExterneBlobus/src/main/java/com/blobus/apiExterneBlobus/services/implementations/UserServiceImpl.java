@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
             Optional<User> userOptional = userRepository.findUserByEmail(user.getEmail());
             Optional<User> userOptional1 = userRepository.findUserByPhoneNumber(user.getPhoneNumber());
             if(userOptional.isPresent() || userOptional1.isPresent()){
-                throw new IllegalStateException("Oups! cette utilisateur existe deja");
+                throw new IllegalStateException("Oups! cette email "+ user.getEmail()+" existe deja");
             }
             if( user.getNinea()!= null)
                 user.setRoles(Collections.singletonList(Role.RETAILER));
@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public User updateSingleUser(User user, Long id) {
-      User user1 = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("updated failled ,user_id not founc"));
+      User user1 = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("updated failled ,user_id not found"));
       if (user.getFirstName()!=null && user.getFirstName().length()>0
             && !Objects.equals(user1.getFirstName(),user.getFirstName()))
       {
@@ -94,7 +94,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(Long id) {
-       userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("deleted failled ,user_id not founc"));
+       userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("deleted failled ,user_id "+id+" not found"));
        userRepository.deleteById(id);
     }
 

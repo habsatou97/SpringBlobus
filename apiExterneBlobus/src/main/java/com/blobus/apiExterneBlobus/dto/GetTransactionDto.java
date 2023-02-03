@@ -4,6 +4,8 @@ import com.blobus.apiExterneBlobus.models.Customer;
 import com.blobus.apiExterneBlobus.models.User;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -11,12 +13,12 @@ import java.util.Date;
 public class GetTransactionDto {
 
     private AmountDto amount;
-    private Date createdAt;
+    private LocalDate createdAt;
     private Customer customer;
     private User partner;
     private boolean receiveNotification;
     private String reference;
-    private Date requestDate;
+    private LocalDate requestDate;
     private String status;
     private Long transactionId;
     private  String type;
