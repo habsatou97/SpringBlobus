@@ -45,6 +45,19 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "retailer", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Account> accounts = new ArrayList<>();
+
+    public User(Long id,String firstName, String lastName, String email, Role role, String ninea, String phoneNumber, String userId, String userSecret) {
+        this.id=id;
+        this.firstName=firstName;
+        this.lastName=lastName;
+        this.email=email;
+        this.roles= Collections.singletonList(Role.valueOf(String.valueOf(role)));
+        this.ninea=ninea;
+        this.phoneNumber=phoneNumber;
+        this.userId=userId;
+        this.userSecret=userSecret;
+    }
+  //  public User(){}
     @OneToMany(mappedBy = "retailer")
     private List<Bulk> bulks = new ArrayList<>();
 
