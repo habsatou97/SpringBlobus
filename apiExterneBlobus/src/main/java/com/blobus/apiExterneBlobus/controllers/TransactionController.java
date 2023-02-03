@@ -30,7 +30,7 @@ public class TransactionController {
     public TransactionDto getTransactionStatus(@PathVariable("transactionId") Long transactionId){
         return  transactionService.getTransactionStatus(transactionId);
     }
-    @GetMapping("/bulkcashins")
+    @PostMapping("/bulkcashins")
     public ResponseEntity<ResponseCashInTransactionDto> BulkCashInTransaction(@RequestBody RequestBodyTransactionDto[] requestBodyTransactionDtos){
         return ResponseEntity.ok(
                 transactionService.BulkCashInTransaction(requestBodyTransactionDtos)
