@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/ewallet/v1")
 public class TransactionController {
     private final TransactionService transactionService;
-    @GetMapping("/cashins")
+    @PostMapping ("/cashins")
     public ResponseEntity<ResponseCashInTransactionDto> CashInTransaction(@RequestBody RequestBodyTransactionDto requestBodyTransactionDto){
         return ResponseEntity.ok(
                 transactionService.CashInTransaction(requestBodyTransactionDto)
