@@ -15,8 +15,6 @@ import java.util.List;
 @Data
 @RequiredArgsConstructor
 @AllArgsConstructor
-
-
 public class Account {
     @Id
     @GeneratedValue
