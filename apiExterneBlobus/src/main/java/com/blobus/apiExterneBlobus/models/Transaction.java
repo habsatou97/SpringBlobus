@@ -6,6 +6,7 @@ import com.blobus.apiExterneBlobus.models.enums.TransactionType;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 @Entity
 @Table(name = "transactions")
@@ -17,9 +18,9 @@ public class Transaction {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String reference;
-    private Date createdDate;
+    private LocalDate createdDate;
     private Boolean receiveNotificatiion;
-    private Date requestDate;
+    private LocalDate requestDate;
     private TransactionStatus status;
     private TransactionType type;
     private Double amount;

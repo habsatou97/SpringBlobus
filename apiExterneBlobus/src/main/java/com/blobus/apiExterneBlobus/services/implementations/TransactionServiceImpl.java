@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Optional;
 
@@ -43,7 +44,7 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setCurrency(requestBodyTransactionDto.getAmount().getCurrency());
         transaction.setReceiveNotificatiion(requestBodyTransactionDto.getReceiveNotificatiion());
         transaction.setRequestDate(requestBodyTransactionDto.getRequestDate());
-        transaction.setCreatedDate(Date.from(Instant.now()));
+        transaction.setCreatedDate(LocalDate.now());
         transaction.setType(requestBodyTransactionDto.getTransactionType());
 
         return transaction;
