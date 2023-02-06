@@ -5,6 +5,7 @@ import com.blobus.apiExterneBlobus.models.Account;
 import com.blobus.apiExterneBlobus.models.Customer;
 import com.blobus.apiExterneBlobus.models.User;
 import com.blobus.apiExterneBlobus.models.enums.Role;
+import com.blobus.apiExterneBlobus.models.enums.WalletType;
 import com.blobus.apiExterneBlobus.repositories.CustomerRepository;
 import com.blobus.apiExterneBlobus.repositories.AccountRepository;
 import com.blobus.apiExterneBlobus.repositories.UserRepository;
@@ -193,6 +194,7 @@ public class AccountServiceImpl implements AccountService {
         }
 
 
+        throw new EntityNotFoundException("Ce retailer n'existe pas");
     }
 
     @Override
