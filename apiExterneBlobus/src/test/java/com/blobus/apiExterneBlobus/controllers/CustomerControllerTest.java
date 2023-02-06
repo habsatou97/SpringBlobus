@@ -1,145 +1,143 @@
 package com.blobus.apiExterneBlobus.controllers;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.blobus.apiExterneBlobus.models.Customer;
 import com.blobus.apiExterneBlobus.repositories.CustomerRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import com.blobus.apiExterneBlobus.services.implementations.CustomerImpl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.ResponseEntity;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureMockMvc
 class CustomerControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private CustomerRepository repository;
-
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-
-    @BeforeEach
-    void setup(){
-        repository.deleteAll();
-    }
-
+    /**
+     * Method under test: {@link CustomerController#findAll()}
+     */
     @Test
-    void findAll() throws Exception {
-        // given - precondition or setup
-        List<Customer> listOfEmployees = new ArrayList<>();
-        listOfEmployees.add(Customer.builder().firstName("Ramesh").lastName("Fadatare").email("ramesh@gmail.com").phoneNumber("778885522").build());
-        listOfEmployees.add(Customer.builder().firstName("Tony").lastName("Stark").email("tony@gmail.com").phoneNumber("775554499").build());
-        repository.saveAll(listOfEmployees);
-        // when -  action or the behaviour that we are going test
-        ResultActions response = mockMvc.perform(get("/api/ewallet/v1/customers/"));
+    void testFindAll() {
+        //   Diffblue Cover was unable to write a Spring test,
+        //   so wrote a non-Spring test instead.
+        //   Diffblue AI was unable to find a test
 
-        // then - verify the output
-        response.andExpect(status().isOk())
-                .andDo(print())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.size()",
-                        is(listOfEmployees.size())));
-    }
-
-    @Test
-    void findOne() throws Exception {
-        // given - precondition or setup
-        long employeeId = 1L;
-        Customer employee = Customer.builder()
-                .id(employeeId)
+        CustomerRepository customerRepository = mock(CustomerRepository.class);
+        when(customerRepository.findAll()).thenReturn(List.of(Customer.builder()
                 .firstName("Ramesh")
                 .lastName("Fadatare")
-                .email("ramesh@gmaill.com")
-                .phoneNumber("7785453271")
-                .build();
-        repository.save(employee);
-
-        // when -  action or the behaviour that we are going test
-        ResultActions response = mockMvc.perform(get("/api/ewallet/v1/customers/{id}", employeeId));
-
-        // then - verify the output
-        response.andExpect(status().isOk())
-                .andDo(print());
-
+                .email("ramesh1@gmail.com")
+                .phoneNumber("778545382")
+                .build(), Customer.builder()
+                .firstName("Ramesh")
+                .lastName("Fadatare")
+                .email("ramesh2@gmail.com")
+                .phoneNumber("778545383")
+                .build()));
+        ResponseEntity<List<Customer>> actualFindAllResult = (new CustomerController(new CustomerImpl(customerRepository)))
+                .findAll();
+        assertTrue(actualFindAllResult.hasBody());
+        assertEquals(200, actualFindAllResult.getStatusCodeValue());
+        assertTrue(actualFindAllResult.getHeaders().isEmpty());
+        verify(customerRepository).findAll();
     }
 
+
+    /**
+     * Method under test: {@link CustomerController#findOne(Long)}
+     */
     @Test
-    void delete() throws Exception {
-        // given - precondition or setup
+    void testFindOne() {
+        //   Diffblue Cover was unable to write a Spring test,
+        //   so wrote a non-Spring test instead.
+        //   Diffblue AI was unable to find a test
+
+        CustomerRepository customerRepository = mock(CustomerRepository.class);
+        when(customerRepository.findById((Long) any())).thenReturn(Optional.of(new Customer("jane.doe@example.org")));
+        ResponseEntity<Customer> actualFindOneResult = (new CustomerController(new CustomerImpl(customerRepository)))
+                .findOne(123L);
+        assertTrue(actualFindOneResult.hasBody());
+        assertTrue(actualFindOneResult.getHeaders().isEmpty());
+        assertEquals(200, actualFindOneResult.getStatusCodeValue());
+        verify(customerRepository).findById((Long) any());
+    }
+
+
+
+    /**
+     * Method under test: {@link CustomerController#delete(Long)}
+     */
+    @Test
+    void testDelete() {
+        //   Diffblue Cover was unable to write a Spring test,
+        //   so wrote a non-Spring test instead.
+        //   Diffblue AI was unable to find a test
+
+        CustomerRepository customerRepository = mock(CustomerRepository.class);
         Customer savedEmployee = Customer.builder()
                 .firstName("Ramesh")
                 .lastName("Fadatare")
                 .email("ramesh@gmail.com")
                 .phoneNumber("778545382")
                 .build();
-        repository.save(savedEmployee);
-
-        // when -  action or the behaviour that we are going test
-        ResultActions response = mockMvc.perform(MockMvcRequestBuilders.delete("/api/ewallet/v1/customers/{id}", savedEmployee.getId()));
-
-        // then - verify the output
-        response.andExpect(status().isOk())
-                .andDo(print());
+        customerRepository.save(savedEmployee);
+        doNothing().when(customerRepository).deleteById(savedEmployee.getId());
+        (new CustomerController(new CustomerImpl(customerRepository))).delete(savedEmployee.getId());
+        verify(customerRepository).deleteById(savedEmployee.getId());
     }
 
+    /**
+     * Method under test: {@link CustomerController#delete(Long)}
+     */
+
+    /**
+     * Method under test: {@link CustomerController#save(Customer)}
+     */
     @Test
-    void save() throws Exception {
-        // given - precondition or setup
-        Customer customer = Customer.builder()
-                .firstName("Ramesh")
-                .lastName("Fadatare")
-                .email("ramesh@gmail.com")
-                .phoneNumber("778545382")
-                .build();
+    void testSave() {
+        //   Diffblue Cover was unable to write a Spring test,
+        //   so wrote a non-Spring test instead.
+        //   Diffblue AI was unable to find a test
 
-        // when - action or behaviour that we are going test
-        // when - action or behaviour that we are going test
-        ResultActions response = mockMvc.perform(post("/api/ewallet/v1/customers/")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(customer)));
+        CustomerRepository customerRepository = mock(CustomerRepository.class);
+        when(customerRepository.save((Customer) any())).thenReturn(new Customer("jane.doe@example.org"));
+        CustomerController customerController = new CustomerController(new CustomerImpl(customerRepository));
+        Customer customer = new Customer("jane.doe@example.org");
+        ResponseEntity<Customer> actualSaveResult = customerController.save(customer);
+        assertEquals(customer, actualSaveResult.getBody());
+        assertTrue(actualSaveResult.getHeaders().isEmpty());
+        assertEquals(200, actualSaveResult.getStatusCodeValue());
+        verify(customerRepository).save((Customer) any());
     }
 
+    /**
+     * Method under test: {@link CustomerController#edit(Customer)}
+     */
     @Test
-    void edit() throws Exception {
-        // given - precondition or setup
+    void testEdit() {
+        //   Diffblue Cover was unable to write a Spring test,
+        //   so wrote a non-Spring test instead.
+        //   Diffblue AI was unable to find a test
 
-        Customer employee = Customer.builder()
-                .firstName("Ramesh")
-                .lastName("Fadatare")
-                .email("ramesh@gmaill.com")
-                .phoneNumber("7785453271")
-                .build();
-
-        Customer customer = repository.save(employee);
-        customer.setFirstName("Ablaye");
-        customer.setTransferAccounts(new ArrayList<>());
-
-        // when -  action or the behaviour that we are going test
-        ResultActions response = mockMvc.perform(put("/api/ewallet/v1/customers/")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(customer)));
-
-
-        // then - verify the output
-        response.andExpect(status().isOk())
-                .andDo(print());
+        CustomerRepository customerRepository = mock(CustomerRepository.class);
+        when(customerRepository.save((Customer) any())).thenReturn(new Customer("jane.doe@example.org"));
+        CustomerController customerController = new CustomerController(new CustomerImpl(customerRepository));
+        Customer customer = new Customer("jane.doe@example.org");
+        ResponseEntity<Customer> actualEditResult = customerController.edit(customer);
+        assertEquals(customer, actualEditResult.getBody());
+        assertTrue(actualEditResult.getHeaders().isEmpty());
+        assertEquals(200, actualEditResult.getStatusCodeValue());
+        verify(customerRepository).save((Customer) any());
     }
+
+
 }
+
