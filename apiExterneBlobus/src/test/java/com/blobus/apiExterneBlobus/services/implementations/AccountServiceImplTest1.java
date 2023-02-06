@@ -8,17 +8,21 @@ import com.blobus.apiExterneBlobus.models.enums.WalletType;
 import com.blobus.apiExterneBlobus.repositories.AccountRepository;
 import com.blobus.apiExterneBlobus.repositories.CustomerRepository;
 import com.blobus.apiExterneBlobus.repositories.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
@@ -39,6 +43,9 @@ class AccountServiceImplTest1 {
 
     @Autowired
     AccountServiceImpl accountService;
+
+    @MockBean
+    AccountServiceImpl service;
     @Mock
     AccountRepository repository;
 
@@ -126,30 +133,56 @@ class AccountServiceImplTest1 {
 
     @Test
     void getTransfertAccountById() {
+        assertThrows(EntityNotFoundException.class,
+                ()-> accountService.getTransfertAccountById(1L));
+
     }
 
     @Test
     void enableTransfertAccount() {
+        assertThrows(EntityNotFoundException.class,
+                ()-> accountService.EnableTransfertAccount(1L));
     }
 
     @Test
     void diseableTranfertAccount() {
+        assertThrows(EntityNotFoundException.class,
+                () -> accountService.DiseableTranfertAccount(1L));
     }
 
     @Test
     void getAccountPhoneNumber() {
+            assertThrows(EntityNotFoundException.class,
+                    ()-> accountService.GetAccountPhoneNumber(1L));
     }
 
     @Test
     void updateTranfertAccount() {
+        Account account = new Account();
+        account.setBalance(100000);
+        account.setPhoneNumber("762564426");
+        account.setEncryptedPinCode("945142952595");
+        account.setWalletType(WalletType.PRINCIPAL);
+        account.set_active(true);
+        assertThrows(EntityNotFoundException.class,
+                (() -> accountService.updateTranfertAccount(account,1L)));
     }
 
     @Test
     void deleteTransfertAccountById() {
+
+        Account account = accountRepository.findById(52L).orElseThrow();
+       Mockito.when(accountRepository.findById(account.getId())).thenReturn(Optional.of(account));
     }
 
     @Test
     void getBalance() {
+        Account account = accountRepository.findById(52L).orElseThrow();
+
+        String encryptedPinCode = account.getEncryptedPinCode();
+        String phoneNumber =account.getPhoneNumber();
+        Long idUser = account.getRetailer().getId();
+       when(service.getBalance(encryptedPinCode,phoneNumber,idUser)).thenReturn(account);
     }
 
     @Test

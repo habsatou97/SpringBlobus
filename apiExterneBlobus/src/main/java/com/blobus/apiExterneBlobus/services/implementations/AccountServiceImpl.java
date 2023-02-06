@@ -12,14 +12,18 @@ import com.blobus.apiExterneBlobus.repositories.UserRepository;
 import com.blobus.apiExterneBlobus.services.interfaces.AccountService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 @Service
+
 
 public class AccountServiceImpl implements AccountService {
     @Autowired
@@ -166,12 +170,12 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account getBalance(String encryptedPinCode, String phoneNumber, Long idUser) {
         boolean userExiste = userRepository.existsById(idUser);
-        if(!userExiste) throw new IllegalStateException("This user don't existe");
+        if(!userExiste) throw new EntityNotFoundException("This user don't existe");
         User user = userRepository.findById(idUser).orElseThrow();
         if (user.getRoles().contains(Role.RETAILER)){
             return transferAccountRepository.findByEncryptedPinCodeAndPhoneNumberAndRetailer(encryptedPinCode,phoneNumber,user).orElseThrow();
         }
-        throw new IllegalStateException("This user don't have a retailer role");
+        throw new EntityNotFoundException("This user don't have a retailer role");
     }
 
     /**
@@ -192,9 +196,7 @@ public class AccountServiceImpl implements AccountService {
             account1.setEncryptedPinCode(account.getEncryptedPinCode());
             return transferAccountRepository.saveAndFlush(account1);
         }
-
-
-        throw new EntityNotFoundException("Ce retailer n'existe pas");
+       throw new EntityNotFoundException("This user isn't a retailer");
     }
 
     @Override
