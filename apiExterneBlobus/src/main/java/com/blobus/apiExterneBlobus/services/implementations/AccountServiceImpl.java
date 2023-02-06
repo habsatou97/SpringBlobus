@@ -170,12 +170,12 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account getBalance(String encryptedPinCode, String phoneNumber, Long idUser) {
         boolean userExiste = userRepository.existsById(idUser);
-        if(!userExiste) throw new IllegalStateException("This user don't existe");
+        if(!userExiste) throw new EntityNotFoundException("This user don't existe");
         User user = userRepository.findById(idUser).orElseThrow();
         if (user.getRoles().contains(Role.RETAILER)){
             return transferAccountRepository.findByEncryptedPinCodeAndPhoneNumberAndRetailer(encryptedPinCode,phoneNumber,user).orElseThrow();
         }
-        throw new IllegalStateException("This user don't have a retailer role");
+        throw new EntityNotFoundException("This user don't have a retailer role");
     }
 
     /**
@@ -196,6 +196,6 @@ public class AccountServiceImpl implements AccountService {
             account1.setEncryptedPinCode(account.getEncryptedPinCode());
             return transferAccountRepository.saveAndFlush(account1);
         }
-        return null;
+       throw new EntityNotFoundException("This user isn't a retailer");
     }
 }
