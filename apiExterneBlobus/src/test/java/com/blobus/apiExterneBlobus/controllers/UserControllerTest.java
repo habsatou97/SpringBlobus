@@ -217,7 +217,7 @@ class UserControllerTest {
 
     @Test
     void deleteUser() throws Exception {
-
+ // test deleted methode
      Mockito.when(userRepository.findById(user1.getId())).thenReturn(Optional.of(user1));
      mockMvc.perform(MockMvcRequestBuilders.delete("/api/ewallet/v1/users/3")
              .contentType(MediaType.APPLICATION_JSON))

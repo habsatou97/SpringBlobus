@@ -84,11 +84,7 @@ class UserServiceImplTest {
         //when
         userService.addSingleUser(user);
         // then
-      /*  assertThatThrownBy(()->
-                userService.addSingleUser(user))
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessage("Oups! cette email "+ user.getEmail()+" existe deja");
-*/
+    
         ArgumentCaptor<User> userArgumentCaptor=
                 ArgumentCaptor.forClass(User.class);
         verify(userRepository).save(userArgumentCaptor.capture());
