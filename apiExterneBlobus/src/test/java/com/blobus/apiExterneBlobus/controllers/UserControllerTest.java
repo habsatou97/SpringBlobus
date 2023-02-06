@@ -1,8 +1,12 @@
 package com.blobus.apiExterneBlobus.controllers;
 
+import com.blobus.apiExterneBlobus.dto.AmountDto;
+import com.blobus.apiExterneBlobus.dto.RequestBodyUserProfileDto;
 import com.blobus.apiExterneBlobus.exception.ResourceNotFoundException;
 import com.blobus.apiExterneBlobus.models.User;
 import com.blobus.apiExterneBlobus.models.enums.Role;
+import com.blobus.apiExterneBlobus.models.enums.TransactionCurrency;
+import com.blobus.apiExterneBlobus.repositories.AccountRepository;
 import com.blobus.apiExterneBlobus.repositories.UserRepository;
 import com.blobus.apiExterneBlobus.services.implementations.UserServiceImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -30,6 +34,8 @@ import static net.bytebuddy.matcher.ElementMatchers.is;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(UserController.class)
@@ -38,10 +44,14 @@ class UserControllerTest {
     MockMvc mockMvc;
     @Autowired
     ObjectMapper objectMapper;
+    @Autowired
+    UserServiceImpl service;
     @MockBean
     UserServiceImpl userService;
     @MockBean
     UserRepository userRepository;
+    @MockBean
+    AccountRepository accountRepository;
 
     User user1= new  User(
             3l,
@@ -110,7 +120,30 @@ class UserControllerTest {
 
     @Test
     @Disabled
-    void getUserProfileByMsisdn() {
+    void getUserProfileByMsisdn() throws Exception {
+
+        String phoneNumber = "782654489";
+        AmountDto amountDto= new AmountDto();
+        amountDto.setCurrency(TransactionCurrency.XOF);
+        amountDto.setValue(10000000.06);
+        RequestBodyUserProfileDto dto = new RequestBodyUserProfileDto();
+        dto.setUserId("65+65203");
+        dto.setMsisdn("782654489");
+        dto.setFirstName("Ba");
+        dto.setLastName("El-seydi");
+        dto.setSuspended(true);
+        dto.setType(Collections.singletonList(Role.RETAILER).toString());
+        dto.setBalance(amountDto);
+
+        Mockito.when(userService.getUserProfileByMsisdn(phoneNumber)).thenReturn(dto);
+        mockMvc.perform(MockMvcRequestBuilders
+                    .get("/api/ewallet/v1/users/find/782654489")
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(jsonPath("$",notNullValue()))
+               .andExpect(MockMvcResultMatchers.jsonPath("$.msisdn", Matchers.is("782654489")));
+
     }
 
     @Test
@@ -184,7 +217,7 @@ class UserControllerTest {
 
     @Test
     void deleteUser() throws Exception {
-
+ // test deleted methode
      Mockito.when(userRepository.findById(user1.getId())).thenReturn(Optional.of(user1));
      mockMvc.perform(MockMvcRequestBuilders.delete("/api/ewallet/v1/users/3")
              .contentType(MediaType.APPLICATION_JSON))

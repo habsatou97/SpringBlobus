@@ -23,6 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -83,11 +84,7 @@ class UserServiceImplTest {
         //when
         userService.addSingleUser(user);
         // then
-      /*  assertThatThrownBy(()->
-                userService.addSingleUser(user))
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessage("Oups! cette email "+ user.getEmail()+" existe deja");
-*/
+    
         ArgumentCaptor<User> userArgumentCaptor=
                 ArgumentCaptor.forClass(User.class);
         verify(userRepository).save(userArgumentCaptor.capture());
@@ -101,33 +98,59 @@ class UserServiceImplTest {
 
    @Test
     void updateSingleUser() {
+        // initialise un utilisateur
             String email ="barry.pape-dame@avimtoo.com";
-        User user =repository.findById(Long.valueOf(102)).orElseThrow();
+        User user = new User();
+        user.setNinea("vimto1245");
+        user.setPhoneNumber("772654426");
+        user.setUserId("fzidegjd");
+        user.setUserSecret("ofyf78");
         user.setLastName("Barry");
         user.setFirstName("Dame");
         user.setEmail(email);
         user.setRoles(Collections.singletonList(Role.RETAILER));
+
+        // persister l'utlisateur dans la base de données
         repository.save(user);
-        Assertions.assertThat(repository.findById(user.getId())).isNotEmpty();
+
+        // je recuper l'utilisateur
+       User user1= repository.findById(user.getId()).orElseThrow();
+       // je modifie l'utlisateur
+       user1.setLastName("El-seydi");
+       user1.setFirstName("Ba");
+       user1.setEmail("barry.pape-dame@avimtoo.com");
+       //
+       repository.save(user1);
+        Assertions.assertThat(repository.findById(user1.getId())).isNotEmpty();
     }
 
-
-   /* @Test
-    @Disabled
-    void deleteUser() {
-        Mockito.when(userRepository.findById(getUser().getId())).thenReturn(Optional.of(getUser()));
-    }
 
     @Test
-    void getUserProfileByMsisdn() {
-        String phoneNumber = "782654426";
-        userService.getUserProfileByMsisdn(phoneNumber);
-      verify(accountRepository).getAccountByPhoneNumber(phoneNumber);
-        //given
+    @AutoConfigureTestDatabase
+    void deleteUser() {
+        // Vider la base de donnee
+        repository.deleteAll();
+        //initialiser un utilisateur
+        String email = "aby.barry@avimtoo.com";
+        User user = new User();
+             user.setFirstName("El Seydi");
+             user.setLastName( "Ba");
+             user.setEmail(email);
+             user.setRoles(Collections.singletonList(Role.RETAILER));
+             user.setNinea("vimto1245");
+             user.setPhoneNumber("71954362");
+             user.setUserId("fzivbedegjd");
+             user.setUserSecret("fohgfyf78");
+ // persister l'utilisateur dans la base de données
+         repository.save(user);
+       // supprimer l'utilisateur
+        repository.deleteById(user.getId());
+        // verifier si la suppression est effectives
+        Assertions.assertThat(repository.count()).isZero();
 
-    }*/
+    }
 
-    private User getUser(){
+      private User getUser(){
         return repository.findById(Long.valueOf(1)).orElseThrow();
     }
 
