@@ -114,10 +114,6 @@ class CustomerControllerTest {
         ResultActions response = mockMvc.perform(post("/api/ewallet/v1/customers/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(customer)));
-
-
-
-
     }
 
     @Test
