@@ -59,17 +59,6 @@ class UserControllerTest {
     @Test
     @Disabled("TODO: Complete this test")
     void testGetAllUsers2() {
-        //   Diffblue Cover was unable to write a Spring test,
-        //   so wrote a non-Spring test instead.
-        //   Diffblue AI was unable to find a test
-
-        // TODO: Complete this test.
-        //   Reason: R013 No inputs found that don't throw a trivial exception.
-        //   Diffblue Cover tried to run the arrange/act section, but the method under
-        //   test threw
-        //   java.lang.NullPointerException: Cannot invoke "com.blobus.apiExterneBlobus.services.implementations.UserServiceImpl.getAllUsers()" because "this.userService" is null
-        //       at com.blobus.apiExterneBlobus.controllers.UserController.getAllUsers(UserController.java:39)
-        //   See https://diff.blue/R013 to resolve this issue.
 
         (new UserController(null, mock(UserRepository.class))).getAllUsers();
     }
@@ -79,9 +68,6 @@ class UserControllerTest {
      */
     @Test
     void testGetAllUsers3() {
-        //   Diffblue Cover was unable to write a Spring test,
-        //   so wrote a non-Spring test instead.
-        //   Diffblue AI was unable to find a test
 
         UserServiceImpl userServiceImpl = mock(UserServiceImpl.class);
         when(userServiceImpl.getAllUsers()).thenReturn(new ArrayList<>());
@@ -406,9 +392,6 @@ class UserControllerTest {
      */
     @Test
     void testAddUser() {
-        //   Diffblue Cover was unable to write a Spring test,
-        //   so wrote a non-Spring test instead.
-        //   Diffblue AI was unable to find a test
 
         UserController userController = new UserController(
                 new UserServiceImpl(mock(UserRepository.class), mock(AccountRepository.class)), mock(UserRepository.class));
@@ -424,17 +407,6 @@ class UserControllerTest {
     @Test
     @Disabled("TODO: Complete this test")
     void testAddUser2() {
-        //   Diffblue Cover was unable to write a Spring test,
-        //   so wrote a non-Spring test instead.
-        //   Diffblue AI was unable to find a test
-
-        // TODO: Complete this test.
-        //   Reason: R013 No inputs found that don't throw a trivial exception.
-        //   Diffblue Cover tried to run the arrange/act section, but the method under
-        //   test threw
-        //   java.lang.NullPointerException: Cannot invoke "com.blobus.apiExterneBlobus.services.implementations.UserServiceImpl.addSingleUser(com.blobus.apiExterneBlobus.models.User)" because "this.userService" is null
-        //       at com.blobus.apiExterneBlobus.controllers.UserController.addUser(UserController.java:81)
-        //   See https://diff.blue/R013 to resolve this issue.
 
         UserController userController = new UserController(null, mock(UserRepository.class));
         userController.addUser(new User());
@@ -445,9 +417,6 @@ class UserControllerTest {
      */
     @Test
     void testAddUser3() {
-        //   Diffblue Cover was unable to write a Spring test,
-        //   so wrote a non-Spring test instead.
-        //   Diffblue AI was unable to find a test
 
         UserServiceImpl userServiceImpl = mock(UserServiceImpl.class);
         when(userServiceImpl.addSingleUser((User) any())).thenReturn(new User());
@@ -465,36 +434,6 @@ class UserControllerTest {
      */
     @Test
     void testUpdateUser() {
-        //   Diffblue Cover was unable to write a Spring test,
-        //   so wrote a non-Spring test instead.
-        //   Reason: R013 No inputs found that don't throw a trivial exception.
-        //   Diffblue Cover tried to run the arrange/act section, but the method under
-        //   test threw
-        //   jakarta.servlet.ServletException: Request processing failed: org.springframework.http.converter.HttpMessageConversionException: Type definition error: [simple type, class org.springframework.security.core.GrantedAuthority]
-        //       at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:734)
-        //       at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:814)
-        //   org.springframework.http.converter.HttpMessageConversionException: Type definition error: [simple type, class org.springframework.security.core.GrantedAuthority]
-        //       at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:734)
-        //       at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:814)
-        //   com.fasterxml.jackson.databind.exc.InvalidDefinitionException: Cannot construct instance of `org.springframework.security.core.GrantedAuthority` (no Creators, like default constructor, exist): abstract types either need to be mapped to concrete types, have custom deserializer, or contain additional type information
-        //    at [Source: (org.springframework.util.StreamUtils$NonClosingInputStream); line: 1, column: 251] (through reference chain: com.blobus.apiExterneBlobus.models.User["authorities"]->java.util.ImmutableCollections$List12[1])
-        //       at com.fasterxml.jackson.databind.exc.InvalidDefinitionException.from(InvalidDefinitionException.java:67)
-        //       at com.fasterxml.jackson.databind.DeserializationContext.reportBadDefinition(DeserializationContext.java:1909)
-        //       at com.fasterxml.jackson.databind.DatabindContext.reportBadDefinition(DatabindContext.java:408)
-        //       at com.fasterxml.jackson.databind.DeserializationContext.handleMissingInstantiator(DeserializationContext.java:1354)
-        //       at com.fasterxml.jackson.databind.deser.AbstractDeserializer.deserialize(AbstractDeserializer.java:274)
-        //       at com.fasterxml.jackson.databind.deser.std.CollectionDeserializer._deserializeFromArray(CollectionDeserializer.java:359)
-        //       at com.fasterxml.jackson.databind.deser.std.CollectionDeserializer.deserialize(CollectionDeserializer.java:272)
-        //       at com.fasterxml.jackson.databind.deser.std.CollectionDeserializer.deserialize(CollectionDeserializer.java:28)
-        //       at com.fasterxml.jackson.databind.deser.impl.SetterlessProperty.deserializeAndSet(SetterlessProperty.java:134)
-        //       at com.fasterxml.jackson.databind.deser.BeanDeserializer.deserializeFromObject(BeanDeserializer.java:392)
-        //       at com.fasterxml.jackson.databind.deser.BeanDeserializer.deserialize(BeanDeserializer.java:185)
-        //       at com.fasterxml.jackson.databind.deser.DefaultDeserializationContext.readRootValue(DefaultDeserializationContext.java:323)
-        //       at com.fasterxml.jackson.databind.ObjectReader._bindAndClose(ObjectReader.java:2105)
-        //       at com.fasterxml.jackson.databind.ObjectReader.readValue(ObjectReader.java:1481)
-        //       at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:734)
-        //       at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:814)
-        //   See https://diff.blue/R013 to resolve this issue.
 
         UserRepository userRepository = mock(UserRepository.class);
         when(userRepository.saveAndFlush((User) any())).thenReturn(new User());
@@ -516,48 +455,6 @@ class UserControllerTest {
     @Test
     @Disabled("TODO: Complete this test")
     void testUpdateUser2() {
-        //   Diffblue Cover was unable to write a Spring test,
-        //   so wrote a non-Spring test instead.
-        //   Reason: R013 No inputs found that don't throw a trivial exception.
-        //   Diffblue Cover tried to run the arrange/act section, but the method under
-        //   test threw
-        //   jakarta.servlet.ServletException: Request processing failed: org.springframework.http.converter.HttpMessageConversionException: Type definition error: [simple type, class org.springframework.security.core.GrantedAuthority]
-        //       at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:734)
-        //       at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:814)
-        //   org.springframework.http.converter.HttpMessageConversionException: Type definition error: [simple type, class org.springframework.security.core.GrantedAuthority]
-        //       at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:734)
-        //       at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:814)
-        //   com.fasterxml.jackson.databind.exc.InvalidDefinitionException: Cannot construct instance of `org.springframework.security.core.GrantedAuthority` (no Creators, like default constructor, exist): abstract types either need to be mapped to concrete types, have custom deserializer, or contain additional type information
-        //    at [Source: (org.springframework.util.StreamUtils$NonClosingInputStream); line: 1, column: 251] (through reference chain: com.blobus.apiExterneBlobus.models.User["authorities"]->java.util.ImmutableCollections$List12[1])
-        //       at com.fasterxml.jackson.databind.exc.InvalidDefinitionException.from(InvalidDefinitionException.java:67)
-        //       at com.fasterxml.jackson.databind.DeserializationContext.reportBadDefinition(DeserializationContext.java:1909)
-        //       at com.fasterxml.jackson.databind.DatabindContext.reportBadDefinition(DatabindContext.java:408)
-        //       at com.fasterxml.jackson.databind.DeserializationContext.handleMissingInstantiator(DeserializationContext.java:1354)
-        //       at com.fasterxml.jackson.databind.deser.AbstractDeserializer.deserialize(AbstractDeserializer.java:274)
-        //       at com.fasterxml.jackson.databind.deser.std.CollectionDeserializer._deserializeFromArray(CollectionDeserializer.java:359)
-        //       at com.fasterxml.jackson.databind.deser.std.CollectionDeserializer.deserialize(CollectionDeserializer.java:272)
-        //       at com.fasterxml.jackson.databind.deser.std.CollectionDeserializer.deserialize(CollectionDeserializer.java:28)
-        //       at com.fasterxml.jackson.databind.deser.impl.SetterlessProperty.deserializeAndSet(SetterlessProperty.java:134)
-        //       at com.fasterxml.jackson.databind.deser.BeanDeserializer.deserializeFromObject(BeanDeserializer.java:392)
-        //       at com.fasterxml.jackson.databind.deser.BeanDeserializer.deserialize(BeanDeserializer.java:185)
-        //       at com.fasterxml.jackson.databind.deser.DefaultDeserializationContext.readRootValue(DefaultDeserializationContext.java:323)
-        //       at com.fasterxml.jackson.databind.ObjectReader._bindAndClose(ObjectReader.java:2105)
-        //       at com.fasterxml.jackson.databind.ObjectReader.readValue(ObjectReader.java:1481)
-        //       at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:734)
-        //       at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:814)
-        //   See https://diff.blue/R013 to resolve this issue.
-
-        // TODO: Complete this test.
-        //   Reason: R013 No inputs found that don't throw a trivial exception.
-        //   Diffblue Cover tried to run the arrange/act section, but the method under
-        //   test threw
-        //   com.blobus.apiExterneBlobus.exception.ResourceNotFoundException: updated failled ,user_id not found
-        //       at com.blobus.apiExterneBlobus.services.implementations.UserServiceImpl.lambda$updateSingleUser$0(UserServiceImpl.java:51)
-        //       at java.util.Optional.orElseThrow(Optional.java:403)
-        //       at com.blobus.apiExterneBlobus.services.implementations.UserServiceImpl.updateSingleUser(UserServiceImpl.java:51)
-        //       at com.blobus.apiExterneBlobus.controllers.UserController.updateUser(UserController.java:92)
-        //   See https://diff.blue/R013 to resolve this issue.
-
         UserRepository userRepository = mock(UserRepository.class);
         when(userRepository.saveAndFlush((User) any())).thenReturn(new User());
         when(userRepository.findById((Long) any())).thenReturn(Optional.empty());
@@ -571,36 +468,6 @@ class UserControllerTest {
      */
     @Test
     void testUpdateUser3() {
-        //   Diffblue Cover was unable to write a Spring test,
-        //   so wrote a non-Spring test instead.
-        //   Reason: R013 No inputs found that don't throw a trivial exception.
-        //   Diffblue Cover tried to run the arrange/act section, but the method under
-        //   test threw
-        //   jakarta.servlet.ServletException: Request processing failed: org.springframework.http.converter.HttpMessageConversionException: Type definition error: [simple type, class org.springframework.security.core.GrantedAuthority]
-        //       at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:734)
-        //       at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:814)
-        //   org.springframework.http.converter.HttpMessageConversionException: Type definition error: [simple type, class org.springframework.security.core.GrantedAuthority]
-        //       at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:734)
-        //       at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:814)
-        //   com.fasterxml.jackson.databind.exc.InvalidDefinitionException: Cannot construct instance of `org.springframework.security.core.GrantedAuthority` (no Creators, like default constructor, exist): abstract types either need to be mapped to concrete types, have custom deserializer, or contain additional type information
-        //    at [Source: (org.springframework.util.StreamUtils$NonClosingInputStream); line: 1, column: 251] (through reference chain: com.blobus.apiExterneBlobus.models.User["authorities"]->java.util.ImmutableCollections$List12[1])
-        //       at com.fasterxml.jackson.databind.exc.InvalidDefinitionException.from(InvalidDefinitionException.java:67)
-        //       at com.fasterxml.jackson.databind.DeserializationContext.reportBadDefinition(DeserializationContext.java:1909)
-        //       at com.fasterxml.jackson.databind.DatabindContext.reportBadDefinition(DatabindContext.java:408)
-        //       at com.fasterxml.jackson.databind.DeserializationContext.handleMissingInstantiator(DeserializationContext.java:1354)
-        //       at com.fasterxml.jackson.databind.deser.AbstractDeserializer.deserialize(AbstractDeserializer.java:274)
-        //       at com.fasterxml.jackson.databind.deser.std.CollectionDeserializer._deserializeFromArray(CollectionDeserializer.java:359)
-        //       at com.fasterxml.jackson.databind.deser.std.CollectionDeserializer.deserialize(CollectionDeserializer.java:272)
-        //       at com.fasterxml.jackson.databind.deser.std.CollectionDeserializer.deserialize(CollectionDeserializer.java:28)
-        //       at com.fasterxml.jackson.databind.deser.impl.SetterlessProperty.deserializeAndSet(SetterlessProperty.java:134)
-        //       at com.fasterxml.jackson.databind.deser.BeanDeserializer.deserializeFromObject(BeanDeserializer.java:392)
-        //       at com.fasterxml.jackson.databind.deser.BeanDeserializer.deserialize(BeanDeserializer.java:185)
-        //       at com.fasterxml.jackson.databind.deser.DefaultDeserializationContext.readRootValue(DefaultDeserializationContext.java:323)
-        //       at com.fasterxml.jackson.databind.ObjectReader._bindAndClose(ObjectReader.java:2105)
-        //       at com.fasterxml.jackson.databind.ObjectReader.readValue(ObjectReader.java:1481)
-        //       at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:734)
-        //       at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:814)
-        //   See https://diff.blue/R013 to resolve this issue.
 
         UserServiceImpl userServiceImpl = mock(UserServiceImpl.class);
         when(userServiceImpl.updateSingleUser((User) any(), (Long) any())).thenReturn(new User());

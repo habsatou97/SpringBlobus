@@ -42,16 +42,17 @@ class AccountServiceImplTest1 {
     @Mock
     AccountRepository repository;
 
+
     @Test
     void createRetailerTransfertAccount() {
 
         // initialise un retailer
-        String email ="diouf.aby@avimtoo.com";
+        String email ="dtdvf.fffrgfby@avimtoo.com";
         User user = new User();
         user.setNinea("vimto1245");
-        user.setPhoneNumber("702654426");
-        user.setUserId("fzidgj144512d");
-        user.setUserSecret("ofy521578");
+        user.setPhoneNumber("8454426");
+        user.setUserId("fzi512d");
+        user.setUserSecret("ee578");
         user.setLastName("Diouf");
         user.setFirstName("Aby");
         user.setEmail(email);
@@ -67,8 +68,8 @@ class AccountServiceImplTest1 {
         // j'unitialise un compte e transfert
         Account account = new Account();
         account.setBalance(100000);
-        account.setPhoneNumber("702564426");
-        account.setEncryptedPinCode("945ds952595");
+        account.setPhoneNumber("7892578426");
+        account.setEncryptedPinCode("94t952595");
         account.setWalletType(WalletType.BONUS);
         account.set_active(true);
 
@@ -84,11 +85,10 @@ class AccountServiceImplTest1 {
     @Test
     void createCustomerTransfertAccount() {
 
-
         // initialise un retailer
-        String email ="ablaye.faye@avimtoo.com";
+        String email ="laye.faye@avimtoo.com";
         Customer costumer = new Customer();
-        costumer.setPhoneNumber("762654426");
+        costumer.setPhoneNumber("788654426");
         costumer.setLastName("Faye");
         costumer.setFirstName("Ablaye");
         costumer.setEmail(email);
@@ -103,9 +103,9 @@ class AccountServiceImplTest1 {
         // j'unitialise un compte e transfert
         Account account = new Account();
         account.setBalance(100000);
-        account.setPhoneNumber("762564426");
-        account.setEncryptedPinCode("945142952595");
-        account.setWalletType(WalletType.PRINCIPAL);
+        account.setPhoneNumber("788564426");
+        account.setEncryptedPinCode("92952595");
+        account.setWalletType(WalletType.INTERNATIONAL);
         account.set_active(true);
         //verify mocker
         when(repository.save(any(Account.class))).then(returnsFirstArg());
@@ -123,8 +123,6 @@ class AccountServiceImplTest1 {
 
         when(repository.findAll()).thenReturn(list);
     }
-
-
 
     @Test
     void getTransfertAccountById() {
