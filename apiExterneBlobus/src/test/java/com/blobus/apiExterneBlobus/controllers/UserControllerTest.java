@@ -1,17 +1,8 @@
 package com.blobus.apiExterneBlobus.controllers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import com.blobus.apiExterneBlobus.dto.AmountDto;
 import com.blobus.apiExterneBlobus.dto.RequestBodyUserProfileDto;
+import com.blobus.apiExterneBlobus.exception.ResourceNotFoundException;
 import com.blobus.apiExterneBlobus.models.Account;
 import com.blobus.apiExterneBlobus.models.Customer;
 import com.blobus.apiExterneBlobus.models.Transaction;
@@ -22,6 +13,8 @@ import com.blobus.apiExterneBlobus.models.enums.WalletType;
 import com.blobus.apiExterneBlobus.repositories.AccountRepository;
 import com.blobus.apiExterneBlobus.repositories.UserRepository;
 import com.blobus.apiExterneBlobus.services.implementations.UserServiceImpl;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,11 +22,101 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.stubbing.OngoingStubbing;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.*;
+
+import static net.bytebuddy.matcher.ElementMatchers.is;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@WebMvcTest(UserController.class)
 class UserControllerTest {
+    @Autowired
+    MockMvc mockMvc;
+    @Autowired
+    ObjectMapper objectMapper;
+    @Autowired
+    UserServiceImpl service;
+    @MockBean
+    UserServiceImpl userService;
+    @MockBean
+    UserRepository userRepository;
+    @MockBean
+    AccountRepository accountRepository;
+
+    User user1 = new User(
+            3l,
+            "El Seydi",
+            "Ba",
+            "em-seydi.ba@avimtoo.com",
+            Role.RETAILER,
+            "vimto1245",
+            "718954362",
+            "fzivbedfegjd",
+            "fohfgfyf78");
+
+    User user2 = new User(
+            2l,
+            "Cheikh Yangkhouba",
+            "Cisse",
+            "cheikh-yangkhouba.cisse@avimtoo.com",
+            Role.ADMIN,
+            "vimto1245",
+            "708954362",
+            "fzivbeegjd",
+            "fohfyf78");
+    User user3 = new User(
+            4l,
+            "Cheikh Yangkhouba",
+            "Cisse",
+            "cheikh-yangkhouba.cisse@avimtoo.com",
+            Role.RETAILER,
+            "vimto1245",
+            "708954362",
+            "fzivbeegjd",
+            "fohfyf78");
+
+    @Test
+    void getAllUsers() throws Exception {
+
+        List<User> users = new ArrayList<>(Arrays.asList(user1, user2));
+        List<User> users1 = userRepository.findAll();
+        Mockito.when(userService.getAllUsers()).thenReturn(users);
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/api/ewallet/v1/users/")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(2)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].firstName", Matchers.is("Cheikh Yangkhouba")));
+    }
+
     /**
      * Method under test: {@link UserController#getAllUsers()}
      */
@@ -46,7 +129,8 @@ class UserControllerTest {
         UserRepository userRepository = mock(UserRepository.class);
         when(userRepository.findAll()).thenReturn(new ArrayList<>());
         ResponseEntity<List<User>> actualAllUsers = (new UserController(
-                new UserServiceImpl(userRepository, mock(AccountRepository.class)), mock(UserRepository.class))).getAllUsers();
+                new UserServiceImpl(userRepository, mock(AccountRepository.class)), mock(UserRepository.class)))
+                .getAllUsers();
         assertTrue(actualAllUsers.hasBody());
         assertEquals(200, actualAllUsers.getStatusCodeValue());
         assertTrue(actualAllUsers.getHeaders().isEmpty());
@@ -93,177 +177,23 @@ class UserControllerTest {
         verify(userServiceImpl).getAllUsers();
     }
 
-    /**
-     * Method under test: {@link UserController#getUserProfileByMsisdn(String)}
-     */
     @Test
-    void testGetUserProfileByMsisdn() {
-        //   Diffblue Cover was unable to write a Spring test,
-        //   so wrote a non-Spring test instead.
-        //   Diffblue AI was unable to find a test
+    void getAllRetailer() throws Exception {
+        List<User> users = new ArrayList<>(Arrays.asList(user1, user2, user3));
+        List<User> userList = new ArrayList<>();
+        for (User user : users) {
+            if (user.getRoles().contains(Role.RETAILER)) {
+                userList.add(user);
+            }
+        }
+        Mockito.when(userService.getAllRetailer()).thenReturn(userList);
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/api/ewallet/v1/users/retailers")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(2)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].firstName", Matchers.is("Cheikh Yangkhouba")));
 
-        AccountRepository accountRepository = mock(AccountRepository.class);
-        when(accountRepository.getAccountByPhoneNumber((String) any())).thenReturn(Optional.of(new Account()));
-        ResponseEntity<RequestBodyUserProfileDto> actualUserProfileByMsisdn = (new UserController(
-                new UserServiceImpl(mock(UserRepository.class), accountRepository), mock(UserRepository.class)))
-                .getUserProfileByMsisdn("4105551212");
-        assertTrue(actualUserProfileByMsisdn.hasBody());
-        assertTrue(actualUserProfileByMsisdn.getHeaders().isEmpty());
-        assertEquals(200, actualUserProfileByMsisdn.getStatusCodeValue());
-        RequestBodyUserProfileDto body = actualUserProfileByMsisdn.getBody();
-        assertFalse(body.isSuspended());
-        assertNull(body.getMsisdn());
-        AmountDto balance = body.getBalance();
-        assertEquals(TransactionCurrency.XOF, balance.getCurrency());
-        assertEquals(0.0d, balance.getValue().doubleValue());
-        verify(accountRepository).getAccountByPhoneNumber((String) any());
-    }
-
-    /**
-     * Method under test: {@link UserController#getUserProfileByMsisdn(String)}
-     */
-    @Test
-    void testGetUserProfileByMsisdn2() {
-        //   Diffblue Cover was unable to write a Spring test,
-        //   so wrote a non-Spring test instead.
-        //   Diffblue AI was unable to find a test
-
-        AccountRepository accountRepository = mock(AccountRepository.class);
-        Customer customer = new Customer("jane.doe@example.org");
-        User retailer = new User();
-        ArrayList<Transaction> customerTransactions = new ArrayList<>();
-        when(accountRepository.getAccountByPhoneNumber((String) any()))
-                .thenReturn(Optional.of(new Account(123L, 10.0d, "Encrypted Pin Code", WalletType.BONUS, "4105551212", true,
-                        customer, retailer, customerTransactions, new ArrayList<>())));
-        ResponseEntity<RequestBodyUserProfileDto> actualUserProfileByMsisdn = (new UserController(
-                new UserServiceImpl(mock(UserRepository.class), accountRepository), mock(UserRepository.class)))
-                .getUserProfileByMsisdn("4105551212");
-        assertTrue(actualUserProfileByMsisdn.hasBody());
-        assertTrue(actualUserProfileByMsisdn.getHeaders().isEmpty());
-        assertEquals(200, actualUserProfileByMsisdn.getStatusCodeValue());
-        RequestBodyUserProfileDto body = actualUserProfileByMsisdn.getBody();
-        assertTrue(body.isSuspended());
-        assertNull(body.getLastName());
-        assertNull(body.getFirstName());
-        assertEquals("4105551212", body.getMsisdn());
-        assertEquals("CUSTOMER", body.getType());
-        AmountDto balance = body.getBalance();
-        assertEquals(TransactionCurrency.XOF, balance.getCurrency());
-        assertEquals(10.0d, balance.getValue().doubleValue());
-        verify(accountRepository).getAccountByPhoneNumber((String) any());
-    }
-
-    /**
-     * Method under test: {@link UserController#getUserProfileByMsisdn(String)}
-     */
-    @Test
-    @Disabled("TODO: Complete this test")
-    void testGetUserProfileByMsisdn3() {
-        //   Diffblue Cover was unable to write a Spring test,
-        //   so wrote a non-Spring test instead.
-        //   Diffblue AI was unable to find a test
-
-        // TODO: Complete this test.
-        //   Reason: R013 No inputs found that don't throw a trivial exception.
-        //   Diffblue Cover tried to run the arrange/act section, but the method under
-        //   test threw
-        //   com.blobus.apiExterneBlobus.exception.ResourceNotFoundException: msisdn invalid
-        //       at com.blobus.apiExterneBlobus.services.implementations.UserServiceImpl.lambda$getUserProfileByMsisdn$2(UserServiceImpl.java:107)
-        //       at java.util.Optional.orElseThrow(Optional.java:403)
-        //       at com.blobus.apiExterneBlobus.services.implementations.UserServiceImpl.getUserProfileByMsisdn(UserServiceImpl.java:106)
-        //       at com.blobus.apiExterneBlobus.controllers.UserController.getUserProfileByMsisdn(UserController.java:50)
-        //   See https://diff.blue/R013 to resolve this issue.
-
-        AccountRepository accountRepository = mock(AccountRepository.class);
-        when(accountRepository.getAccountByPhoneNumber((String) any())).thenReturn(Optional.empty());
-        (new UserController(new UserServiceImpl(mock(UserRepository.class), accountRepository),
-                mock(UserRepository.class))).getUserProfileByMsisdn("4105551212");
-    }
-
-    /**
-     * Method under test: {@link UserController#getUserProfileByMsisdn(String)}
-     */
-    @Test
-    void testGetUserProfileByMsisdn4() {
-        //   Diffblue Cover was unable to write a Spring test,
-        //   so wrote a non-Spring test instead.
-        //   Diffblue AI was unable to find a test
-
-        RequestBodyUserProfileDto requestBodyUserProfileDto = new RequestBodyUserProfileDto();
-        requestBodyUserProfileDto.setBalance(new AmountDto());
-        requestBodyUserProfileDto.setFirstName("Jane");
-        requestBodyUserProfileDto.setLastName("Doe");
-        requestBodyUserProfileDto.setMsisdn("Msisdn");
-        requestBodyUserProfileDto.setSuspended(true);
-        requestBodyUserProfileDto.setType("Type");
-        requestBodyUserProfileDto.setUserId("42");
-        UserServiceImpl userServiceImpl = mock(UserServiceImpl.class);
-        when(userServiceImpl.getUserProfileByMsisdn((String) any())).thenReturn(requestBodyUserProfileDto);
-        ResponseEntity<RequestBodyUserProfileDto> actualUserProfileByMsisdn = (new UserController(userServiceImpl,
-                mock(UserRepository.class))).getUserProfileByMsisdn("4105551212");
-        assertTrue(actualUserProfileByMsisdn.hasBody());
-        assertTrue(actualUserProfileByMsisdn.getHeaders().isEmpty());
-        assertEquals(200, actualUserProfileByMsisdn.getStatusCodeValue());
-        verify(userServiceImpl).getUserProfileByMsisdn((String) any());
-    }
-
-    /**
-     * Method under test: {@link UserController#getOne(Long)}
-     */
-    @Test
-    void testGetOne() {
-        //   Diffblue Cover was unable to write a Spring test,
-        //   so wrote a non-Spring test instead.
-        //   Diffblue AI was unable to find a test
-
-        UserRepository userRepository = mock(UserRepository.class);
-        when(userRepository.findById((Long) any())).thenReturn(Optional.of(new User()));
-        ResponseEntity<Optional<User>> actualOne = (new UserController(
-                new UserServiceImpl(userRepository, mock(AccountRepository.class)), mock(UserRepository.class))).getOne(123L);
-        assertTrue(actualOne.getBody().isPresent());
-        assertTrue(actualOne.getHeaders().isEmpty());
-        assertEquals(200, actualOne.getStatusCodeValue());
-        verify(userRepository).findById((Long) any());
-    }
-
-    /**
-     * Method under test: {@link UserController#getOne(Long)}
-     */
-    @Test
-    @Disabled("TODO: Complete this test")
-    void testGetOne2() {
-        //   Diffblue Cover was unable to write a Spring test,
-        //   so wrote a non-Spring test instead.
-        //   Diffblue AI was unable to find a test
-
-        // TODO: Complete this test.
-        //   Reason: R013 No inputs found that don't throw a trivial exception.
-        //   Diffblue Cover tried to run the arrange/act section, but the method under
-        //   test threw
-        //   java.lang.NullPointerException: Cannot invoke "com.blobus.apiExterneBlobus.services.implementations.UserServiceImpl.getOneUser(java.lang.Long)" because "this.userService" is null
-        //       at com.blobus.apiExterneBlobus.controllers.UserController.getOne(UserController.java:60)
-        //   See https://diff.blue/R013 to resolve this issue.
-
-        (new UserController(null, mock(UserRepository.class))).getOne(123L);
-    }
-
-    /**
-     * Method under test: {@link UserController#getOne(Long)}
-     */
-    @Test
-    void testGetOne3() {
-        //   Diffblue Cover was unable to write a Spring test,
-        //   so wrote a non-Spring test instead.
-        //   Diffblue AI was unable to find a test
-
-        UserServiceImpl userServiceImpl = mock(UserServiceImpl.class);
-        when(userServiceImpl.getOneUser((Long) any())).thenReturn(Optional.of(new User()));
-        ResponseEntity<Optional<User>> actualOne = (new UserController(userServiceImpl, mock(UserRepository.class)))
-                .getOne(123L);
-        assertTrue(actualOne.getBody().isPresent());
-        assertTrue(actualOne.getHeaders().isEmpty());
-        assertEquals(200, actualOne.getStatusCodeValue());
-        verify(userServiceImpl).getOneUser((Long) any());
     }
 
     /**
@@ -477,7 +407,7 @@ class UserControllerTest {
         //       at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:734)
         //       at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:814)
         //   com.fasterxml.jackson.databind.exc.InvalidDefinitionException: Cannot construct instance of `org.springframework.security.core.GrantedAuthority` (no Creators, like default constructor, exist): abstract types either need to be mapped to concrete types, have custom deserializer, or contain additional type information
-        //    at [Source: (org.springframework.util.StreamUtils$NonClosingInputStream); line: 1, column: 251] (through reference chain: com.blobus.apiExterneBlobus.models.User["authorities"]->java.util.ImmutableCollections$List12[1])
+        //    at [Source: (org.springframework.util.StreamUtils$NonClosingInputStream); line: 1, column: 226] (through reference chain: com.blobus.apiExterneBlobus.models.User["authorities"]->java.util.ImmutableCollections$List12[1])
         //       at com.fasterxml.jackson.databind.exc.InvalidDefinitionException.from(InvalidDefinitionException.java:67)
         //       at com.fasterxml.jackson.databind.DeserializationContext.reportBadDefinition(DeserializationContext.java:1909)
         //       at com.fasterxml.jackson.databind.DatabindContext.reportBadDefinition(DatabindContext.java:408)
@@ -528,7 +458,7 @@ class UserControllerTest {
         //       at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:734)
         //       at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:814)
         //   com.fasterxml.jackson.databind.exc.InvalidDefinitionException: Cannot construct instance of `org.springframework.security.core.GrantedAuthority` (no Creators, like default constructor, exist): abstract types either need to be mapped to concrete types, have custom deserializer, or contain additional type information
-        //    at [Source: (org.springframework.util.StreamUtils$NonClosingInputStream); line: 1, column: 251] (through reference chain: com.blobus.apiExterneBlobus.models.User["authorities"]->java.util.ImmutableCollections$List12[1])
+        //    at [Source: (org.springframework.util.StreamUtils$NonClosingInputStream); line: 1, column: 226] (through reference chain: com.blobus.apiExterneBlobus.models.User["authorities"]->java.util.ImmutableCollections$List12[1])
         //       at com.fasterxml.jackson.databind.exc.InvalidDefinitionException.from(InvalidDefinitionException.java:67)
         //       at com.fasterxml.jackson.databind.DeserializationContext.reportBadDefinition(DeserializationContext.java:1909)
         //       at com.fasterxml.jackson.databind.DatabindContext.reportBadDefinition(DatabindContext.java:408)
@@ -583,7 +513,7 @@ class UserControllerTest {
         //       at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:734)
         //       at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:814)
         //   com.fasterxml.jackson.databind.exc.InvalidDefinitionException: Cannot construct instance of `org.springframework.security.core.GrantedAuthority` (no Creators, like default constructor, exist): abstract types either need to be mapped to concrete types, have custom deserializer, or contain additional type information
-        //    at [Source: (org.springframework.util.StreamUtils$NonClosingInputStream); line: 1, column: 251] (through reference chain: com.blobus.apiExterneBlobus.models.User["authorities"]->java.util.ImmutableCollections$List12[1])
+        //    at [Source: (org.springframework.util.StreamUtils$NonClosingInputStream); line: 1, column: 226] (through reference chain: com.blobus.apiExterneBlobus.models.User["authorities"]->java.util.ImmutableCollections$List12[1])
         //       at com.fasterxml.jackson.databind.exc.InvalidDefinitionException.from(InvalidDefinitionException.java:67)
         //       at com.fasterxml.jackson.databind.DeserializationContext.reportBadDefinition(DeserializationContext.java:1909)
         //       at com.fasterxml.jackson.databind.DatabindContext.reportBadDefinition(DatabindContext.java:408)
@@ -683,5 +613,282 @@ class UserControllerTest {
         assertTrue(actualDeleteUserResult.getHeaders().isEmpty());
         verify(userServiceImpl).deleteUser((Long) any());
     }
-}
 
+    @Test
+    @Disabled
+    void getUserProfileByMsisdn() throws Exception {
+
+        String phoneNumber = "782654489";
+        AmountDto amountDto = new AmountDto();
+        amountDto.setCurrency(TransactionCurrency.XOF);
+        amountDto.setValue(10000000.06);
+        RequestBodyUserProfileDto dto = new RequestBodyUserProfileDto();
+        dto.setUserId("65+65203");
+        dto.setMsisdn("782654489");
+        dto.setFirstName("Ba");
+        dto.setLastName("El-seydi");
+        dto.setSuspended(true);
+        dto.setType(Collections.singletonList(Role.RETAILER).toString());
+        dto.setBalance(amountDto);
+
+        Mockito.when(userService.getUserProfileByMsisdn(phoneNumber)).thenReturn(dto);
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/api/ewallet/v1/users/find/782654489")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(jsonPath("$", notNullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.msisdn", Matchers.is("782654489")));
+
+    }
+
+    /**
+     * Method under test: {@link UserController#getUserProfileByMsisdn(String)}
+     */
+    @Test
+    void testGetUserProfileByMsisdn() {
+        //   Diffblue Cover was unable to write a Spring test,
+        //   so wrote a non-Spring test instead.
+        //   Diffblue AI was unable to find a test
+
+        AccountRepository accountRepository = mock(AccountRepository.class);
+        when(accountRepository.getAccountByPhoneNumber((String) any())).thenReturn(Optional.of(new Account()));
+        ResponseEntity<RequestBodyUserProfileDto> actualUserProfileByMsisdn = (new UserController(
+                new UserServiceImpl(mock(UserRepository.class), accountRepository), mock(UserRepository.class)))
+                .getUserProfileByMsisdn("4105551212");
+        assertTrue(actualUserProfileByMsisdn.hasBody());
+        assertTrue(actualUserProfileByMsisdn.getHeaders().isEmpty());
+        assertEquals(200, actualUserProfileByMsisdn.getStatusCodeValue());
+        RequestBodyUserProfileDto body = actualUserProfileByMsisdn.getBody();
+        assertFalse(body.isSuspended());
+        assertNull(body.getMsisdn());
+        AmountDto balance = body.getBalance();
+        assertEquals(TransactionCurrency.XOF, balance.getCurrency());
+        assertEquals(0.0d, balance.getValue().doubleValue());
+        verify(accountRepository).getAccountByPhoneNumber((String) any());
+    }
+
+    /**
+     * Method under test: {@link UserController#getUserProfileByMsisdn(String)}
+     */
+    @Test
+    void testGetUserProfileByMsisdn2() {
+        //   Diffblue Cover was unable to write a Spring test,
+        //   so wrote a non-Spring test instead.
+        //   Diffblue AI was unable to find a test
+
+        AccountRepository accountRepository = mock(AccountRepository.class);
+        Customer customer = new Customer("jane.doe@example.org");
+        User retailer = new User();
+        ArrayList<Transaction> customerTransactions = new ArrayList<>();
+        when(accountRepository.getAccountByPhoneNumber((String) any()))
+                .thenReturn(Optional.of(new Account(123L, 10.0d, "Encrypted Pin Code", WalletType.BONUS, "4105551212", true,
+                        customer, retailer, customerTransactions, new ArrayList<>())));
+        ResponseEntity<RequestBodyUserProfileDto> actualUserProfileByMsisdn = (new UserController(
+                new UserServiceImpl(mock(UserRepository.class), accountRepository), mock(UserRepository.class)))
+                .getUserProfileByMsisdn("4105551212");
+        assertTrue(actualUserProfileByMsisdn.hasBody());
+        assertTrue(actualUserProfileByMsisdn.getHeaders().isEmpty());
+        assertEquals(200, actualUserProfileByMsisdn.getStatusCodeValue());
+        RequestBodyUserProfileDto body = actualUserProfileByMsisdn.getBody();
+        assertTrue(body.isSuspended());
+        assertNull(body.getLastName());
+        assertNull(body.getFirstName());
+        assertEquals("4105551212", body.getMsisdn());
+        assertEquals("CUSTOMER", body.getType());
+        AmountDto balance = body.getBalance();
+        assertEquals(TransactionCurrency.XOF, balance.getCurrency());
+        assertEquals(10.0d, balance.getValue().doubleValue());
+        verify(accountRepository).getAccountByPhoneNumber((String) any());
+    }
+
+    /**
+     * Method under test: {@link UserController#getUserProfileByMsisdn(String)}
+     */
+    @Test
+    @Disabled("TODO: Complete this test")
+    void testGetUserProfileByMsisdn3() {
+        //   Diffblue Cover was unable to write a Spring test,
+        //   so wrote a non-Spring test instead.
+        //   Diffblue AI was unable to find a test
+
+        // TODO: Complete this test.
+        //   Reason: R013 No inputs found that don't throw a trivial exception.
+        //   Diffblue Cover tried to run the arrange/act section, but the method under
+        //   test threw
+        //   com.blobus.apiExterneBlobus.exception.ResourceNotFoundException: msisdn invalid
+        //       at com.blobus.apiExterneBlobus.services.implementations.UserServiceImpl.lambda$getUserProfileByMsisdn$2(UserServiceImpl.java:107)
+        //       at java.util.Optional.orElseThrow(Optional.java:403)
+        //       at com.blobus.apiExterneBlobus.services.implementations.UserServiceImpl.getUserProfileByMsisdn(UserServiceImpl.java:106)
+        //       at com.blobus.apiExterneBlobus.controllers.UserController.getUserProfileByMsisdn(UserController.java:50)
+        //   See https://diff.blue/R013 to resolve this issue.
+
+        AccountRepository accountRepository = mock(AccountRepository.class);
+        when(accountRepository.getAccountByPhoneNumber((String) any())).thenReturn(Optional.empty());
+        (new UserController(new UserServiceImpl(mock(UserRepository.class), accountRepository),
+                mock(UserRepository.class))).getUserProfileByMsisdn("4105551212");
+    }
+
+    /**
+     * Method under test: {@link UserController#getUserProfileByMsisdn(String)}
+     */
+    @Test
+    void testGetUserProfileByMsisdn4() {
+        //   Diffblue Cover was unable to write a Spring test,
+        //   so wrote a non-Spring test instead.
+        //   Diffblue AI was unable to find a test
+
+        RequestBodyUserProfileDto requestBodyUserProfileDto = new RequestBodyUserProfileDto();
+        requestBodyUserProfileDto.setBalance(new AmountDto());
+        requestBodyUserProfileDto.setFirstName("Jane");
+        requestBodyUserProfileDto.setLastName("Doe");
+        requestBodyUserProfileDto.setMsisdn("Msisdn");
+        requestBodyUserProfileDto.setSuspended(true);
+        requestBodyUserProfileDto.setType("Type");
+        requestBodyUserProfileDto.setUserId("42");
+        UserServiceImpl userServiceImpl = mock(UserServiceImpl.class);
+        when(userServiceImpl.getUserProfileByMsisdn((String) any())).thenReturn(requestBodyUserProfileDto);
+        ResponseEntity<RequestBodyUserProfileDto> actualUserProfileByMsisdn = (new UserController(userServiceImpl,
+                mock(UserRepository.class))).getUserProfileByMsisdn("4105551212");
+        assertTrue(actualUserProfileByMsisdn.hasBody());
+        assertTrue(actualUserProfileByMsisdn.getHeaders().isEmpty());
+        assertEquals(200, actualUserProfileByMsisdn.getStatusCodeValue());
+        verify(userServiceImpl).getUserProfileByMsisdn((String) any());
+    }
+
+    /**
+     * Method under test: {@link UserController#getOne(Long)}
+     */
+    @Test
+    void testGetOne() {
+        //   Diffblue Cover was unable to write a Spring test,
+        //   so wrote a non-Spring test instead.
+        //   Diffblue AI was unable to find a test
+
+        UserRepository userRepository = mock(UserRepository.class);
+        when(userRepository.findById((Long) any())).thenReturn(Optional.of(new User()));
+        ResponseEntity<Optional<User>> actualOne = (new UserController(
+                new UserServiceImpl(userRepository, mock(AccountRepository.class)), mock(UserRepository.class))).getOne(123L);
+        assertTrue(actualOne.getBody().isPresent());
+        assertTrue(actualOne.getHeaders().isEmpty());
+        assertEquals(200, actualOne.getStatusCodeValue());
+        verify(userRepository).findById((Long) any());
+    }
+
+    /**
+     * Method under test: {@link UserController#getOne(Long)}
+     */
+    @Test
+    @Disabled("TODO: Complete this test")
+    void testGetOne2() {
+        //   Diffblue Cover was unable to write a Spring test,
+        //   so wrote a non-Spring test instead.
+        //   Diffblue AI was unable to find a test
+
+        // TODO: Complete this test.
+        //   Reason: R013 No inputs found that don't throw a trivial exception.
+        //   Diffblue Cover tried to run the arrange/act section, but the method under
+        //   test threw
+        //   java.lang.NullPointerException: Cannot invoke "com.blobus.apiExterneBlobus.services.implementations.UserServiceImpl.getOneUser(java.lang.Long)" because "this.userService" is null
+        //       at com.blobus.apiExterneBlobus.controllers.UserController.getOne(UserController.java:60)
+        //   See https://diff.blue/R013 to resolve this issue.
+
+        (new UserController(null, mock(UserRepository.class))).getOne(123L);
+    }
+
+    /**
+     * Method under test: {@link UserController#getOne(Long)}
+     */
+    @Test
+    void testGetOne3() {
+        //   Diffblue Cover was unable to write a Spring test,
+        //   so wrote a non-Spring test instead.
+        //   Diffblue AI was unable to find a test
+
+        UserServiceImpl userServiceImpl = mock(UserServiceImpl.class);
+        when(userServiceImpl.getOneUser((Long) any())).thenReturn(Optional.of(new User()));
+        ResponseEntity<Optional<User>> actualOne = (new UserController(userServiceImpl, mock(UserRepository.class)))
+                .getOne(123L);
+        assertTrue(actualOne.getBody().isPresent());
+        assertTrue(actualOne.getHeaders().isEmpty());
+        assertEquals(200, actualOne.getStatusCodeValue());
+        verify(userServiceImpl).getOneUser((Long) any());
+    }
+
+    @Test
+    void getOne() throws Exception {
+        Mockito.when(userService.getOneUser(user1.getId())).thenReturn(Optional.of(user1));
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/api/ewallet/v1/users/3")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", notNullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.firstName", Matchers.is("El Seydi")));
+    }
+
+
+    @Test
+    void addUser() throws Exception {
+
+        User user = new User(
+                4l,
+                "Rokhya",
+                "Ndiaye",
+                "rokhya-ndiaye@avimtoo.com",
+                Role.RETAILER,
+                "vimto1245",
+                "768954362",
+                "fzivbedfegjd",
+                "fohfgfyf78");
+        Mockito.when(userService.addSingleUser(user)).thenReturn(user);
+
+        MockHttpServletRequestBuilder mockResquest = MockMvcRequestBuilders.post("/api/ewallet/v1/users/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(this.objectMapper.writeValueAsString(user));
+        mockMvc.perform(mockResquest)
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$", notNullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.firstName", Matchers.is("Rokhya")));
+
+
+    }
+
+    @Test
+    void updateUserSuccess() throws Exception {
+        User user = new User(
+                4l,
+                "Maguette",
+                "Ngom",
+                "rokhya-ndiaye@avimtoo.com",
+                Role.RETAILER,
+                "vimto1245",
+                "768954362",
+                "fzivbedfegjd",
+                "fohfgfyf78");
+
+        Mockito.when(userService.updateSingleUser(user, user.getId())).thenReturn(user);
+
+        MockHttpServletRequestBuilder moockRequest = MockMvcRequestBuilders.put("/api/ewallet/v1/users/4")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(this.objectMapper.writeValueAsString(user));
+
+        mockMvc.perform(moockRequest)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", notNullValue()))
+                .andExpect(jsonPath("$.lastName", Matchers.is("Ngom")));
+    }
+
+
+    @Test
+    void deleteUser() throws Exception {
+        // test deleted methode
+        Mockito.when(userRepository.findById(user1.getId())).thenReturn(Optional.of(user1));
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/ewallet/v1/users/3")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+}

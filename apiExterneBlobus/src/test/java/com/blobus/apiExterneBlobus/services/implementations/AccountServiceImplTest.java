@@ -1,95 +1,125 @@
 package com.blobus.apiExterneBlobus.services.implementations;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import com.blobus.apiExterneBlobus.exception.ResourceNotFoundException;
 import com.blobus.apiExterneBlobus.models.Account;
-import com.blobus.apiExterneBlobus.models.User;
-import com.blobus.apiExterneBlobus.models.enums.Role;
-import com.blobus.apiExterneBlobus.models.enums.WalletType;
-import com.blobus.apiExterneBlobus.repositories.AccountRepository;
-import com.blobus.apiExterneBlobus.repositories.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-@RunWith(SpringRunner.class)
 @SpringBootTest
+@ExtendWith(SpringExtension.class)
 class AccountServiceImplTest {
-
-
     @Autowired
-    UserRepository userRepository;
-    @Autowired
-    AccountRepository accountRepository;
+    private AccountServiceImpl accountServiceImpl;
 
-    @Autowired
-    AccountServiceImpl accountService;
-    @Mock
-    AccountRepository repository;
-
+    /**
+     * Method under test: {@link AccountServiceImpl#createRetailerTransfertAccount(Account, Long)}
+     */
     @Test
-    void createRetailerTransfertAccount() {
-
-        // ajouter un retailer
-        User user= new  User(
-                4l,
-                "Rokhya",
-                "Ndiaye",
-                "rokhya-ndiaye@avimtoo.com" ,
-                Role.RETAILER,
-                "vimto1245",
-                "768954362",
-                "fzivbedfegjd",
-                "fohfgfyf78");
-        userRepository.save(user);
-        //
-        Account account = new Account();
-        account.setBalance(10000);
-        account.setPhoneNumber("782564426");
-        account.setEncryptedPinCode("945952595");
-        account.setWalletType(WalletType.SALAIRE);
-
-    }
-    @Test
-    void createCustomerTransfertAccount() {
+    void testCreateRetailerTransfertAccount() {
+        assertThrows(ResourceNotFoundException.class,
+                () -> accountServiceImpl.createRetailerTransfertAccount(new Account(), 123L));
     }
 
+    /**
+     * Method under test: {@link AccountServiceImpl#createCustomerTransfertAccount(Account, Long)}
+     */
     @Test
-    void getAllTransfertAccount() {
+    void testCreateCustomerTransfertAccount() {
+        assertThrows(ResourceNotFoundException.class,
+                () -> accountServiceImpl.createCustomerTransfertAccount(new Account(), 123L));
     }
 
+    /**
+     * Method under test: {@link AccountServiceImpl#getAllTransfertAccount()}
+     */
     @Test
-    void getTransfertAccountById() {
+    void testGetAllTransfertAccount() {
+        assertTrue(accountServiceImpl.getAllTransfertAccount().isEmpty());
     }
 
+    /**
+     * Method under test: {@link AccountServiceImpl#getTransfertAccountById(Long)}
+     */
     @Test
-    void enableTransfertAccount() {
+    void testGetTransfertAccountById() {
+        assertThrows(EntityNotFoundException.class, () -> accountServiceImpl.getTransfertAccountById(123L));
     }
 
+    /**
+     * Method under test: {@link AccountServiceImpl#EnableTransfertAccount(Long)}
+     */
     @Test
-    void diseableTranfertAccount() {
+    void testEnableTransfertAccount() {
+        assertThrows(EntityNotFoundException.class, () -> accountServiceImpl.EnableTransfertAccount(123L));
     }
 
+    /**
+     * Method under test: {@link AccountServiceImpl#DiseableTranfertAccount(Long)}
+     */
     @Test
-    void getAccountPhoneNumber() {
+    void testDiseableTranfertAccount() {
+        assertThrows(EntityNotFoundException.class, () -> accountServiceImpl.DiseableTranfertAccount(123L));
+        assertThrows(EntityNotFoundException.class, () -> accountServiceImpl.DiseableTranfertAccount(3L));
     }
 
+    /**
+     * Method under test: {@link AccountServiceImpl#GetAccountPhoneNumber(Long)}
+     */
     @Test
-    void updateTranfertAccount() {
+    void testGetAccountPhoneNumber() {
+        assertThrows(EntityNotFoundException.class, () -> accountServiceImpl.GetAccountPhoneNumber(123L));
     }
 
+    /**
+     * Method under test: {@link AccountServiceImpl#updateTranfertAccount(Account, Long)}
+     */
     @Test
-    void deleteTransfertAccountById() {
+    void testUpdateTranfertAccount() {
+        assertThrows(EntityNotFoundException.class, () -> accountServiceImpl.updateTranfertAccount(new Account(), 123L));
     }
 
+    /**
+     * Method under test: {@link AccountServiceImpl#deleteTransfertAccountById(Long)}
+     */
     @Test
-    void getBalance() {
+    void testDeleteTransfertAccountById() {
+        assertThrows(EntityNotFoundException.class, () -> accountServiceImpl.deleteTransfertAccountById(123L));
     }
 
+    /**
+     * Method under test: {@link AccountServiceImpl#addCustomerAccount(Account, Long)}
+     */
     @Test
-    void modifyTransferAccountRetailer() {
+    void testAddCustomerAccount() {
+        assertNull(accountServiceImpl.addCustomerAccount(new Account(), 123L));
+    }
+
+    /**
+     * Method under test: {@link AccountServiceImpl#getBalance(String, String, Long)}
+     */
+    @Test
+    void testGetBalance() {
+        assertThrows(IllegalStateException.class,
+                () -> accountServiceImpl.getBalance("Encrypted Pin Code", "4105551212", 1L));
+        assertThrows(IllegalStateException.class,
+                () -> accountServiceImpl.getBalance("This user don't existe", "4105551212", 1L));
+    }
+
+    /**
+     * Method under test: {@link AccountServiceImpl#deleteByPhoneNumber(String)}
+     */
+    @Test
+    void testDeleteByPhoneNumber() {
+            accountServiceImpl.deleteByPhoneNumber("4105551212");
+            assertTrue(accountServiceImpl.getAllTransfertAccount().isEmpty());
     }
 }
+
