@@ -64,6 +64,7 @@ class CustomerControllerTest {
         // given - precondition or setup
         long employeeId = 1L;
         Customer employee = Customer.builder()
+                .id(employeeId)
                 .firstName("Ramesh")
                 .lastName("Fadatare")
                 .email("ramesh@gmaill.com")
