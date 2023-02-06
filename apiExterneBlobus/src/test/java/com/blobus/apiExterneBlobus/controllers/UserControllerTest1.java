@@ -2,28 +2,21 @@ package com.blobus.apiExterneBlobus.controllers;
 
 import com.blobus.apiExterneBlobus.dto.AmountDto;
 import com.blobus.apiExterneBlobus.dto.RequestBodyUserProfileDto;
-import com.blobus.apiExterneBlobus.exception.ResourceNotFoundException;
 import com.blobus.apiExterneBlobus.models.User;
 import com.blobus.apiExterneBlobus.models.enums.Role;
 import com.blobus.apiExterneBlobus.models.enums.TransactionCurrency;
 import com.blobus.apiExterneBlobus.repositories.AccountRepository;
 import com.blobus.apiExterneBlobus.repositories.UserRepository;
 import com.blobus.apiExterneBlobus.services.implementations.UserServiceImpl;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.stubbing.OngoingStubbing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -39,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(UserController.class)
-class UserControllerTest {
+class UserControllerTest1 {
     @Autowired
     MockMvc mockMvc;
     @Autowired
@@ -119,7 +112,6 @@ class UserControllerTest {
     }
 
     @Test
-    @Disabled
     void getUserProfileByMsisdn() throws Exception {
 
         String phoneNumber = "782654489";

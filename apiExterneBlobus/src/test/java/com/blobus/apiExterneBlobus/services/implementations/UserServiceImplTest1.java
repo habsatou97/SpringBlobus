@@ -5,17 +5,12 @@ import com.blobus.apiExterneBlobus.models.enums.Role;
 import com.blobus.apiExterneBlobus.repositories.AccountRepository;
 import com.blobus.apiExterneBlobus.repositories.UserRepository;
 import org.assertj.core.api.Assertions;
-import org.assertj.core.api.OptionalAssert;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -23,18 +18,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 
 @RunWith(SpringRunner.class)
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
-class UserServiceImplTest {
+class UserServiceImplTest1 {
 
     @Mock
     private UserRepository userRepository;
@@ -81,10 +73,11 @@ class UserServiceImplTest {
     void addSingleUser()  throws Exception{
         // given
         User user=createUser();
+
         //when
         userService.addSingleUser(user);
+
         // then
-    
         ArgumentCaptor<User> userArgumentCaptor=
                 ArgumentCaptor.forClass(User.class);
         verify(userRepository).save(userArgumentCaptor.capture());
@@ -99,12 +92,12 @@ class UserServiceImplTest {
    @Test
     void updateSingleUser() {
         // initialise un utilisateur
-            String email ="barry.pape-dame@avimtoo.com";
+            String email ="barry.dame@avimtoo.com";
         User user = new User();
         user.setNinea("vimto1245");
-        user.setPhoneNumber("772654426");
-        user.setUserId("fzidegjd");
-        user.setUserSecret("ofyf78");
+        user.setPhoneNumber("782654426");
+        user.setUserId("fzidgjd");
+        user.setUserSecret("ofy78");
         user.setLastName("Barry");
         user.setFirstName("Dame");
         user.setEmail(email);
@@ -158,7 +151,7 @@ class UserServiceImplTest {
     private User createUser(){
         String email = "bibiche.diouf@avimtoo.com";
         User user = new User(
-                6l,
+                6L,
                 "El Seydi",
                 "Ba",
                 email ,

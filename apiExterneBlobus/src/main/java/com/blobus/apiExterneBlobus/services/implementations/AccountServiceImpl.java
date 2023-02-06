@@ -20,7 +20,6 @@ import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 @Service
 
-
 public class AccountServiceImpl implements AccountService {
     @Autowired
     private AccountRepository transferAccountRepository;
@@ -32,25 +31,73 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account createRetailerTransfertAccount(Account transferAccount,Long id) {
 
-            User retailer=userRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("User not found"));
-            if(retailer.getRoles().contains(Role.RETAILER)) {
+        User retailer = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        List<Account> comptes = retailer.getAccounts();
+        int i = 0;
+        /* verifier si le retailer à deja un compte de tranfert
+         si la collection compts est vide
+         on ajoute le compte directement
+        */
+        if (comptes.isEmpty()) {
+            // verifie si l'utlisateur est un retailer
+            if (retailer.getRoles().contains(Role.RETAILER)) {
                 transferAccount.setRetailer(retailer);
                 transferAccount.set_active(true);
                 Account compte = transferAccountRepository.save(transferAccount);
                 retailer.addTransferAccounts(compte);
                 return compte;
+            } else throw new EntityNotFoundException("Retailer with id" + ": " + id + " don't exist");
+
+        }
+        // Si le retailer a deja au moins un compte :
+        else {
+
+            for (Account cpt : comptes ) {
+                WalletType type = cpt.getWalletType();
+                if (type == transferAccount.getWalletType())
+                    i++;
             }
-            else throw new EntityNotFoundException("Retailer with id"+": "+id+ " don't exist");
+            if (i != 0) {
+                //System.out.println("Ce customer possede deja un compte de ce type");
+                throw  new IllegalStateException("Ce retailer possede deja un compte de ce type");
+            } else {
+                if (retailer.getRoles().contains(Role.RETAILER)) {
+                    transferAccount.setRetailer(retailer);
+                    transferAccount.set_active(true);
+                    Account compte = transferAccountRepository.save(transferAccount);
+                    retailer.addTransferAccounts(compte);
+                    return compte;
+                } else throw new EntityNotFoundException("Retailer with id" + ": " + id + " don't exist");
+            }
+        }
+
     }
 
     @Override
     public Account createCustomerTransfertAccount(Account transferAccount,Long id) {
-        Customer customer=customerRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Customer not found"));
-        transferAccount.setCustomer(customer);
-        transferAccount.set_active(true);
-        Account compte=transferAccountRepository.save(transferAccount);
-        customer.addTransferAccounts(compte);
-        return compte;
+
+        //List<Account> comptes=new ArrayList<>();
+        Customer customer = customerRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+        List<Account> comptes = customer.getTransferAccounts();
+        int i = 0;
+        for (Account cpt : comptes
+        ) {
+            WalletType type=cpt.getWalletType();
+            if(type==transferAccount.getWalletType())
+                i++;
+        }
+        if (i != 0) {
+            throw new IllegalStateException("Ce customer : "  +id + " Possede deja un compte de ce type");
+            //System.out.println("Ce customer possede deja un compte de ce type");
+            //return null;
+        } else {
+
+            transferAccount.setCustomer(customer);
+            transferAccount.set_active(true);
+            Account compte = transferAccountRepository.save(transferAccount);
+            customer.addTransferAccounts(compte);
+            return compte;
+        }
     }
 
     @Override
@@ -103,9 +150,7 @@ public class AccountServiceImpl implements AccountService {
             return transferAccountRepository.save(existingAccount.get());
         }
         else throw new EntityNotFoundException("Account with id"+": "+id+ " don't exist");
-
         //return null;
-
     }
 
     @Override
@@ -115,11 +160,6 @@ public class AccountServiceImpl implements AccountService {
             transferAccountRepository.deleteById(id);
         }
         else throw new EntityNotFoundException("Account with id"+": "+id+ " don't exist");
-
-    }
-
-    public Account addCustomerAccount(Account account, Long id) {
- return null;
     }
 
     @Override
@@ -133,6 +173,28 @@ public class AccountServiceImpl implements AccountService {
         throw new IllegalStateException("This user don't have a retailer role");
     }
 
+    /**
+     * Cette methode permet a un administrateur de mettre à jour le compte de tranfert d'un retailer
+     * @param id
+     * @param account
+     * @param role
+     * @return
+     */
+    @Override
+    public Account modifyTransferAccountRetailer(Long id, Account account, Role role) {
+        Account account1 = transferAccountRepository.findById(id).orElseThrow(()->
+                new ResourceNotFoundException("Account not found"));
+        if(account1.getRetailer().getRoles().contains(Role.RETAILER)){
+            account1.setBalance(account.getBalance());
+            account1.setPhoneNumber(account.getPhoneNumber());
+            account1.setWalletType(account1.getWalletType());
+            account1.setEncryptedPinCode(account.getEncryptedPinCode());
+            return transferAccountRepository.saveAndFlush(account1);
+        }
+
+
+    }
+
     @Override
     public void deleteByPhoneNumber(String phoneNumber) {
         Optional<Account> account = transferAccountRepository.getAccountByPhoneNumber(phoneNumber);
@@ -142,6 +204,7 @@ public class AccountServiceImpl implements AccountService {
         }
 
     }
+
 
 
 }
