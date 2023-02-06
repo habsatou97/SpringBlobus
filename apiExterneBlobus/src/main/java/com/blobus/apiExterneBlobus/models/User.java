@@ -10,7 +10,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
-@Data
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -41,7 +40,7 @@ public class User {
 
    // hello
 
-    @OneToMany(mappedBy = "retailer", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER,mappedBy = "retailer", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Account> accounts = new ArrayList<>();
 
     public User(Long id,String firstName, String lastName, String email, Role role, String ninea, String phoneNumber, String userId, String userSecret) {

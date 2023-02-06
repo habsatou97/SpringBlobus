@@ -9,7 +9,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "customers")
-@Data
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -27,7 +26,7 @@ public class Customer {
     @Column(nullable = false, unique = true)
     private String phoneNumber;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER,mappedBy = "customer", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Account> transferAccounts = new ArrayList<>();
 
     public void addTransferAccounts(Account account){ transferAccounts.add(account); }
