@@ -1,6 +1,9 @@
 package com.blobus.apiExterneBlobus.services.implementations;
 
 import com.blobus.apiExterneBlobus.models.Account;
+import com.blobus.apiExterneBlobus.models.User;
+import com.blobus.apiExterneBlobus.models.enums.Role;
+import com.blobus.apiExterneBlobus.models.enums.WalletType;
 import com.blobus.apiExterneBlobus.repositories.AccountRepository;
 import com.blobus.apiExterneBlobus.repositories.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -29,10 +32,26 @@ class AccountServiceImplTest {
 
     @Test
     void createRetailerTransfertAccount() {
+
+        // ajouter un retailer
+        User user= new  User(
+                4l,
+                "Rokhya",
+                "Ndiaye",
+                "rokhya-ndiaye@avimtoo.com" ,
+                Role.RETAILER,
+                "vimto1245",
+                "768954362",
+                "fzivbedfegjd",
+                "fohfgfyf78");
+        userRepository.save(user);
+        //
         Account account = new Account();
         account.setBalance(10000);
         account.setPhoneNumber("782564426");
         account.setEncryptedPinCode("945952595");
+        account.setWalletType(WalletType.SALAIRE);
+
     }
     @Test
     void createCustomerTransfertAccount() {
