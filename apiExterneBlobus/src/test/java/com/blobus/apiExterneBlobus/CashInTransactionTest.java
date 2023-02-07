@@ -1,5 +1,8 @@
 package com.blobus.apiExterneBlobus;
 
+import com.blobus.apiExterneBlobus.config.JwtAuthenticationFilter;
+import com.blobus.apiExterneBlobus.config.JwtService;
+import com.blobus.apiExterneBlobus.config.SecurityConfiguration;
 import com.blobus.apiExterneBlobus.controllers.TransactionController;
 import com.blobus.apiExterneBlobus.dto.*;
 import com.blobus.apiExterneBlobus.models.Account;
@@ -11,15 +14,19 @@ import com.blobus.apiExterneBlobus.repositories.TransferAccountRepository;
 import com.blobus.apiExterneBlobus.repositories.UserRepository;
 import com.blobus.apiExterneBlobus.services.interfaces.TransactionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDate;
 
@@ -29,10 +36,12 @@ import static com.blobus.apiExterneBlobus.models.enums.TransactionStatus.SUCCESS
 import static com.blobus.apiExterneBlobus.models.enums.TransactionType.CASHIN;
 import static com.blobus.apiExterneBlobus.models.enums.WalletType.*;
 import static java.lang.Boolean.TRUE;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.hamcrest.Matchers.*;
 
 @WebMvcTest(TransactionController.class)
+@AutoConfigureMockMvc(addFilters = false)
 public class CashInTransactionTest {
     @Autowired
     public MockMvc mockMvc;
@@ -48,6 +57,25 @@ public class CashInTransactionTest {
     UserRepository userRepository;
     @MockBean
     AccountRepository accountRepository;
+
+    @MockBean
+    JwtAuthenticationFilter jwtAuthenticationFilter;
+    @MockBean
+    JwtService jwtService;
+    @MockBean
+    SecurityConfiguration securityConfiguration;
+
+
+    @Autowired
+    private WebApplicationContext webApplicationContext;
+
+    @Before()
+    public void setup()
+    {
+        //Init MockMvc Object and build
+        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+    }
+
     @Test
     public void testCashInTransaction() throws Exception {
         Customer customer1 = new Customer();
@@ -133,7 +161,7 @@ public class CashInTransactionTest {
 
         Mockito.when(transactionService.CashInTransaction(requestBodyTransactionDto)).thenReturn(responseCashInTransactionDto);
 
-        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.post("/api/ewallet/v1/cashins")
+        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.post("/api/ewallet/v1/cashins").with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 //.header(HttpHeaders.AUTHORIZATION,"Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJlbCIsImlhdCI6MTY3NTM1ODYyNCwiZXhwIjoxNjc1MzYwMDY0fQ.J_HNwr_romXql1KBuXTKZTSXm6-Np7lcCcE7Hg3Ldr0")

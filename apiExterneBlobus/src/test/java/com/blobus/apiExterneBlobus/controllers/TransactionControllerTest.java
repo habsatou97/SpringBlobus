@@ -36,76 +36,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 
 class TransactionControllerTest {
-    /**
-     * Method under test: {@link TransactionController#CashInTransaction(RequestBodyTransactionDto)}
-     */
+
+
     @Test
-    @Disabled("TODO: Complete this test")
     void testCashInTransaction() {
-        //   Diffblue Cover was unable to write a Spring test,
-        //   so wrote a non-Spring test instead.
-        //   Reason: R013 No inputs found that don't throw a trivial exception.
-        //   Diffblue Cover tried to run the arrange/act section, but the method under
-        //   test threw
-        //   com.fasterxml.jackson.databind.exc.InvalidDefinitionException: Java 8 date/time type `java.time.LocalDate` not supported by default: add Module "com.fasterxml.jackson.datatype:jackson-datatype-jsr310" to enable handling (through reference chain: com.blobus.apiExterneBlobus.dto.RequestBodyTransactionDto["requestDate"])
-        //       at com.fasterxml.jackson.databind.exc.InvalidDefinitionException.from(InvalidDefinitionException.java:77)
-        //       at com.fasterxml.jackson.databind.SerializerProvider.reportBadDefinition(SerializerProvider.java:1306)
-        //       at com.fasterxml.jackson.databind.ser.impl.UnsupportedTypeSerializer.serialize(UnsupportedTypeSerializer.java:35)
-        //       at com.fasterxml.jackson.databind.ser.BeanPropertyWriter.serializeAsField(BeanPropertyWriter.java:733)
-        //       at com.fasterxml.jackson.databind.ser.std.BeanSerializerBase.serializeFields(BeanSerializerBase.java:774)
-        //       at com.fasterxml.jackson.databind.ser.BeanSerializer.serialize(BeanSerializer.java:178)
-        //       at com.fasterxml.jackson.databind.ser.DefaultSerializerProvider._serialize(DefaultSerializerProvider.java:480)
-        //       at com.fasterxml.jackson.databind.ser.DefaultSerializerProvider.serializeValue(DefaultSerializerProvider.java:319)
-        //       at com.fasterxml.jackson.databind.ObjectMapper._writeValueAndClose(ObjectMapper.java:4624)
-        //       at com.fasterxml.jackson.databind.ObjectMapper.writeValueAsString(ObjectMapper.java:3869)
-        //   See https://diff.blue/R013 to resolve this issue.
-
-        // TODO: Complete this test.
-        //   Reason: R013 No inputs found that don't throw a trivial exception.
-        //   Diffblue Cover tried to run the arrange/act section, but the method under
-        //   test threw
-        //   java.lang.NullPointerException: Cannot invoke "String.equals(Object)" because "str" is null
-        //       at com.blobus.apiExterneBlobus.services.implementations.TransactionServiceImpl.codePinIsvalid(TransactionServiceImpl.java:299)
-        //       at com.blobus.apiExterneBlobus.services.implementations.TransactionServiceImpl.TransactionIsSuccess(TransactionServiceImpl.java:159)
-        //       at com.blobus.apiExterneBlobus.services.implementations.TransactionServiceImpl.CashInTransaction(TransactionServiceImpl.java:64)
-        //       at com.blobus.apiExterneBlobus.controllers.TransactionController.CashInTransaction(TransactionController.java:20)
-        //   See https://diff.blue/R013 to resolve this issue.
-
-        AccountRepository accountRepository = mock(AccountRepository.class);
-        when(accountRepository.findByPhoneNumberAndWalletType((String) any(), (WalletType) any()))
-                .thenReturn(Optional.of(new Account()));
-        TransactionController transactionController = new TransactionController(new TransactionServiceImpl(
-                accountRepository, mock(TransactionRepository.class), mock(BulkRepository.class), mock(UserRepository.class)));
-        AmountDto amount = new AmountDto();
-        CustomerDto customer = new CustomerDto("4105551212", WalletType.BONUS);
-
-        transactionController.CashInTransaction(new RequestBodyTransactionDto(amount, customer,
-                new RetailerDto("4105551212", "Encrypted Pin Code", WalletType.BONUS), "Reference", true,
-                LocalDate.ofEpochDay(1L), TransactionType.CASHIN));
-    }
-
-    /**
-     * Method under test: {@link TransactionController#CashInTransaction(RequestBodyTransactionDto)}
-     */
-    @Test
-    void testCashInTransaction2() {
-        //   Diffblue Cover was unable to write a Spring test,
-        //   so wrote a non-Spring test instead.
-        //   Reason: R013 No inputs found that don't throw a trivial exception.
-        //   Diffblue Cover tried to run the arrange/act section, but the method under
-        //   test threw
-        //   com.fasterxml.jackson.databind.exc.InvalidDefinitionException: Java 8 date/time type `java.time.LocalDate` not supported by default: add Module "com.fasterxml.jackson.datatype:jackson-datatype-jsr310" to enable handling (through reference chain: com.blobus.apiExterneBlobus.dto.RequestBodyTransactionDto["requestDate"])
-        //       at com.fasterxml.jackson.databind.exc.InvalidDefinitionException.from(InvalidDefinitionException.java:77)
-        //       at com.fasterxml.jackson.databind.SerializerProvider.reportBadDefinition(SerializerProvider.java:1306)
-        //       at com.fasterxml.jackson.databind.ser.impl.UnsupportedTypeSerializer.serialize(UnsupportedTypeSerializer.java:35)
-        //       at com.fasterxml.jackson.databind.ser.BeanPropertyWriter.serializeAsField(BeanPropertyWriter.java:733)
-        //       at com.fasterxml.jackson.databind.ser.std.BeanSerializerBase.serializeFields(BeanSerializerBase.java:774)
-        //       at com.fasterxml.jackson.databind.ser.BeanSerializer.serialize(BeanSerializer.java:178)
-        //       at com.fasterxml.jackson.databind.ser.DefaultSerializerProvider._serialize(DefaultSerializerProvider.java:480)
-        //       at com.fasterxml.jackson.databind.ser.DefaultSerializerProvider.serializeValue(DefaultSerializerProvider.java:319)
-        //       at com.fasterxml.jackson.databind.ObjectMapper._writeValueAndClose(ObjectMapper.java:4624)
-        //       at com.fasterxml.jackson.databind.ObjectMapper.writeValueAsString(ObjectMapper.java:3869)
-        //   See https://diff.blue/R013 to resolve this issue.
 
         AccountRepository accountRepository = mock(AccountRepository.class);
         when(accountRepository.findByPhoneNumberAndWalletType((String) any(), (WalletType) any()))
@@ -134,15 +68,8 @@ class TransactionControllerTest {
         verify(accountRepository, atLeast(1)).findByPhoneNumberAndWalletType((String) any(), (WalletType) any());
     }
 
-    /**
-     * Method under test: {@link TransactionController#getTransactionStatus(Long)}
-     */
     @Test
     void testGetTransactionStatus() {
-        //   Diffblue Cover was unable to write a Spring test,
-        //   so wrote a non-Spring test instead.
-        //   Diffblue AI was unable to find a test
-
         TransactionRepository transactionRepository = mock(TransactionRepository.class);
         when(transactionRepository.findById((Long) any())).thenReturn(Optional.of(new Transaction()));
         assertNull(
@@ -151,17 +78,8 @@ class TransactionControllerTest {
         verify(transactionRepository).findById((Long) any());
     }
 
-    /**
-     * Method under test: {@link TransactionController#getTransactionStatus(Long)}
-     */
-
-
-    /**
-     * Method under test: {@link TransactionController#BulkCashInTransaction(RequestBodyTransactionDto[])}
-     */
-
     @Test
-    void testBulkCashInTransaction2() {
+    void testBulkCashInTransaction() {
 
 
         ResponseCashInTransactionDto responseCashInTransactionDto = new ResponseCashInTransactionDto();
@@ -190,7 +108,7 @@ class TransactionControllerTest {
     }
 
     @Test
-    void testGetTransaction2() {
+    void testGetTransaction() {
         TransactionRepository transactionRepository = mock(TransactionRepository.class);
         LocalDate createdDate = LocalDate.ofEpochDay(1L);
         LocalDate requestDate = LocalDate.ofEpochDay(1L);
