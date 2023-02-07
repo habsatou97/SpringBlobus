@@ -145,6 +145,7 @@ class UserControllerTest1 {
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/ewallet/v1/users/3")
                         .contentType(MediaType.APPLICATION_JSON))
+
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", notNullValue()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.firstName", Matchers.is("El Seydi")));

@@ -165,6 +165,7 @@ class AccountServiceImplTest1 {
         account.setEncryptedPinCode("945142952595");
         account.setWalletType(WalletType.PRINCIPAL);
         account.set_active(true);
+
         assertThrows(EntityNotFoundException.class,
                 (() -> accountService.updateTranfertAccount(account,1L)));
     }
