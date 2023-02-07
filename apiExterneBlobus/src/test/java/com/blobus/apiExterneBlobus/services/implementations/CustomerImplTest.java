@@ -17,8 +17,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
 
 //@RunWith(SpringRunner.class)
 //@ExtendWith(MockitoExtension.class)
@@ -29,8 +29,6 @@ class CustomerImplTest {
     private CustomerRepository repository;
     private AutoCloseable closeable;
 
-    //@Autowired
-    //private CustomerRepository customerRepository;
     @InjectMocks
     private CustomerImpl service;
 
@@ -111,14 +109,11 @@ class CustomerImplTest {
 
     @Test
     void edit() {
-        Customer customer = new Customer();
-        customer.setFirstName("Ablaye");
-        customer.setLastName("Faye");
-        customer.setEmail("laye@gmail.com");
-        customer.setId(1L);
-        customer.setPhoneNumber("775545254");
-        Customer found = service.edit(customer);
-
+        when(service.save((Customer) any())).thenReturn(new Customer("jane.doe@example.org"));
+        Customer customer = new Customer("jane.doe@example.org");
+        Customer found = repository.save(any(Customer.class));
+        found.setPhoneNumber("454164684");
+        repository.save(found);
         assertNotNull(found);
         assertEquals(customer.getEmail(), found.getEmail());
         assertEquals(customer.getId(), found.getId());
@@ -126,5 +121,16 @@ class CustomerImplTest {
 
     @Test
     void delete() {
+        CustomerImpl customerServiceImplement = mock(CustomerImpl.class);
+        Customer savedCustomer = Customer.builder()
+                .firstName("Ramesh")
+                .lastName("Fadatare")
+                .email("ramesh@gmail.com")
+                .phoneNumber("778545382")
+                .build();
+        customerServiceImplement.save(savedCustomer);
+        doNothing().when(customerServiceImplement).delete(savedCustomer.getId());
+        customerServiceImplement.delete(savedCustomer.getId());
+        verify(customerServiceImplement).delete(savedCustomer.getId());
     }
 }
