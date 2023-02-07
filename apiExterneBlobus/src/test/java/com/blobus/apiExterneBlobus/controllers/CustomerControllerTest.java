@@ -1,145 +1,106 @@
 package com.blobus.apiExterneBlobus.controllers;
 
+import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import com.blobus.apiExterneBlobus.models.Customer;
 import com.blobus.apiExterneBlobus.repositories.CustomerRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
-import java.util.ArrayList;
+import com.blobus.apiExterneBlobus.services.implementations.CustomerImpl;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.ResponseEntity;
 
-import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureMockMvc
 class CustomerControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private CustomerRepository repository;
-
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-
-    @BeforeEach
-    void setup(){
-        repository.deleteAll();
-    }
-
     @Test
-    void findAll() throws Exception {
-        // given - precondition or setup
-        List<Customer> listOfEmployees = new ArrayList<>();
-        listOfEmployees.add(Customer.builder().firstName("Ramesh").lastName("Fadatare").email("ramesh@gmail.com").phoneNumber("778885522").build());
-        listOfEmployees.add(Customer.builder().firstName("Tony").lastName("Stark").email("tony@gmail.com").phoneNumber("775554499").build());
-        repository.saveAll(listOfEmployees);
-        // when -  action or the behaviour that we are going test
-        ResultActions response = mockMvc.perform(get("/api/ewallet/v1/customers/"));
+    void testFindAll() {
 
-        // then - verify the output
-        response.andExpect(status().isOk())
-                .andDo(print())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.size()",
-                        is(listOfEmployees.size())));
-    }
-
-    @Test
-    void findOne() throws Exception {
-        // given - precondition or setup
-        long employeeId = 1L;
-        Customer employee = Customer.builder()
-                .id(employeeId)
+        CustomerRepository customerRepository = mock(CustomerRepository.class);
+        when(customerRepository.findAll()).thenReturn(List.of(Customer.builder()
                 .firstName("Ramesh")
                 .lastName("Fadatare")
-                .email("ramesh@gmaill.com")
-                .phoneNumber("7785453271")
-                .build();
-        repository.save(employee);
-
-        // when -  action or the behaviour that we are going test
-        ResultActions response = mockMvc.perform(get("/api/ewallet/v1/customers/{id}", employeeId));
-
-        // then - verify the output
-        response.andExpect(status().isOk())
-                .andDo(print());
-
+                .email("ramesh1@gmail.com")
+                .phoneNumber("778545382")
+                .build(), Customer.builder()
+                .firstName("Ramesh")
+                .lastName("Fadatare")
+                .email("ramesh2@gmail.com")
+                .phoneNumber("778545383")
+                .build()));
+        ResponseEntity<List<Customer>> actualFindAllResult = (new CustomerController(new CustomerImpl(customerRepository)))
+                .findAll();
+        assertTrue(actualFindAllResult.hasBody());
+        assertEquals(200, actualFindAllResult.getStatusCodeValue());
+        assertTrue(actualFindAllResult.getHeaders().isEmpty());
+        assertTrue(2 == Objects.requireNonNull(actualFindAllResult.getBody()).size());
+        verify(customerRepository).findAll();
     }
 
+
     @Test
-    void delete() throws Exception {
-        // given - precondition or setup
-        Customer savedEmployee = Customer.builder()
+    void testFindOne() {
+
+        CustomerRepository customerRepository = mock(CustomerRepository.class);
+        when(customerRepository.findById((Long) any())).thenReturn(Optional.of(new Customer("jane.doe@example.org")));
+        ResponseEntity<Customer> actualFindOneResult = (new CustomerController(new CustomerImpl(customerRepository)))
+                .findOne(123L);
+        assertTrue(actualFindOneResult.hasBody());
+        assertTrue(actualFindOneResult.getHeaders().isEmpty());
+        assertEquals(200, actualFindOneResult.getStatusCodeValue());
+        verify(customerRepository).findById((Long) any());
+    }
+
+
+    @Test
+    void testDelete() {
+        CustomerRepository customerRepository = mock(CustomerRepository.class);
+        Customer savedCustomer = Customer.builder()
                 .firstName("Ramesh")
                 .lastName("Fadatare")
                 .email("ramesh@gmail.com")
                 .phoneNumber("778545382")
                 .build();
-        repository.save(savedEmployee);
-
-        // when -  action or the behaviour that we are going test
-        ResultActions response = mockMvc.perform(MockMvcRequestBuilders.delete("/api/ewallet/v1/customers/{id}", savedEmployee.getId()));
-
-        // then - verify the output
-        response.andExpect(status().isOk())
-                .andDo(print());
+        customerRepository.save(savedCustomer);
+        doNothing().when(customerRepository).deleteById(savedCustomer.getId());
+        (new CustomerController(new CustomerImpl(customerRepository))).delete(savedCustomer.getId());
+        verify(customerRepository).deleteById(savedCustomer.getId());
     }
+
 
     @Test
-    void save() throws Exception {
-        // given - precondition or setup
-        Customer customer = Customer.builder()
-                .firstName("Ramesh")
-                .lastName("Fadatare")
-                .email("ramesh@gmail.com")
-                .phoneNumber("778545382")
-                .build();
+    void testSave() {
 
-        // when - action or behaviour that we are going test
-        // when - action or behaviour that we are going test
-        ResultActions response = mockMvc.perform(post("/api/ewallet/v1/customers/")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(customer)));
+        CustomerRepository customerRepository = mock(CustomerRepository.class);
+        when(customerRepository.save((Customer) any())).thenReturn(new Customer("jane.doe@example.org"));
+        CustomerController customerController = new CustomerController(new CustomerImpl(customerRepository));
+        Customer customer = new Customer("jane.doe@example.org");
+        ResponseEntity<Customer> actualSaveResult = customerController.save(customer);
+        assertEquals(customer.getId(), actualSaveResult.getBody().getId());
+        assertTrue(actualSaveResult.getHeaders().isEmpty());
+        assertEquals(200, actualSaveResult.getStatusCodeValue());
+        verify(customerRepository).save((Customer) any());
     }
+
 
     @Test
-    void edit() throws Exception {
-        // given - precondition or setup
-
-        Customer employee = Customer.builder()
-                .firstName("Ramesh")
-                .lastName("Fadatare")
-                .email("ramesh@gmaill.com")
-                .phoneNumber("7785453271")
-                .build();
-
-        Customer customer = repository.save(employee);
-        customer.setFirstName("Ablaye");
-        customer.setTransferAccounts(new ArrayList<>());
-
-        // when -  action or the behaviour that we are going test
-        ResultActions response = mockMvc.perform(put("/api/ewallet/v1/customers/")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(customer)));
-
-
-        // then - verify the output
-        response.andExpect(status().isOk())
-                .andDo(print());
+    void testEdit() {
+        CustomerRepository customerRepository = mock(CustomerRepository.class);
+        when(customerRepository.save((Customer) any())).thenReturn(new Customer("jane.doe@example.org"));
+        CustomerController customerController = new CustomerController(new CustomerImpl(customerRepository));
+        Customer customer = new Customer("jane.doe@example.org");
+        ResponseEntity<Customer> actualEditResult = customerController.edit(customer);
+        assertEquals(customer.getEmail(), actualEditResult.getBody().getEmail());
+        assertTrue(actualEditResult.getHeaders().isEmpty());
+        assertEquals(200, actualEditResult.getStatusCodeValue());
+        verify(customerRepository).save((Customer) any());
     }
+
+
 }
+
