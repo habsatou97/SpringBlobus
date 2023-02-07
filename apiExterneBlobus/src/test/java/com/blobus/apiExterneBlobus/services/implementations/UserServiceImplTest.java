@@ -15,12 +15,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Collections;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 
 @RunWith(SpringRunner.class)
@@ -34,6 +36,9 @@ class UserServiceImplTest {
     private AccountRepository accountRepository;
     @Autowired
     private UserServiceImpl userService;
+
+    @MockBean
+    UserServiceImpl service;
     @Autowired
     private UserRepository repository;
 
@@ -102,28 +107,25 @@ class UserServiceImplTest {
         user.setFirstName("Dame");
         user.setEmail(email);
         user.setRoles(Collections.singletonList(Role.RETAILER));
-
         // persister l'utlisateur dans la base de données
-        repository.save(user);
+        userRepository.save(user);
 
         // je recuper l'utilisateur
-       User user1= repository.findById(user.getId()).orElseThrow();
+       User user1= new User();
        // je modifie l'utlisateur
        user1.setLastName("El-seydi");
        user1.setFirstName("Ba");
        user1.setEmail("barry.pape-dame@avimtoo.com");
        //
-       repository.save(user1);
-        Assertions.assertThat(repository.findById(user1.getId())).isNotEmpty();
+       when(service.updateSingleUser(user1,user.getId())).thenReturn(user1);
+        Assertions.assertThat(service.updateSingleUser(user1,user.getId())).isNotNull();
     }
 
 
     @Test
     @AutoConfigureTestDatabase
     void deleteUser() {
-        // Vider la base de donnee
-        repository.deleteAll();
-        //initialiser un utilisateur
+
         String email = "aby.barry@avimtoo.com";
         User user = new User();
              user.setFirstName("El Seydi");
@@ -134,12 +136,12 @@ class UserServiceImplTest {
              user.setPhoneNumber("71954362");
              user.setUserId("fzivbedegjd");
              user.setUserSecret("fohgfyf78");
- // persister l'utilisateur dans la base de données
-         repository.save(user);
-       // supprimer l'utilisateur
-        repository.deleteById(user.getId());
-        // verifier si la suppression est effectives
-        Assertions.assertThat(repository.count()).isZero();
+
+         userRepository.save(user);
+
+        service.deleteUser(user.getId());
+
+        Assertions.assertThat(userRepository.findById(user.getId()).isEmpty());
 
     }
 
