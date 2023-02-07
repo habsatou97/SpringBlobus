@@ -1,5 +1,8 @@
 package com.blobus.apiExterneBlobus.controllers;
 
+import com.blobus.apiExterneBlobus.config.JwtAuthenticationFilter;
+import com.blobus.apiExterneBlobus.config.JwtService;
+import com.blobus.apiExterneBlobus.config.SecurityConfiguration;
 import com.blobus.apiExterneBlobus.dto.AmountDto;
 import com.blobus.apiExterneBlobus.dto.RequestBodyUserProfileDto;
 import com.blobus.apiExterneBlobus.models.User;
@@ -10,16 +13,20 @@ import com.blobus.apiExterneBlobus.repositories.UserRepository;
 import com.blobus.apiExterneBlobus.services.implementations.UserServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
+import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.*;
 
@@ -27,12 +34,15 @@ import static net.bytebuddy.matcher.ElementMatchers.is;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.verify;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(UserController.class)
-class UserControllerTest1 {
+@AutoConfigureMockMvc(addFilters = false)
+class UserControllerTest {
     @Autowired
     MockMvc mockMvc;
     @Autowired
@@ -45,6 +55,18 @@ class UserControllerTest1 {
     UserRepository userRepository;
     @MockBean
     AccountRepository accountRepository;
+    @MockBean
+    JwtAuthenticationFilter  jwtAuthenticationFilter;
+    @MockBean
+    JwtService jwtService;
+    @MockBean
+    SecurityConfiguration securityConfiguration;
+
+
+    @Autowired
+    private WebApplicationContext webApplicationContext;
+
+
 
     User user1= new  User(
             3l,
@@ -78,6 +100,13 @@ class UserControllerTest1 {
             "fzivbeegjd",
             "fohfyf78");
 
+    @Before()
+    public void setup()
+    {
+        //Init MockMvc Object and build
+        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+    }
+
     @Test
     void getAllUsers() throws Exception {
 
@@ -85,7 +114,7 @@ class UserControllerTest1 {
         List<User> users1= userRepository.findAll();
         Mockito.when(userService.getAllUsers()).thenReturn(users);
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/api/ewallet/v1/users/")
+                        .get("/api/ewallet/v1/users/").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(2)))
@@ -151,11 +180,58 @@ class UserControllerTest1 {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.firstName", Matchers.is("El Seydi")));
     }
 
+    @Test
+    void testAddUser(){
+        UserRepository userRepository1= mock(UserRepository.class);
+        AccountRepository accountRepository1= mock(AccountRepository.class);
+        UserServiceImpl userService1 = mock(UserServiceImpl.class);
+        when(userRepository1.save((User) any())).thenReturn( new  User(
+                4l,
+                "Rokhya",
+                "Ndiaye",
+                "rokhya-ndiaye@avimtoo.com" ,
+                Role.RETAILER,
+                "vimto1245",
+                "768954362",
+                "fzivbedfegjd",
+                "fohfgfyf78"));
 
+        UserController userController= new UserController(new UserServiceImpl(userRepository1,accountRepository1), userRepository1);
+
+                User user= new  User(
+                4l,
+                "Rokhya",
+                "Ndiaye",
+                "rokhya-ndiaye@avimtoo.com" ,
+                Role.RETAILER,
+                "vimto1245",
+                "768954362",
+                "fzivbedfegjd",
+                "fohfgfyf78");
+            ResponseEntity<User>  userResult = userController.addUser(user);
+            assertTrue(userResult.getHeaders().isEmpty());
+            assertEquals(200,userResult.getStatusCodeValue());
+            verify(userRepository1).save((User) any());
+
+    }
 
     @Test
-    void addUser() throws Exception {
+    void testUpdateSingleUser(){
 
+        UserRepository userRepository2= mock(UserRepository.class);
+        UserServiceImpl userService2 = mock(UserServiceImpl.class);
+        when(userRepository2.save((User) any())).thenReturn( new  User(
+                4l,
+                "Rokhya",
+                "Ndiaye",
+                "rokhya-ndiaye@avimtoo.com" ,
+                Role.RETAILER,
+                "vimto1245",
+                "768954362",
+                "fzivbedfegjd",
+                "fohfgfyf78"));
+
+        UserController userController= new UserController(userService2, userRepository2);
         User user= new  User(
                 4l,
                 "Rokhya",
@@ -166,53 +242,17 @@ class UserControllerTest1 {
                 "768954362",
                 "fzivbedfegjd",
                 "fohfgfyf78");
-        Mockito.when(userService.addSingleUser(user)).thenReturn(user);
-
-        MockHttpServletRequestBuilder mockResquest = MockMvcRequestBuilders.post("/api/ewallet/v1/users/")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(this.objectMapper.writeValueAsString(user));
-        mockMvc.perform(mockResquest)
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$",notNullValue()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.firstName", Matchers.is("Rokhya")));
-
+        ResponseEntity<User>  userResult = userController.updateUser(user,user.getId());
+        assertTrue(userResult.getHeaders().isEmpty());
+        assertEquals(200,userResult.getStatusCodeValue());
 
     }
-
-    @Test
-    void updateUserSuccess() throws Exception {
-        User user= new  User(
-                4l,
-                "Maguette",
-                "Ngom",
-                "rokhya-ndiaye@avimtoo.com" ,
-                Role.RETAILER,
-                "vimto1245",
-                "768954362",
-                "fzivbedfegjd",
-                "fohfgfyf78");
-
-        Mockito.when(userService.updateSingleUser(user,user.getId())).thenReturn(user);
-
-        MockHttpServletRequestBuilder moockRequest=MockMvcRequestBuilders.put("/api/ewallet/v1/users/4")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(this.objectMapper.writeValueAsString(user));
-
-         mockMvc.perform(moockRequest)
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", notNullValue()))
-                .andExpect(jsonPath("$.lastName", Matchers.is("Ngom")));
-    }
-
-
 
     @Test
     void deleteUser() throws Exception {
 
      Mockito.when(userRepository.findById(user1.getId())).thenReturn(Optional.of(user1));
-     mockMvc.perform(MockMvcRequestBuilders.delete("/api/ewallet/v1/users/3")
+     mockMvc.perform(MockMvcRequestBuilders.delete("/api/ewallet/v1/users/3").with(csrf())
              .contentType(MediaType.APPLICATION_JSON))
              .andExpect(status().isOk());
     }

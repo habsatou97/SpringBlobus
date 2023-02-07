@@ -26,7 +26,7 @@ import static org.mockito.Mockito.verify;
 @RunWith(SpringRunner.class)
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
-class UserServiceImplTest1 {
+class UserServiceImplTest {
 
     @Mock
     private UserRepository userRepository;

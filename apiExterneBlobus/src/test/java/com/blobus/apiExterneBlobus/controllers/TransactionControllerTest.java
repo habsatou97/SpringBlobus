@@ -154,104 +154,15 @@ class TransactionControllerTest {
     /**
      * Method under test: {@link TransactionController#getTransactionStatus(Long)}
      */
-    @Test
-    @Disabled("TODO: Complete this test")
-    void testGetTransactionStatus2() {
-        //   Diffblue Cover was unable to write a Spring test,
-        //   so wrote a non-Spring test instead.
-        //   Diffblue AI was unable to find a test
 
-        // TODO: Complete this test.
-        //   Reason: R013 No inputs found that don't throw a trivial exception.
-        //   Diffblue Cover tried to run the arrange/act section, but the method under
-        //   test threw
-        //   java.lang.NullPointerException: Cannot invoke "com.blobus.apiExterneBlobus.services.interfaces.TransactionService.getTransactionStatus(java.lang.Long)" because "this.transactionService" is null
-        //       at com.blobus.apiExterneBlobus.controllers.TransactionController.getTransactionStatus(TransactionController.java:31)
-        //   See https://diff.blue/R013 to resolve this issue.
-
-        (new TransactionController(null)).getTransactionStatus(123L);
-    }
 
     /**
      * Method under test: {@link TransactionController#BulkCashInTransaction(RequestBodyTransactionDto[])}
      */
-    @Test
-    @Disabled("TODO: Complete this test")
-    void testBulkCashInTransaction() {
-        //   Diffblue Cover was unable to write a Spring test,
-        //   so wrote a non-Spring test instead.
-        //   Reason: R013 No inputs found that don't throw a trivial exception.
-        //   Diffblue Cover tried to run the arrange/act section, but the method under
-        //   test threw
-        //   com.fasterxml.jackson.databind.exc.InvalidDefinitionException: Java 8 date/time type `java.time.LocalDate` not supported by default: add Module "com.fasterxml.jackson.datatype:jackson-datatype-jsr310" to enable handling (through reference chain: com.blobus.apiExterneBlobus.dto.RequestBodyTransactionDto[0]->com.blobus.apiExterneBlobus.dto.RequestBodyTransactionDto["requestDate"])
-        //       at com.fasterxml.jackson.databind.exc.InvalidDefinitionException.from(InvalidDefinitionException.java:77)
-        //       at com.fasterxml.jackson.databind.SerializerProvider.reportBadDefinition(SerializerProvider.java:1306)
-        //       at com.fasterxml.jackson.databind.ser.impl.UnsupportedTypeSerializer.serialize(UnsupportedTypeSerializer.java:35)
-        //       at com.fasterxml.jackson.databind.ser.BeanPropertyWriter.serializeAsField(BeanPropertyWriter.java:733)
-        //       at com.fasterxml.jackson.databind.ser.std.BeanSerializerBase.serializeFields(BeanSerializerBase.java:774)
-        //       at com.fasterxml.jackson.databind.ser.BeanSerializer.serialize(BeanSerializer.java:178)
-        //       at com.fasterxml.jackson.databind.ser.std.ObjectArraySerializer.serializeContents(ObjectArraySerializer.java:253)
-        //       at com.fasterxml.jackson.databind.ser.std.ObjectArraySerializer.serialize(ObjectArraySerializer.java:214)
-        //       at com.fasterxml.jackson.databind.ser.std.ObjectArraySerializer.serialize(ObjectArraySerializer.java:23)
-        //       at com.fasterxml.jackson.databind.ser.DefaultSerializerProvider._serialize(DefaultSerializerProvider.java:480)
-        //       at com.fasterxml.jackson.databind.ser.DefaultSerializerProvider.serializeValue(DefaultSerializerProvider.java:319)
-        //       at com.fasterxml.jackson.databind.ObjectMapper._writeValueAndClose(ObjectMapper.java:4624)
-        //       at com.fasterxml.jackson.databind.ObjectMapper.writeValueAsString(ObjectMapper.java:3869)
-        //   See https://diff.blue/R013 to resolve this issue.
 
-        // TODO: Complete this test.
-        //   Reason: R013 No inputs found that don't throw a trivial exception.
-        //   Diffblue Cover tried to run the arrange/act section, but the method under
-        //   test threw
-        //   java.lang.NullPointerException
-        //       at java.util.stream.ReduceOps$1ReducingSink.accept(ReduceOps.java:80)
-        //       at java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
-        //       at java.util.Spliterators$ArraySpliterator.forEachRemaining(Spliterators.java:992)
-        //       at java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
-        //       at java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
-        //       at java.util.stream.ReduceOps$ReduceOp.evaluateSequential(ReduceOps.java:921)
-        //       at java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
-        //       at java.util.stream.ReferencePipeline.reduce(ReferencePipeline.java:657)
-        //       at com.blobus.apiExterneBlobus.services.implementations.TransactionServiceImpl.BulkCashInTransaction(TransactionServiceImpl.java:71)
-        //       at com.blobus.apiExterneBlobus.controllers.TransactionController.BulkCashInTransaction(TransactionController.java:36)
-        //   See https://diff.blue/R013 to resolve this issue.
-
-        TransactionController transactionController = new TransactionController(
-                new TransactionServiceImpl(mock(AccountRepository.class), mock(TransactionRepository.class),
-                        mock(BulkRepository.class), mock(UserRepository.class)));
-        AmountDto amount = new AmountDto();
-        CustomerDto customer = new CustomerDto("4105551212", WalletType.BONUS);
-
-        transactionController.BulkCashInTransaction(new RequestBodyTransactionDto[]{new RequestBodyTransactionDto(amount,
-                customer, new RetailerDto("4105551212", "Encrypted Pin Code", WalletType.BONUS), "Reference", true,
-                LocalDate.ofEpochDay(1L), TransactionType.CASHIN)});
-    }
-
-    /**
-     * Method under test: {@link TransactionController#BulkCashInTransaction(RequestBodyTransactionDto[])}
-     */
     @Test
     void testBulkCashInTransaction2() {
-        //   Diffblue Cover was unable to write a Spring test,
-        //   so wrote a non-Spring test instead.
-        //   Reason: R013 No inputs found that don't throw a trivial exception.
-        //   Diffblue Cover tried to run the arrange/act section, but the method under
-        //   test threw
-        //   com.fasterxml.jackson.databind.exc.InvalidDefinitionException: Java 8 date/time type `java.time.LocalDate` not supported by default: add Module "com.fasterxml.jackson.datatype:jackson-datatype-jsr310" to enable handling (through reference chain: com.blobus.apiExterneBlobus.dto.RequestBodyTransactionDto[0]->com.blobus.apiExterneBlobus.dto.RequestBodyTransactionDto["requestDate"])
-        //       at com.fasterxml.jackson.databind.exc.InvalidDefinitionException.from(InvalidDefinitionException.java:77)
-        //       at com.fasterxml.jackson.databind.SerializerProvider.reportBadDefinition(SerializerProvider.java:1306)
-        //       at com.fasterxml.jackson.databind.ser.impl.UnsupportedTypeSerializer.serialize(UnsupportedTypeSerializer.java:35)
-        //       at com.fasterxml.jackson.databind.ser.BeanPropertyWriter.serializeAsField(BeanPropertyWriter.java:733)
-        //       at com.fasterxml.jackson.databind.ser.std.BeanSerializerBase.serializeFields(BeanSerializerBase.java:774)
-        //       at com.fasterxml.jackson.databind.ser.BeanSerializer.serialize(BeanSerializer.java:178)
-        //       at com.fasterxml.jackson.databind.ser.std.ObjectArraySerializer.serializeContents(ObjectArraySerializer.java:253)
-        //       at com.fasterxml.jackson.databind.ser.std.ObjectArraySerializer.serialize(ObjectArraySerializer.java:214)
-        //       at com.fasterxml.jackson.databind.ser.std.ObjectArraySerializer.serialize(ObjectArraySerializer.java:23)
-        //       at com.fasterxml.jackson.databind.ser.DefaultSerializerProvider._serialize(DefaultSerializerProvider.java:480)
-        //       at com.fasterxml.jackson.databind.ser.DefaultSerializerProvider.serializeValue(DefaultSerializerProvider.java:319)
-        //       at com.fasterxml.jackson.databind.ObjectMapper._writeValueAndClose(ObjectMapper.java:4624)
-        //       at com.fasterxml.jackson.databind.ObjectMapper.writeValueAsString(ObjectMapper.java:3869)
-        //   See https://diff.blue/R013 to resolve this issue.
+
 
         ResponseCashInTransactionDto responseCashInTransactionDto = new ResponseCashInTransactionDto();
         responseCashInTransactionDto.setBulkId(123L);
@@ -278,40 +189,8 @@ class TransactionControllerTest {
         verify(transactionServiceImpl).BulkCashInTransaction((RequestBodyTransactionDto[]) any());
     }
 
-    /**
-     * Method under test: {@link TransactionController#getTransaction(Long)}
-     */
-    @Test
-    @Disabled("TODO: Complete this test")
-    void testGetTransaction() {
-        //   Diffblue Cover was unable to write a Spring test,
-        //   so wrote a non-Spring test instead.
-        //   Diffblue AI was unable to find a test
-
-        // TODO: Complete this test.
-        //   Reason: R013 No inputs found that don't throw a trivial exception.
-        //   Diffblue Cover tried to run the arrange/act section, but the method under
-        //   test threw
-        //   java.lang.NullPointerException: Cannot invoke "java.lang.Boolean.booleanValue()" because the return value of "com.blobus.apiExterneBlobus.models.Transaction.getReceiveNotificatiion()" is null
-        //       at com.blobus.apiExterneBlobus.services.implementations.TransactionServiceImpl.getTransaction(TransactionServiceImpl.java:128)
-        //       at com.blobus.apiExterneBlobus.controllers.TransactionController.getTransaction(TransactionController.java:47)
-        //   See https://diff.blue/R013 to resolve this issue.
-
-        TransactionRepository transactionRepository = mock(TransactionRepository.class);
-        when(transactionRepository.findById((Long) any())).thenReturn(Optional.of(new Transaction()));
-        (new TransactionController(new TransactionServiceImpl(mock(AccountRepository.class), transactionRepository,
-                mock(BulkRepository.class), mock(UserRepository.class)))).getTransaction(123L);
-    }
-
-    /**
-     * Method under test: {@link TransactionController#getTransaction(Long)}
-     */
     @Test
     void testGetTransaction2() {
-        //   Diffblue Cover was unable to write a Spring test,
-        //   so wrote a non-Spring test instead.
-        //   Diffblue AI was unable to find a test
-
         TransactionRepository transactionRepository = mock(TransactionRepository.class);
         LocalDate createdDate = LocalDate.ofEpochDay(1L);
         LocalDate requestDate = LocalDate.ofEpochDay(1L);
