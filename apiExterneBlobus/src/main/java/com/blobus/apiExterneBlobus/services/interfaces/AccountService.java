@@ -3,6 +3,7 @@ package com.blobus.apiExterneBlobus.services.interfaces;
 
 import com.blobus.apiExterneBlobus.dto.BalanceDto;
 import com.blobus.apiExterneBlobus.dto.CreateOrEditAccountDto;
+import com.blobus.apiExterneBlobus.dto.GetRetailerBalanceDto;
 import com.blobus.apiExterneBlobus.models.Account;
 import com.blobus.apiExterneBlobus.models.enums.Role;
 
@@ -18,7 +19,7 @@ public interface AccountService {
   public String GetAccountPhoneNumber(Long id);
   public CreateOrEditAccountDto updateTranfertAccount(CreateOrEditAccountDto transferAccount, Long id);
   public void deleteTransfertAccountById(Long id);
-  public Account getBalance(String encryptedPinCode, String phoneNumber, Long idUser);
+  public double getBalance(GetRetailerBalanceDto getRetailerBalanceDto);
 
   CreateOrEditAccountDto modifyTransferAccountRetailer(Long id, CreateOrEditAccountDto account, Role role);
     public void deleteByPhoneNumber(String phoneNumber);

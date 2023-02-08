@@ -8,6 +8,8 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import com.blobus.apiExterneBlobus.dto.CustomerEditCreateDto;
 import com.blobus.apiExterneBlobus.models.Customer;
 import com.blobus.apiExterneBlobus.repositories.CustomerRepository;
 import com.blobus.apiExterneBlobus.services.implementations.CustomerImpl;
@@ -33,7 +35,7 @@ class CustomerControllerTest {
                 .email("ramesh2@gmail.com")
                 .phoneNumber("778545383")
                 .build()));
-        ResponseEntity<List<Customer>> actualFindAllResult = (new CustomerController(new CustomerImpl(customerRepository)))
+        ResponseEntity<List<CustomerEditCreateDto>> actualFindAllResult = (new CustomerController(new CustomerImpl(customerRepository)))
                 .findAll();
         assertTrue(actualFindAllResult.hasBody());
         assertEquals(200, actualFindAllResult.getStatusCodeValue());
@@ -47,8 +49,8 @@ class CustomerControllerTest {
     void testFindOne() {
 
         CustomerRepository customerRepository = mock(CustomerRepository.class);
-        when(customerRepository.findById((Long) any())).thenReturn(Optional.of(new Customer("jane.doe@example.org")));
-        ResponseEntity<Customer> actualFindOneResult = (new CustomerController(new CustomerImpl(customerRepository)))
+        when(customerRepository.findById((Long) any())).thenReturn(Optional.of(new Customer()));
+        ResponseEntity<CustomerEditCreateDto> actualFindOneResult = (new CustomerController(new CustomerImpl(customerRepository)))
                 .findOne(123L);
         assertTrue(actualFindOneResult.hasBody());
         assertTrue(actualFindOneResult.getHeaders().isEmpty());
@@ -77,11 +79,15 @@ class CustomerControllerTest {
     void testSave() {
 
         CustomerRepository customerRepository = mock(CustomerRepository.class);
-        when(customerRepository.save((Customer) any())).thenReturn(new Customer("jane.doe@example.org"));
+        when(customerRepository.save((Customer) any())).thenReturn(new Customer());
         CustomerController customerController = new CustomerController(new CustomerImpl(customerRepository));
-        Customer customer = new Customer("jane.doe@example.org");
-        ResponseEntity<Customer> actualSaveResult = customerController.save(customer);
-        assertEquals(customer.getId(), actualSaveResult.getBody().getId());
+        Customer customer = new Customer();
+        customer.setEmail("ablaye@gmail.com");
+        customer.setLastName("Faye");
+        customer.setFirstName("hello");
+        customer.setPhoneNumber("451258");
+        ResponseEntity<CustomerEditCreateDto> actualSaveResult = customerController.save(customer);
+        assertEquals(customer.getEmail(), actualSaveResult.getBody().getEmail());
         assertTrue(actualSaveResult.getHeaders().isEmpty());
         assertEquals(200, actualSaveResult.getStatusCodeValue());
         verify(customerRepository).save((Customer) any());
@@ -91,10 +97,14 @@ class CustomerControllerTest {
     @Test
     void testEdit() {
         CustomerRepository customerRepository = mock(CustomerRepository.class);
-        when(customerRepository.save((Customer) any())).thenReturn(new Customer("jane.doe@example.org"));
+        when(customerRepository.save((Customer) any())).thenReturn(new Customer());
         CustomerController customerController = new CustomerController(new CustomerImpl(customerRepository));
-        Customer customer = new Customer("jane.doe@example.org");
-        ResponseEntity<Customer> actualEditResult = customerController.edit(customer);
+        Customer customer = new Customer();
+        customer.setLastName("Faye");
+        customer.setFirstName("hello");
+        customer.setPhoneNumber("451258");
+        customer.setEmail("hello@gmail.com");
+        ResponseEntity<CustomerEditCreateDto> actualEditResult = customerController.edit(customer);
         assertEquals(customer.getEmail(), actualEditResult.getBody().getEmail());
         assertTrue(actualEditResult.getHeaders().isEmpty());
         assertEquals(200, actualEditResult.getStatusCodeValue());
