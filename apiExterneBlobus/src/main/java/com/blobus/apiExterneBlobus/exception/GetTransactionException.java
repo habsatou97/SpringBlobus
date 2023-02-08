@@ -7,5 +7,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class GetTransactionException extends RuntimeException{
 
     public GetTransactionException(String message){
+        super(message);
     }
 }
