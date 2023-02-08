@@ -167,4 +167,15 @@ public class AccountServiceImpl implements AccountService {
         }
         throw new IllegalStateException("This user don't have a retailer role");
     }
+
+    //@Override
+    //public String EncryptPinCode(String encryptedPinCode, Long id) {
+        //boolean userExists= userRepository.existsById(id);
+        //if(!userExists)
+            //throw new IllegalStateException("This user don't existe");
+        //else
+
+
+        //return null;
+    //}
 }
