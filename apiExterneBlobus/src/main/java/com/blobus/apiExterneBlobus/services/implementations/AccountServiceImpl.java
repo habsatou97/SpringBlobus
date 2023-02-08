@@ -1,5 +1,6 @@
 package com.blobus.apiExterneBlobus.services.implementations;
 
+import com.blobus.apiExterneBlobus.dto.GetRetailerBalanceDto;
 import com.blobus.apiExterneBlobus.exception.ResourceNotFoundException;
 import com.blobus.apiExterneBlobus.models.Account;
 import com.blobus.apiExterneBlobus.models.Customer;
@@ -168,14 +169,8 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account getBalance(String encryptedPinCode, String phoneNumber, Long idUser) {
-        boolean userExiste = userRepository.existsById(idUser);
-        if(!userExiste) throw new EntityNotFoundException("This user don't existe");
-        User user = userRepository.findById(idUser).orElseThrow();
-        if (user.getRoles().contains(Role.RETAILER)){
-            return transferAccountRepository.findByEncryptedPinCodeAndPhoneNumberAndRetailer(encryptedPinCode,phoneNumber,user).orElseThrow();
-        }
-        throw new EntityNotFoundException("This user don't have a retailer role");
+    public double getBalance(GetRetailerBalanceDto getRetailerBalanceDto) {
+        return transferAccountRepository.findByPhoneNumberAndWalletTypeAndEncryptedPinCode(getRetailerBalanceDto.getPhoneNumber(), getRetailerBalanceDto.getWalletType(), getRetailerBalanceDto.getEncryptedPinCode()).orElseThrow().getBalance();
     }
 
     /**

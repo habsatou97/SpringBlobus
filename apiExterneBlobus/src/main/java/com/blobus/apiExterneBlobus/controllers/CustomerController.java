@@ -1,5 +1,6 @@
 package com.blobus.apiExterneBlobus.controllers;
 
+import com.blobus.apiExterneBlobus.dto.CustomerEditCreateDto;
 import com.blobus.apiExterneBlobus.models.Customer;
 import com.blobus.apiExterneBlobus.services.interfaces.CustomerService;
 import lombok.RequiredArgsConstructor;
@@ -16,13 +17,13 @@ public class CustomerController {
 
 
     @GetMapping
-    public ResponseEntity<List<Customer>> findAll(){
-        return ResponseEntity.ok().body(customerService.findAll());
+    public ResponseEntity<List<CustomerEditCreateDto>> findAll(){
+        return ResponseEntity.ok().body(customerService.findAllDto());
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Customer> findOne(@PathVariable Long id){
-        return ResponseEntity.ok().body(customerService.findOne(id));
+    public ResponseEntity<CustomerEditCreateDto> findOne(@PathVariable Long id){
+        return ResponseEntity.ok().body(customerService.findOneDto(id));
     }
 
     @DeleteMapping("{id}")
@@ -31,13 +32,13 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<Customer> save(@RequestBody Customer customer){
-        return ResponseEntity.ok().body(customerService.save(customer));
+    public ResponseEntity<CustomerEditCreateDto> save(@RequestBody Customer customer){
+        return ResponseEntity.ok().body(customerService.saveDto(customer));
     }
 
     @PutMapping
-    public ResponseEntity<Customer> edit(@RequestBody Customer customer){
-        return ResponseEntity.ok().body(customerService.edit(customer));
+    public ResponseEntity<CustomerEditCreateDto> edit(@RequestBody Customer customer){
+        return ResponseEntity.ok().body(customerService.editDto(customer));
     }
 
 }

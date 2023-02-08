@@ -1,5 +1,6 @@
 package com.blobus.apiExterneBlobus.controllers;
 
+import com.blobus.apiExterneBlobus.dto.GetRetailerBalanceDto;
 import com.blobus.apiExterneBlobus.models.Account;
 import com.blobus.apiExterneBlobus.models.Customer;
 import com.blobus.apiExterneBlobus.services.implementations.AccountServiceImpl;
@@ -16,9 +17,9 @@ public class AccountController {
     @Autowired
     private AccountServiceImpl transferAccountService;
 
-    @GetMapping("balanceRetailer/{encryptedPinCode}/{phoneNumber}/{idUser}")
-    public Double getBalance(@PathVariable String encryptedPinCode,@PathVariable String phoneNumber,@PathVariable Long idUser){
-        return transferAccountService.getBalance(encryptedPinCode, phoneNumber, idUser).getBalance();
+    @GetMapping("retailer/balance")
+    public double getBalance(@RequestBody GetRetailerBalanceDto getRetailerBalanceDto){
+        return transferAccountService.getBalance(getRetailerBalanceDto);
     }
 
     @GetMapping

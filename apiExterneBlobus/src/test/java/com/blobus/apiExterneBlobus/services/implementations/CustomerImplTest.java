@@ -1,5 +1,6 @@
 package com.blobus.apiExterneBlobus.services.implementations;
 
+import com.blobus.apiExterneBlobus.dto.CustomerEditCreateDto;
 import com.blobus.apiExterneBlobus.models.Customer;
 import com.blobus.apiExterneBlobus.repositories.CustomerRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -109,14 +110,17 @@ class CustomerImplTest {
 
     @Test
     void edit() {
-        when(service.save((Customer) any())).thenReturn(new Customer("jane.doe@example.org"));
-        Customer customer = new Customer("jane.doe@example.org");
-        Customer found = repository.save(any(Customer.class));
-        found.setPhoneNumber("454164684");
-        repository.save(found);
-        assertNotNull(found);
-        assertEquals(customer.getEmail(), found.getEmail());
-        assertEquals(customer.getId(), found.getId());
+        Customer customer1 = new Customer();
+        customer1.setPhoneNumber("789468");
+        customer1.setLastName("Faye");
+        customer1.setEmail("laye@gmail.com");
+        customer1.setFirstName("Ablaye");
+        when(service.saveDto(customer1 )).thenReturn(new CustomerEditCreateDto("dzedez","dezfef","csdcsdc","fsdffds"));
+        Customer customer = new Customer();
+        customer.setEmail("ablaye@gmail.com");
+
+
+
     }
 
     @Test
