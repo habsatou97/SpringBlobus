@@ -2,6 +2,7 @@ package com.blobus.apiExterneBlobus.services.interfaces;
 
 
 import com.blobus.apiExterneBlobus.models.Account;
+import com.blobus.apiExterneBlobus.models.enums.Role;
 
 import java.util.List;
 
@@ -15,9 +16,9 @@ public interface AccountService {
   public String GetAccountPhoneNumber(Long id);
   public Account updateTranfertAccount(Account transferAccount, Long id);
   public void deleteTransfertAccountById(Long id);
-  public Account addCustomerAccount(Account account, Long id);
-
   public Account getBalance(String encryptedPinCode, String phoneNumber, Long idUser);
 
+    Account modifyTransferAccountRetailer(Long id, Account account, Role role);
 
+    public void deleteByPhoneNumber(String phoneNumber);
 }

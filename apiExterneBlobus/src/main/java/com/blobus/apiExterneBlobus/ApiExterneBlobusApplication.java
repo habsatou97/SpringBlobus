@@ -1,5 +1,7 @@
 package com.blobus.apiExterneBlobus;
 
+import com.blobus.apiExterneBlobus.repositories.AccountRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -18,7 +20,6 @@ import static com.blobus.apiExterneBlobus.models.KeyGenerator.writeToFileString;
 @Configuration
 public class ApiExterneBlobusApplication
 {
-
 	public static void main(String[] args) {
 		SpringApplication.run(ApiExterneBlobusApplication.class, args);
 
@@ -35,4 +36,3 @@ public class ApiExterneBlobusApplication
 
 
 }
-
