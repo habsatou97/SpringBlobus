@@ -2,6 +2,7 @@ package com.blobus.apiExterneBlobus.services.implementations;
 
 import com.blobus.apiExterneBlobus.dto.AmountDto;
 import com.blobus.apiExterneBlobus.dto.RequestBodyUserProfileDto;
+import com.blobus.apiExterneBlobus.dto.UserDto;
 import com.blobus.apiExterneBlobus.exception.ResourceNotFoundException;
 import com.blobus.apiExterneBlobus.models.Account;
 import com.blobus.apiExterneBlobus.models.User;
@@ -26,7 +27,8 @@ public class UserServiceImpl implements UserService {
     private final AccountRepository transferAccountRepository;
 
     @Override
-    public User addSingleUser(User user) {
+    public UserDto addSingleUser(User user) {
+        UserDto userDto=new UserDto();
         if(
                 user.getFirstName()!=null &&
                 user.getLastName()!=null &&
@@ -40,14 +42,20 @@ public class UserServiceImpl implements UserService {
             }
             if( user.getNinea()!= null)
                 user.setRoles(Collections.singletonList(Role.RETAILER));
-            return userRepository.save(user);
+           userRepository.save(user);
+            userDto.setEmail(user.getEmail());
+            userDto.setPhoneNumber(user.getPhoneNumber());
+            userDto.setFirstName(user.getFirstName());
+            userDto.setLastName(user.getLastName());
+            return userDto;
         }
-       return null ;
+           throw new IllegalStateException("Veuillez renseignez tous les champs correctement");
     }
 
     @Override
     @Transactional
-    public User updateSingleUser(User user, Long id) {
+    public UserDto updateSingleUser(User user, Long id) {
+        UserDto userDto= new UserDto();
       User user1 = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("updated failled ,user_id not found"));
       if (user.getFirstName()!=null && user.getFirstName().length()>0
             && !Objects.equals(user1.getFirstName(),user.getFirstName()))
@@ -78,18 +86,38 @@ public class UserServiceImpl implements UserService {
         }
         user1.setRoles(user.getRoles());
         user1.setNinea(user.getNinea());
-        return userRepository.saveAndFlush(user1);
-
+        userRepository.saveAndFlush(user1);
+        userDto.setEmail(user1.getEmail());
+        userDto.setLastName(user1.getLastName());
+        userDto.setFirstName(user1.getFirstName());
+        userDto.setPhoneNumber(user1.getPhoneNumber());
+        return  userDto;
     }
 
     @Override
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserDto> getAllUsers() {
+        return userRepository.findAll().stream().map(
+                user -> {
+                    UserDto dto = new UserDto();
+                    dto.setLastName(user.getLastName());
+                    dto.setEmail(user.getEmail());
+                    dto.setFirstName(user.getFirstName());
+                    dto.setPhoneNumber(user.getPhoneNumber());
+                    return dto;
+                }).toList();
     }
 
     @Override
-    public Optional<User> getOneUser(Long id) {
-        return userRepository.findById(id);
+    public Optional<UserDto> getOneUser(Long id) {
+        return userRepository.findById(id).stream().map(
+                user -> {
+            UserDto dto = new UserDto();
+            dto.setLastName(user.getLastName());
+            dto.setEmail(user.getEmail());
+            dto.setFirstName(user.getFirstName());
+            dto.setPhoneNumber(user.getPhoneNumber());
+            return dto;
+        }).findAny();
     }
 
     @Override
@@ -125,7 +153,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getAllRetailer() {
+    public List<UserDto> getAllRetailer() {
         List<User> users = new ArrayList<>();
         List<User> users1 = userRepository.findAll();
         for (User user: users1){
@@ -133,6 +161,13 @@ public class UserServiceImpl implements UserService {
                 users.add(user);
             }
         }
-        return users;
+        return users.stream().map(user -> {
+            UserDto dto = new UserDto();
+            dto.setLastName(user.getLastName());
+            dto.setEmail(user.getEmail());
+            dto.setFirstName(user.getFirstName());
+            dto.setPhoneNumber(user.getPhoneNumber());
+            return dto;
+        }).toList();
     }
 }

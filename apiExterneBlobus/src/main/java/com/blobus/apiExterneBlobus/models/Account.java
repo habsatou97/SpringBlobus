@@ -14,6 +14,7 @@ import java.util.List;
 @Setter
 @RequiredArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Account {
     @Id
     @GeneratedValue
@@ -22,7 +23,7 @@ public class Account {
     @Column(nullable = false)
     private String encryptedPinCode;
     private WalletType walletType;
-    @Column(nullable = false,unique = true)
+    @Column(nullable = false)
     private String phoneNumber;
     boolean is_active;
     @ManyToOne

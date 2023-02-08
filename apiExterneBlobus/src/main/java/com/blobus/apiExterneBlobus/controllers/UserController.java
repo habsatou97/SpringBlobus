@@ -1,6 +1,7 @@
 package com.blobus.apiExterneBlobus.controllers;
 
 import com.blobus.apiExterneBlobus.dto.RequestBodyUserProfileDto;
+import com.blobus.apiExterneBlobus.dto.UserDto;
 import com.blobus.apiExterneBlobus.models.User;
 import com.blobus.apiExterneBlobus.repositories.UserRepository;
 import com.blobus.apiExterneBlobus.services.implementations.UserServiceImpl;
@@ -35,7 +36,7 @@ public class UserController {
      * @return
      */
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers(){
+    public ResponseEntity<List<UserDto>> getAllUsers(){
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
@@ -56,7 +57,7 @@ public class UserController {
      * @return
      */
     @GetMapping("{id}")
-    public ResponseEntity<Optional<User>> getOne(@PathVariable("id") Long id){
+    public ResponseEntity<Optional<UserDto>> getOne(@PathVariable("id") Long id){
         return ResponseEntity.ok(userService.getOneUser(id));
     }
 
@@ -66,7 +67,7 @@ public class UserController {
      * cette methode retourne la listes de tous les retailers de l'api
      */
     @GetMapping("retailers")
-    public ResponseEntity<List<User>> getAllRetailer(){
+    public ResponseEntity<List<UserDto>> getAllRetailer(){
         return ResponseEntity.ok(userService.getAllRetailer());
     }
 
@@ -77,7 +78,7 @@ public class UserController {
      * @return
      */
     @PostMapping
-    public ResponseEntity<User> addUser(@RequestBody User user){
+    public ResponseEntity<UserDto> addUser(@RequestBody User user){
         return ResponseEntity.ok(userService.addSingleUser(user));
     }
 
@@ -88,7 +89,7 @@ public class UserController {
      * @return
      */
     @PutMapping("{id}")
-    public ResponseEntity<User> updateUser(@RequestBody User user, @PathVariable("id") Long id){
+    public ResponseEntity<UserDto> updateUser(@RequestBody User user, @PathVariable("id") Long id){
         return ResponseEntity.ok(userService.updateSingleUser(user,id));
     }
 
