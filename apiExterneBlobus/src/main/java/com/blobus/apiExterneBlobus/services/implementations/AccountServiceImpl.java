@@ -129,14 +129,29 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public List <Account> getAllTransfertAccount() {
+    public List <CreateOrEditAccountDto> getAllTransfertAccount() {
 
-        return transferAccountRepository.findAll();
+        return transferAccountRepository.findAll().stream().map( account -> {
+            CreateOrEditAccountDto dto = new CreateOrEditAccountDto();
+            dto.setPhoneNumber(account.getPhoneNumber());
+            dto.setWalletType(account.getWalletType());
+            dto.setEncryptedPinCode(account.getEncryptedPinCode());
+            dto.setBalance(account.getBalance());
+            return dto;
+        }).toList();
     }
 
     @Override
-    public Account getTransfertAccountById(Long id) {
-        return transferAccountRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Account with id"+": "+id+ " don't exist"));
+    public Optional<CreateOrEditAccountDto> getTransfertAccountById(Long id) {
+        return transferAccountRepository.findById(id).stream().map(account -> {
+            CreateOrEditAccountDto dto = new CreateOrEditAccountDto();
+            dto.setPhoneNumber(account.getPhoneNumber());
+            dto.setWalletType(account.getWalletType());
+            dto.setEncryptedPinCode(account.getEncryptedPinCode());
+            dto.setBalance(account.getBalance());
+            return dto;
+        }).findAny();
+
     }
 
     @Override
@@ -232,7 +247,9 @@ public class AccountServiceImpl implements AccountService {
      * @return
      */
     @Override
-    public CreateOrEditAccountDto modifyTransferAccountRetailer(Long id, CreateOrEditAccountDto account, Role role) {
+    public CreateOrEditAccountDto modifyTransferAccountRetailer(Long id,
+                                                                CreateOrEditAccountDto account,
+                                                                Role role) {
         Account account1 = transferAccountRepository.findById(id).orElseThrow(()->
                 new ResourceNotFoundException("Account not found"));
         if(account1.getRetailer().getRoles().contains(Role.RETAILER)){
@@ -256,6 +273,12 @@ public class AccountServiceImpl implements AccountService {
 
     }
 
+    /**
+     * Cette methode permet de mettre à jour le solde d'un compte de transfert
+     * @param balance
+     * @param id
+     * @return
+     */
     @Override
     public BalanceDto updatedBalance(BalanceDto balance, Long id) {
         Optional<Account> account = transferAccountRepository.findById(id);
@@ -266,6 +289,4 @@ public class AccountServiceImpl implements AccountService {
         }
         throw new EntityNotFoundException("This account does'nt exist !!");
     }
-
-
 }
