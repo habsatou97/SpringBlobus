@@ -121,7 +121,7 @@ public class AccountServiceImpl implements AccountService {
             //return null;
         } else {
 
-            if(transferAccount.getPhoneNumber()!=null && transferAccount.getPhoneNumber().length() ==0
+            if(transferAccount.getPhoneNumber()!=null && transferAccount.getPhoneNumber().length() ==9
               && transferAccount.getWalletType()!=null && transferAccount.getEncryptedPinCode()!=null
                     && transferAccount.getEncryptedPinCode().length() >0){
                 account.setCustomer(customer);
