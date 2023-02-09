@@ -23,7 +23,7 @@ public class Account {
     @Column(nullable = false)
     private String encryptedPinCode;
     private WalletType walletType;
-    @Column(nullable = false)
+    @Column(nullable = false,length = 9)
     private String phoneNumber;
     boolean is_active;
     @ManyToOne
