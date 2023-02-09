@@ -241,7 +241,7 @@ class AccountServiceImplTest {
         Mockito.when(repository.findById(account.getId())).thenReturn(Optional.of(account));
     }
 
-    /*@Test
+    @Test
     void getBalance() {
         String email ="dtdvf.fffrgfby@avimtoo.com";
         User user = new User();
@@ -266,10 +266,10 @@ class AccountServiceImplTest {
 
         String encryptedPinCode = account.getEncryptedPinCode();
         String phoneNumber =account.getPhoneNumber();
-        String  walletType = WalletType.BONUS.name();
-        //when(service.getBalance(new GetRetailerBalanceDto(encryptedPinCode,phoneNumber,walletType))).thenReturn(null);
-        //Assertions.assertThat(service.getBalance(new GetRetailerBalanceDto(encryptedPinCode,phoneNumber,walletType))).isNotNull();
-    }*/
+        WalletType  walletType = WalletType.BONUS;
+        when(service.getBalance(new GetRetailerBalanceDto(encryptedPinCode,phoneNumber,walletType))).thenReturn(account.getBalance());
+        Assertions.assertThat(service.getBalance(new GetRetailerBalanceDto(encryptedPinCode,phoneNumber,walletType))).isNotNull();
+    }
 
     @Test
     void modifyTransferAccountRetailer() {
