@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,7 +26,7 @@ public class AccountController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Account>>getAll()
+    public ResponseEntity<List<CreateOrEditAccountDto>>getAll()
     {
 
         return ResponseEntity
@@ -33,7 +34,7 @@ public class AccountController {
 
     }
     @GetMapping("{id}")
-    public ResponseEntity<Account> getOne(@PathVariable Long id){
+    public ResponseEntity<Optional<CreateOrEditAccountDto>> getOne(@PathVariable Long id){
         return ResponseEntity.ok().body(transferAccountService.getTransfertAccountById(id));
     }
     @RequestMapping(value = "phoneNumber/{id}",method = RequestMethod.GET)
@@ -43,17 +44,20 @@ public class AccountController {
     }
 
     @PostMapping("customer/{id}")
-    public ResponseEntity<CreateOrEditAccountDto>saveCustomer(@RequestBody CreateOrEditAccountDto transferAccount, @PathVariable Long id){
+    public ResponseEntity<CreateOrEditAccountDto>saveCustomer(@RequestBody CreateOrEditAccountDto transferAccount,
+                                                              @PathVariable Long id){
         return ResponseEntity.ok().body(transferAccountService.createCustomerTransfertAccount(transferAccount,id));
     }
     @PostMapping("/retailer/{id}")
-    public ResponseEntity<CreateOrEditAccountDto>saveRetailer(@RequestBody CreateOrEditAccountDto transferAccount,@PathVariable Long id){
+    public ResponseEntity<CreateOrEditAccountDto>saveRetailer(@RequestBody CreateOrEditAccountDto transferAccount,
+                                                              @PathVariable Long id){
         return ResponseEntity.ok().body(transferAccountService.createRetailerTransfertAccount(transferAccount,id));
     }
 
 
     @RequestMapping(value = "{id}",method = RequestMethod.PUT)
-    public ResponseEntity<CreateOrEditAccountDto> update(@RequestBody CreateOrEditAccountDto transferAccount, @PathVariable Long id){
+    public ResponseEntity<CreateOrEditAccountDto> update(@RequestBody CreateOrEditAccountDto transferAccount,
+                                                         @PathVariable Long id){
         return ResponseEntity.ok().body(transferAccountService.updateTranfertAccount(transferAccount,id));
     }
     @RequestMapping(value = "enable/{id}",method = RequestMethod.PUT)
@@ -80,8 +84,9 @@ public class AccountController {
     }
 
     @PutMapping("/edit/balance/{id}")
-    public BalanceDto updatedBalance(@RequestBody BalanceDto balanceDto,@PathVariable("id") Long id){
-        return transferAccountService.updatedBalance(balanceDto,id);
+    public ResponseEntity<BalanceDto> updatedBalance(@RequestBody BalanceDto balanceDto,
+                                                     @PathVariable("id") Long id){
+        return ResponseEntity.ok(transferAccountService.updatedBalance(balanceDto,id));
     }
 
 }

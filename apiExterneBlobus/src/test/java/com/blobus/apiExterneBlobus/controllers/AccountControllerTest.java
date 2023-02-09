@@ -3,6 +3,8 @@ package com.blobus.apiExterneBlobus.controllers;
 import com.blobus.apiExterneBlobus.config.JwtAuthenticationFilter;
 import com.blobus.apiExterneBlobus.config.JwtService;
 import com.blobus.apiExterneBlobus.config.SecurityConfiguration;
+import com.blobus.apiExterneBlobus.dto.BalanceDto;
+import com.blobus.apiExterneBlobus.dto.CreateOrEditAccountDto;
 import com.blobus.apiExterneBlobus.dto.GetRetailerBalanceDto;
 import com.blobus.apiExterneBlobus.models.Account;
 import com.blobus.apiExterneBlobus.models.Customer;
@@ -10,8 +12,10 @@ import com.blobus.apiExterneBlobus.models.User;
 import com.blobus.apiExterneBlobus.models.enums.Role;
 import com.blobus.apiExterneBlobus.models.enums.WalletType;
 import com.blobus.apiExterneBlobus.repositories.AccountRepository;
+import com.blobus.apiExterneBlobus.repositories.CustomerRepository;
 import com.blobus.apiExterneBlobus.repositories.UserRepository;
 import com.blobus.apiExterneBlobus.services.implementations.AccountServiceImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -45,10 +49,10 @@ class AccountControllerTest {
 
     @MockBean
     AccountRepository accountRepository;
-
     @Autowired
     MockMvc mockMvc;
-
+    @Autowired
+    ObjectMapper mapper;
     @MockBean
     JwtAuthenticationFilter jwtAuthenticationFilter;
     @MockBean
@@ -57,12 +61,8 @@ class AccountControllerTest {
     JwtService jwtService;
     @MockBean
     SecurityConfiguration securityConfiguration;
-
-
     @Autowired
     private WebApplicationContext webApplicationContext;
-
-
 
     User user= new  User(
             3L,
@@ -75,11 +75,13 @@ class AccountControllerTest {
             "fzivbedfegjd",
             "fohfgfyf78");
     Customer customer = Customer.builder()
+            .id(1L)
             .firstName("Ramesh")
             .lastName("Fadatare")
             .email("ramesh1@gmail.com")
             .phoneNumber("778545382").build();
     Account account1 = Account.builder()
+            .id(1L)
             .balance(100000)
             .encryptedPinCode("945142952595")
             .phoneNumber("762564426")
@@ -108,7 +110,7 @@ class AccountControllerTest {
     void testGetAll() {
         AccountRepository repository = mock(AccountRepository.class);
         when(repository.findAll()).thenReturn(List.of(account1,account2));
-        ResponseEntity<List<Account>> accountResult = (new AccountController( new AccountServiceImpl(repository))).getAll();
+        ResponseEntity<List<CreateOrEditAccountDto>> accountResult = (new AccountController( new AccountServiceImpl(repository))).getAll();
         assertTrue(accountResult.hasBody());
         assertEquals(200, accountResult.getStatusCodeValue());
         assertTrue(accountResult.getHeaders().isEmpty());
@@ -121,7 +123,8 @@ class AccountControllerTest {
     void testGetOne() {
         AccountRepository repository = mock(AccountRepository.class);
         when(repository.findById((Long) any())).thenReturn(Optional.of(account1));
-        ResponseEntity<Account> result = (new AccountController(new AccountServiceImpl(repository))).getOne(2L);
+        ResponseEntity<Optional<CreateOrEditAccountDto>> result = (new AccountController(
+                new AccountServiceImpl(repository))).getOne(2L);
         assertTrue(result.hasBody());
         assertEquals(200,result.getStatusCodeValue());
         assertTrue(result.getHeaders().isEmpty());
@@ -149,41 +152,139 @@ class AccountControllerTest {
 
     }
 
-
-
     @Test
-    void getPhoneNumber() {
+    void testGetPhoneNumber() {
+        AccountRepository repository= mock(AccountRepository.class);
+        when(repository.save(account1)).thenReturn(account1);
+        AccountServiceImpl service = mock(AccountServiceImpl.class);
+
+        when(service.GetAccountPhoneNumber(account1.getId())).thenReturn(account1.getPhoneNumber());
+        org.assertj.core.api.Assertions.assertThat(service.GetAccountPhoneNumber(account1.getId())).isNotNull();
     }
 
     @Test
-    void saveCustomer() {
+    void saveCustomer() throws Exception {
+        AccountRepository repository= mock(AccountRepository.class);
+        CustomerRepository customerRepository= mock(CustomerRepository.class);
+        AccountServiceImpl service= mock(AccountServiceImpl.class);
+
+        customerRepository.save(customer);
+
+        CreateOrEditAccountDto dto = new  CreateOrEditAccountDto();
+        dto.setPhoneNumber("788564426");
+        dto.setEncryptedPinCode("92952595");
+        dto.setWalletType(WalletType.INTERNATIONAL);
+        when(service.createCustomerTransfertAccount(dto,customer.getId())).thenReturn(dto);
+        org.assertj.core.api.Assertions.assertThat(service.createCustomerTransfertAccount(dto,customer.getId())).isNotNull();
     }
 
     @Test
     void saveRetailer() {
+
+        AccountRepository repository= mock(AccountRepository.class);
+        UserRepository userRepository= mock(UserRepository.class);
+        AccountServiceImpl service= mock(AccountServiceImpl.class);
+
+        userRepository.save(user);
+
+        CreateOrEditAccountDto dto = new  CreateOrEditAccountDto();
+        dto.setPhoneNumber("788564426");
+        dto.setEncryptedPinCode("92952595");
+        dto.setWalletType(WalletType.INTERNATIONAL);
+
+        when(service.createRetailerTransfertAccount(dto,user.getId())).thenReturn(dto);
+        org.assertj.core.api.Assertions.assertThat(service.createRetailerTransfertAccount(dto,user.getId())).isNotNull();
     }
 
     @Test
     void update() {
+        AccountRepository  repository = mock(AccountRepository.class);
+        AccountServiceImpl service =mock(AccountServiceImpl.class);
+        Account ct = new Account();
+        ct.setId(1L);
+        when(repository.save((Account) any())).thenReturn(ct);
+        AccountController controller= new AccountController(service);
+        CreateOrEditAccountDto dto= new CreateOrEditAccountDto();
+        accountRepository.save(account1);
+        Optional<Account> account = repository.findById(account1.getId());
+
+        dto.setBalance(100000);
+        dto.setPhoneNumber("78541236");
+        dto.setEncryptedPinCode("sftruf65489");
+        dto.setWalletType(WalletType.BONUS);
+        ResponseEntity<CreateOrEditAccountDto> response = controller.update(dto,ct.getId());
+
+        assertEquals(200,response.getStatusCodeValue());
+        assertTrue(response.getHeaders().isEmpty());
     }
 
     @Test
     void enable() {
+        AccountRepository  repository = mock(AccountRepository.class);
+        AccountServiceImpl service =mock(AccountServiceImpl.class);
+        AccountController controller= new AccountController(service);
+        Account ct = new Account();
+        ct.setId(1L);
+        when(repository.save((Account) any())).thenReturn(ct);
+
+        ResponseEntity<CreateOrEditAccountDto> response = controller.enable(ct.getId());
+        assertEquals(200,response.getStatusCodeValue());
+        assertTrue(response.getHeaders().isEmpty());
     }
 
     @Test
     void disable() {
+        AccountRepository  repository = mock(AccountRepository.class);
+        AccountServiceImpl service =mock(AccountServiceImpl.class);
+        AccountController controller= new AccountController(service);
+        Account ct = new Account();
+        ct.setId(1L);
+
+        when(repository.save((Account) any())).thenReturn(ct);
+
+        ResponseEntity<CreateOrEditAccountDto> response = controller.disable(ct.getId());
+
+        assertEquals(200,response.getStatusCodeValue());
+        assertTrue(response.getHeaders().isEmpty());
     }
 
     @Test
     void delete() {
+        AccountRepository  repository = mock(AccountRepository.class);
+        AccountServiceImpl service =mock(AccountServiceImpl.class);
+        repository.save(account1);
+        doNothing().when(repository).deleteById(account1.getId());
+        (new AccountController(service)).delete(account1.getId());
+
+        org.assertj.core.api.Assertions.assertThat(repository.findById(account1.getId())).isEmpty();
     }
 
     @Test
     void deleteByPhoneNumber() {
+
+        AccountRepository  repository = mock(AccountRepository.class);
+        AccountServiceImpl service =mock(AccountServiceImpl.class);
+        repository.save(account1);
+        doNothing().when(repository).deleteAccountByPhoneNumber(account1.getPhoneNumber());
+        (new AccountController(service)).deleteByPhoneNumber(account1.getPhoneNumber());
+
+        org.assertj.core.api.Assertions.assertThat(repository.getAccountByPhoneNumber(account1.getPhoneNumber())).isEmpty();
     }
 
     @Test
     void updatedBalance() {
+        AccountRepository  repository = mock(AccountRepository.class);
+        AccountServiceImpl service =mock(AccountServiceImpl.class);
+        Account ct = new Account();
+        ct.setId(1L);
+        when(repository.save((Account) any())).thenReturn(ct);
+        AccountController controller= new AccountController(service);
+        BalanceDto dto = new BalanceDto();
+        dto.setBalance(1000000);
+        ResponseEntity<BalanceDto> response = controller.updatedBalance(dto,ct.getId());
+
+        assertEquals(200,response.getStatusCodeValue());
+        assertTrue(response.getHeaders().isEmpty());
+
     }
 }

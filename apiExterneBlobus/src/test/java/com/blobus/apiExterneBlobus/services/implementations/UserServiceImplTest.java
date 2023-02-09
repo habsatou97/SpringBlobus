@@ -139,7 +139,7 @@ class UserServiceImplTest {
                             return dto;
                         }).findAny());
         // verify
-        Assertions.assertThat(userRepository.findById(user1.getId()).isEmpty());
+        Assertions.assertThat(service.getOneUser(user1.getId())).isNotNull();
 
 
     }
