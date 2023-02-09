@@ -72,7 +72,7 @@ public class AccountServiceImpl implements AccountService {
                     retailer.addTransferAccounts(compte);
                     return transferAccount;
                 }
-                throw new IllegalStateException("Veuillez renseignez les donnez correctement");
+                throw new IllegalStateException("Veuillez renseignez les données correctement");
 
 
             } else throw new EntityNotFoundException("Retailer with id" + ": " + id + " don't exist");

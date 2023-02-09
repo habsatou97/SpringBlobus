@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
                 user.getFirstName()!=null &&
                 user.getLastName()!=null &&
                 user.getEmail() != null &&
-                user.getPhoneNumber() !=null)
+                user.getPhoneNumber() !=null && user.getPhoneNumber().length() == 9)
         {
             Optional<User> userOptional = userRepository.findUserByEmail(user.getEmail());
             Optional<User> userOptional1 = userRepository.findUserByPhoneNumber(user.getPhoneNumber());
