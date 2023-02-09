@@ -3,6 +3,7 @@ package com.blobus.apiExterneBlobus.controllers;
 import com.blobus.apiExterneBlobus.config.JwtAuthenticationFilter;
 import com.blobus.apiExterneBlobus.config.JwtService;
 import com.blobus.apiExterneBlobus.config.SecurityConfiguration;
+import com.blobus.apiExterneBlobus.dto.GetRetailerBalanceDto;
 import com.blobus.apiExterneBlobus.models.Account;
 import com.blobus.apiExterneBlobus.models.Customer;
 import com.blobus.apiExterneBlobus.models.User;
@@ -128,7 +129,7 @@ class AccountControllerTest {
 
     }
 
-   /* @Test
+    @Test
     void getBalance() throws  Exception{
         AccountRepository repository= mock(AccountRepository.class);
         UserRepository userRepository=mock(UserRepository.class);
@@ -136,16 +137,17 @@ class AccountControllerTest {
         when(userRepository.save(user)).thenReturn(user);
         when(repository.save(account1)).thenReturn(account1);
 
-        when(service.getBalance(
+        when(service.getBalance(new GetRetailerBalanceDto(
                 account1.getEncryptedPinCode(),
                 account1.getPhoneNumber(),
-                account1.getRetailer().getId())).thenReturn(account1);
-        org.assertj.core.api.Assertions.assertThat(service.getBalance(
+                account1.getWalletType()))).
+                thenReturn(account1.getBalance());
+        org.assertj.core.api.Assertions.assertThat(service.getBalance(new GetRetailerBalanceDto(
                 account1.getEncryptedPinCode(),
                 account1.getPhoneNumber(),
-                account1.getRetailer().getId())).isNotNull();
+                account1.getWalletType()))).isNotNull();
 
-    }*/
+    }
 
 
 

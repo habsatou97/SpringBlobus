@@ -95,7 +95,6 @@ public class AccountServiceImpl implements AccountService {
                 } else throw new EntityNotFoundException("Retailer with id" + ": " + id + " don't exist");
             }
         }
-
     }
 
     @Override
@@ -180,7 +179,6 @@ public class AccountServiceImpl implements AccountService {
             return existingAccount.get().getPhoneNumber();
         else throw new EntityNotFoundException("Account with id"+": "+id+ " don't exist");
     }
-
     @Override
     public CreateOrEditAccountDto updateTranfertAccount(CreateOrEditAccountDto transferAccount, Long id) {
         Optional<Account> existingAccount = transferAccountRepository.findById(id);
@@ -204,7 +202,6 @@ public class AccountServiceImpl implements AccountService {
                account.setEncryptedPinCode(compte.getEncryptedPinCode());
                account.setPhoneNumber(compte.getPhoneNumber());
                return account;
-
         }
         else throw new EntityNotFoundException("Account with id"+": "+id+ " don't exist");
         //return null;
@@ -221,7 +218,10 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public double getBalance(GetRetailerBalanceDto getRetailerBalanceDto) {
-        return transferAccountRepository.findByPhoneNumberAndWalletTypeAndEncryptedPinCode(getRetailerBalanceDto.getPhoneNumber(), getRetailerBalanceDto.getWalletType(), getRetailerBalanceDto.getEncryptedPinCode()).orElseThrow().getBalance();
+        return transferAccountRepository.findByPhoneNumberAndWalletTypeAndEncryptedPinCode(
+                getRetailerBalanceDto.getPhoneNumber(),
+                getRetailerBalanceDto.getWalletType(),
+                getRetailerBalanceDto.getEncryptedPinCode()).orElseThrow().getBalance();
     }
 
     /**
