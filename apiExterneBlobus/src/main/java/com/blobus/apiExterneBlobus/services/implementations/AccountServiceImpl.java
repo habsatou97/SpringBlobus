@@ -48,15 +48,23 @@ public class AccountServiceImpl implements AccountService {
         if (comptes.isEmpty()) {
             // verifie si l'utlisateur est un retailer
             if (retailer.getRoles().contains(Role.RETAILER)) {
-                account.setRetailer(retailer);
-                account.set_active(true);
-                account.setEncryptedPinCode(transferAccount.getEncryptedPinCode());
-                account.setWalletType(transferAccount.getWalletType());
-                account.setPhoneNumber(transferAccount.getPhoneNumber());
-                account.setBalance(0.0);
-                Account compte = transferAccountRepository.save(account);
-                retailer.addTransferAccounts(compte);
-                return transferAccount;
+
+                if(transferAccount.getPhoneNumber()!=null && transferAccount.getPhoneNumber().length() ==9
+                        && transferAccount.getWalletType()!=null && transferAccount.getEncryptedPinCode()!=null
+                        && transferAccount.getEncryptedPinCode().length() >0){
+                    account.setRetailer(retailer);
+                    account.set_active(true);
+                    account.setEncryptedPinCode(transferAccount.getEncryptedPinCode());
+                    account.setWalletType(transferAccount.getWalletType());
+                    account.setPhoneNumber(transferAccount.getPhoneNumber());
+                    account.setBalance(0.0);
+                    Account compte = transferAccountRepository.save(account);
+                    retailer.addTransferAccounts(compte);
+                    return transferAccount;
+                }
+                throw new IllegalStateException("Veuillez renseignez les donnez correctement");
+
+
             } else throw new EntityNotFoundException("Retailer with id" + ": " + id + " don't exist");
 
         }
@@ -73,15 +81,22 @@ public class AccountServiceImpl implements AccountService {
                 throw  new IllegalStateException("Ce retailer possede deja un compte de ce type");
             } else {
                 if (retailer.getRoles().contains(Role.RETAILER)) {
-                    account.setRetailer(retailer);
-                    account.set_active(true);
-                    account.setEncryptedPinCode(transferAccount.getEncryptedPinCode());
-                    account.setWalletType(transferAccount.getWalletType());
-                    account.setPhoneNumber(transferAccount.getPhoneNumber());
-                    account.setBalance(0.0);
-                    Account compte = transferAccountRepository.save(account);
-                    retailer.addTransferAccounts(compte);
-                    return transferAccount;
+
+                    if(transferAccount.getPhoneNumber()!=null && transferAccount.getPhoneNumber().length() ==9
+                            && transferAccount.getWalletType()!=null && transferAccount.getEncryptedPinCode()!=null
+                            && transferAccount.getEncryptedPinCode().length() >0){
+                        account.setRetailer(retailer);
+                        account.set_active(true);
+                        account.setEncryptedPinCode(transferAccount.getEncryptedPinCode());
+                        account.setWalletType(transferAccount.getWalletType());
+                        account.setPhoneNumber(transferAccount.getPhoneNumber());
+                        account.setBalance(0.0);
+                        Account compte = transferAccountRepository.save(account);
+                        retailer.addTransferAccounts(compte);
+                        return transferAccount;
+
+                    } throw new IllegalStateException("Veuillez renseignez les donnez correctement");
+
                 } else throw new EntityNotFoundException("Retailer with id" + ": " + id + " don't exist");
             }
         }
@@ -106,15 +121,21 @@ public class AccountServiceImpl implements AccountService {
             //return null;
         } else {
 
-            account.setCustomer(customer);
-            account.set_active(true);
-            account.setEncryptedPinCode(transferAccount.getEncryptedPinCode());
-            account.setWalletType(transferAccount.getWalletType());
-            account.setPhoneNumber(transferAccount.getPhoneNumber());
-            account.setBalance(0.0);
-            Account compte = transferAccountRepository.save(account);
-            customer.addTransferAccounts(compte);
-            return transferAccount;
+            if(transferAccount.getPhoneNumber()!=null && transferAccount.getPhoneNumber().length() ==0
+              && transferAccount.getWalletType()!=null && transferAccount.getEncryptedPinCode()!=null
+                    && transferAccount.getEncryptedPinCode().length() >0){
+                account.setCustomer(customer);
+                account.set_active(true);
+                account.setEncryptedPinCode(transferAccount.getEncryptedPinCode());
+                account.setWalletType(transferAccount.getWalletType());
+                account.setPhoneNumber(transferAccount.getPhoneNumber());
+                account.setBalance(0.0);
+                Account compte = transferAccountRepository.save(account);
+                customer.addTransferAccounts(compte);
+                return transferAccount;
+            }
+            throw new IllegalStateException("Veuillez renseignez les donnez correctement");
+
         }
     }
 
