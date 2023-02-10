@@ -15,9 +15,15 @@ import com.blobus.apiExterneBlobus.repositories.UserRepository;
 import com.blobus.apiExterneBlobus.services.interfaces.AccountService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.*;
 
 import static java.lang.Boolean.FALSE;
@@ -31,12 +37,16 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private UserRepository userRepository;
 
-    public  AccountServiceImpl(AccountRepository transferAccountRepository){
+    @Autowired
+    private KeyGeneratorImpl keyGeneratorService;
+
+    public  AccountServiceImpl(AccountRepository transferAccountRepository, KeyGeneratorImpl keyGeneratorService){
         this.transferAccountRepository=transferAccountRepository;
+        this.keyGeneratorService = keyGeneratorService;
     }
 
     @Override
-    public CreateOrEditAccountDto createRetailerTransfertAccount(CreateOrEditAccountDto transferAccount,Long id) {
+    public CreateOrEditAccountDto createRetailerTransfertAccount(CreateOrEditAccountDto transferAccount,Long id) throws IOException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, InvalidKeySpecException {
         Account account = new Account();
         User retailer = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         List<Account> comptes = retailer.getAccounts();
