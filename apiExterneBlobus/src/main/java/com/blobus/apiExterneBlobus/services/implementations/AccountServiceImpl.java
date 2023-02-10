@@ -58,15 +58,23 @@ public class AccountServiceImpl implements AccountService {
         if (comptes.isEmpty()) {
             // verifie si l'utlisateur est un retailer
             if (retailer.getRoles().contains(Role.RETAILER)) {
-                account.setRetailer(retailer);
-                account.set_active(true);
-                account.setEncryptedPinCode(transferAccount.getEncryptedPinCode());
-                account.setWalletType(transferAccount.getWalletType());
-                account.setPhoneNumber(transferAccount.getPhoneNumber());
-                account.setBalance(0.0);
-                Account compte = transferAccountRepository.save(account);
-                retailer.addTransferAccounts(compte);
-                return transferAccount;
+
+                if(transferAccount.getPhoneNumber()!=null && transferAccount.getPhoneNumber().length() ==9
+                        && transferAccount.getWalletType()!=null && transferAccount.getEncryptedPinCode()!=null
+                        && transferAccount.getEncryptedPinCode().length() >0){
+                    account.setRetailer(retailer);
+                    account.set_active(true);
+                    account.setEncryptedPinCode(transferAccount.getEncryptedPinCode());
+                    account.setWalletType(transferAccount.getWalletType());
+                    account.setPhoneNumber(transferAccount.getPhoneNumber());
+                    account.setBalance(0.0);
+                    Account compte = transferAccountRepository.save(account);
+                    retailer.addTransferAccounts(compte);
+                    return transferAccount;
+                }
+                throw new IllegalStateException("Veuillez renseignez les données correctement");
+
+
             } else throw new EntityNotFoundException("Retailer with id" + ": " + id + " don't exist");
 
         }
@@ -83,19 +91,25 @@ public class AccountServiceImpl implements AccountService {
                 throw  new IllegalStateException("Ce retailer possede deja un compte de ce type");
             } else {
                 if (retailer.getRoles().contains(Role.RETAILER)) {
-                    account.setRetailer(retailer);
-                    account.set_active(true);
-                    account.setEncryptedPinCode(transferAccount.getEncryptedPinCode());
-                    account.setWalletType(transferAccount.getWalletType());
-                    account.setPhoneNumber(transferAccount.getPhoneNumber());
-                    account.setBalance(0.0);
-                    Account compte = transferAccountRepository.save(account);
-                    retailer.addTransferAccounts(compte);
-                    return transferAccount;
+
+                    if(transferAccount.getPhoneNumber()!=null && transferAccount.getPhoneNumber().length() ==9
+                            && transferAccount.getWalletType()!=null && transferAccount.getEncryptedPinCode()!=null
+                            && transferAccount.getEncryptedPinCode().length() >0){
+                        account.setRetailer(retailer);
+                        account.set_active(true);
+                        account.setEncryptedPinCode(transferAccount.getEncryptedPinCode());
+                        account.setWalletType(transferAccount.getWalletType());
+                        account.setPhoneNumber(transferAccount.getPhoneNumber());
+                        account.setBalance(0.0);
+                        Account compte = transferAccountRepository.save(account);
+                        retailer.addTransferAccounts(compte);
+                        return transferAccount;
+
+                    } throw new IllegalStateException("Veuillez renseignez les donnez correctement");
+
                 } else throw new EntityNotFoundException("Retailer with id" + ": " + id + " don't exist");
             }
         }
-
     }
 
     @Override
@@ -117,27 +131,48 @@ public class AccountServiceImpl implements AccountService {
             //return null;
         } else {
 
-            account.setCustomer(customer);
-            account.set_active(true);
-            account.setEncryptedPinCode(transferAccount.getEncryptedPinCode());
-            account.setWalletType(transferAccount.getWalletType());
-            account.setPhoneNumber(transferAccount.getPhoneNumber());
-            account.setBalance(0.0);
-            Account compte = transferAccountRepository.save(account);
-            customer.addTransferAccounts(compte);
-            return transferAccount;
+            if(transferAccount.getPhoneNumber()!=null && transferAccount.getPhoneNumber().length() ==9
+              && transferAccount.getWalletType()!=null && transferAccount.getEncryptedPinCode()!=null
+                    && transferAccount.getEncryptedPinCode().length() >0){
+                account.setCustomer(customer);
+                account.set_active(true);
+                account.setEncryptedPinCode(transferAccount.getEncryptedPinCode());
+                account.setWalletType(transferAccount.getWalletType());
+                account.setPhoneNumber(transferAccount.getPhoneNumber());
+                account.setBalance(0.0);
+                Account compte = transferAccountRepository.save(account);
+                customer.addTransferAccounts(compte);
+                return transferAccount;
+            }
+            throw new IllegalStateException("Veuillez renseignez les donnez correctement");
+
         }
     }
 
     @Override
-    public List <Account> getAllTransfertAccount() {
+    public List <CreateOrEditAccountDto> getAllTransfertAccount() {
 
-        return transferAccountRepository.findAll();
+        return transferAccountRepository.findAll().stream().map( account -> {
+            CreateOrEditAccountDto dto = new CreateOrEditAccountDto();
+            dto.setPhoneNumber(account.getPhoneNumber());
+            dto.setWalletType(account.getWalletType());
+            dto.setEncryptedPinCode(account.getEncryptedPinCode());
+            dto.setBalance(account.getBalance());
+            return dto;
+        }).toList();
     }
 
     @Override
-    public Account getTransfertAccountById(Long id) {
-        return transferAccountRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Account with id"+": "+id+ " don't exist"));
+    public Optional<CreateOrEditAccountDto> getTransfertAccountById(Long id) {
+        return transferAccountRepository.findById(id).stream().map(account -> {
+            CreateOrEditAccountDto dto = new CreateOrEditAccountDto();
+            dto.setPhoneNumber(account.getPhoneNumber());
+            dto.setWalletType(account.getWalletType());
+            dto.setEncryptedPinCode(account.getEncryptedPinCode());
+            dto.setBalance(account.getBalance());
+            return dto;
+        }).findAny();
+
     }
 
     @Override
@@ -180,7 +215,6 @@ public class AccountServiceImpl implements AccountService {
             return existingAccount.get().getPhoneNumber();
         else throw new EntityNotFoundException("Account with id"+": "+id+ " don't exist");
     }
-
     @Override
     public CreateOrEditAccountDto updateTranfertAccount(CreateOrEditAccountDto transferAccount, Long id) {
         Optional<Account> existingAccount = transferAccountRepository.findById(id);
@@ -204,7 +238,6 @@ public class AccountServiceImpl implements AccountService {
                account.setEncryptedPinCode(compte.getEncryptedPinCode());
                account.setPhoneNumber(compte.getPhoneNumber());
                return account;
-
         }
         else throw new EntityNotFoundException("Account with id"+": "+id+ " don't exist");
         //return null;
@@ -221,7 +254,10 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public double getBalance(GetRetailerBalanceDto getRetailerBalanceDto) {
-        return transferAccountRepository.findByPhoneNumberAndWalletTypeAndEncryptedPinCode(getRetailerBalanceDto.getPhoneNumber(), getRetailerBalanceDto.getWalletType(), getRetailerBalanceDto.getEncryptedPinCode()).orElseThrow().getBalance();
+        return transferAccountRepository.findByPhoneNumberAndWalletTypeAndEncryptedPinCode(
+                getRetailerBalanceDto.getPhoneNumber(),
+                getRetailerBalanceDto.getWalletType(),
+                getRetailerBalanceDto.getEncryptedPinCode()).orElseThrow().getBalance();
     }
 
     /**
@@ -232,7 +268,9 @@ public class AccountServiceImpl implements AccountService {
      * @return
      */
     @Override
-    public CreateOrEditAccountDto modifyTransferAccountRetailer(Long id, CreateOrEditAccountDto account, Role role) {
+    public CreateOrEditAccountDto modifyTransferAccountRetailer(Long id,
+                                                                CreateOrEditAccountDto account,
+                                                                Role role) {
         Account account1 = transferAccountRepository.findById(id).orElseThrow(()->
                 new ResourceNotFoundException("Account not found"));
         if(account1.getRetailer().getRoles().contains(Role.RETAILER)){
@@ -256,6 +294,12 @@ public class AccountServiceImpl implements AccountService {
 
     }
 
+    /**
+     * Cette methode permet de mettre à jour le solde d'un compte de transfert
+     * @param balance
+     * @param id
+     * @return
+     */
     @Override
     public BalanceDto updatedBalance(BalanceDto balance, Long id) {
         Optional<Account> account = transferAccountRepository.findById(id);
@@ -266,6 +310,4 @@ public class AccountServiceImpl implements AccountService {
         }
         throw new EntityNotFoundException("This account does'nt exist !!");
     }
-
-
 }

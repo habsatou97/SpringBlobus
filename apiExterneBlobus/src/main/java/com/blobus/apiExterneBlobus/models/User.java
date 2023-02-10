@@ -33,7 +33,9 @@ public class User implements UserDetails {
     private String ninea;
 
     @Column(
-            name = "phone_number"
+            name = "phone_number",
+            nullable = false,
+            length = 9
     )
     private String phoneNumber;
     @Column(unique = true)
