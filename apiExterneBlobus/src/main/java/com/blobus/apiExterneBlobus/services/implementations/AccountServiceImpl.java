@@ -40,9 +40,9 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private KeyGeneratorImpl keyGeneratorService;
 
-    public  AccountServiceImpl(AccountRepository transferAccountRepository, KeyGeneratorImpl keyGeneratorService){
+    public  AccountServiceImpl(AccountRepository transferAccountRepository){
         this.transferAccountRepository=transferAccountRepository;
-        this.keyGeneratorService = keyGeneratorService;
+
     }
 
     @Override

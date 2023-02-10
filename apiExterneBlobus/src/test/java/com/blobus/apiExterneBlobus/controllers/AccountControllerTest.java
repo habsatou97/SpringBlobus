@@ -15,6 +15,7 @@ import com.blobus.apiExterneBlobus.repositories.AccountRepository;
 import com.blobus.apiExterneBlobus.repositories.CustomerRepository;
 import com.blobus.apiExterneBlobus.repositories.UserRepository;
 import com.blobus.apiExterneBlobus.services.implementations.AccountServiceImpl;
+import com.blobus.apiExterneBlobus.services.implementations.KeyGeneratorImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.jupiter.api.Assertions;
@@ -109,8 +110,9 @@ class AccountControllerTest {
     @Test
     void testGetAll() {
         AccountRepository repository = mock(AccountRepository.class);
+        KeyGeneratorImpl key = mock(KeyGeneratorImpl.class);
         when(repository.findAll()).thenReturn(List.of(account1,account2));
-        ResponseEntity<List<CreateOrEditAccountDto>> accountResult = (new AccountController( new AccountServiceImpl(repository))).getAll();
+        ResponseEntity<List<CreateOrEditAccountDto>> accountResult = (new AccountController( new AccountServiceImpl(repository),key)).getAll();
         assertTrue(accountResult.hasBody());
         assertEquals(200, accountResult.getStatusCodeValue());
         assertTrue(accountResult.getHeaders().isEmpty());
@@ -122,9 +124,10 @@ class AccountControllerTest {
     @Test
     void testGetOne() {
         AccountRepository repository = mock(AccountRepository.class);
+        KeyGeneratorImpl key = mock(KeyGeneratorImpl.class);
         when(repository.findById((Long) any())).thenReturn(Optional.of(account1));
         ResponseEntity<Optional<CreateOrEditAccountDto>> result = (new AccountController(
-                new AccountServiceImpl(repository))).getOne(2L);
+                new AccountServiceImpl(repository),key)).getOne(2L);
         assertTrue(result.hasBody());
         assertEquals(200,result.getStatusCodeValue());
         assertTrue(result.getHeaders().isEmpty());
@@ -200,10 +203,11 @@ class AccountControllerTest {
     void update() {
         AccountRepository  repository = mock(AccountRepository.class);
         AccountServiceImpl service =mock(AccountServiceImpl.class);
+        KeyGeneratorImpl key = mock(KeyGeneratorImpl.class);
         Account ct = new Account();
         ct.setId(1L);
         when(repository.save((Account) any())).thenReturn(ct);
-        AccountController controller= new AccountController(service);
+        AccountController controller= new AccountController(service,key);
         CreateOrEditAccountDto dto= new CreateOrEditAccountDto();
         accountRepository.save(account1);
         Optional<Account> account = repository.findById(account1.getId());
@@ -222,7 +226,8 @@ class AccountControllerTest {
     void enable() {
         AccountRepository  repository = mock(AccountRepository.class);
         AccountServiceImpl service =mock(AccountServiceImpl.class);
-        AccountController controller= new AccountController(service);
+        KeyGeneratorImpl key = mock(KeyGeneratorImpl.class);
+        AccountController controller= new AccountController(service,key);
         Account ct = new Account();
         ct.setId(1L);
         when(repository.save((Account) any())).thenReturn(ct);
@@ -236,7 +241,8 @@ class AccountControllerTest {
     void disable() {
         AccountRepository  repository = mock(AccountRepository.class);
         AccountServiceImpl service =mock(AccountServiceImpl.class);
-        AccountController controller= new AccountController(service);
+        KeyGeneratorImpl key = mock(KeyGeneratorImpl.class);
+        AccountController controller= new AccountController(service,key);
         Account ct = new Account();
         ct.setId(1L);
 
@@ -252,9 +258,10 @@ class AccountControllerTest {
     void delete() {
         AccountRepository  repository = mock(AccountRepository.class);
         AccountServiceImpl service =mock(AccountServiceImpl.class);
+        KeyGeneratorImpl key = mock(KeyGeneratorImpl.class);
         repository.save(account1);
         doNothing().when(repository).deleteById(account1.getId());
-        (new AccountController(service)).delete(account1.getId());
+        (new AccountController(service,key)).delete(account1.getId());
 
         org.assertj.core.api.Assertions.assertThat(repository.findById(account1.getId())).isEmpty();
     }
@@ -264,9 +271,10 @@ class AccountControllerTest {
 
         AccountRepository  repository = mock(AccountRepository.class);
         AccountServiceImpl service =mock(AccountServiceImpl.class);
+        KeyGeneratorImpl key = mock(KeyGeneratorImpl.class);
         repository.save(account1);
         doNothing().when(repository).deleteAccountByPhoneNumber(account1.getPhoneNumber());
-        (new AccountController(service)).deleteByPhoneNumber(account1.getPhoneNumber());
+        (new AccountController(service,key)).deleteByPhoneNumber(account1.getPhoneNumber());
 
         org.assertj.core.api.Assertions.assertThat(repository.getAccountByPhoneNumber(account1.getPhoneNumber())).isEmpty();
     }
@@ -275,10 +283,11 @@ class AccountControllerTest {
     void updatedBalance() {
         AccountRepository  repository = mock(AccountRepository.class);
         AccountServiceImpl service =mock(AccountServiceImpl.class);
+        KeyGeneratorImpl key = mock(KeyGeneratorImpl.class);
         Account ct = new Account();
         ct.setId(1L);
         when(repository.save((Account) any())).thenReturn(ct);
-        AccountController controller= new AccountController(service);
+        AccountController controller= new AccountController(service,key);
         BalanceDto dto = new BalanceDto();
         dto.setBalance(1000000);
         ResponseEntity<BalanceDto> response = controller.updatedBalance(dto,ct.getId());
