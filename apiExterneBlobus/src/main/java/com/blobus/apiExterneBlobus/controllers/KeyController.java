@@ -2,10 +2,12 @@ package com.blobus.apiExterneBlobus.controllers;
 
 //import com.blobus.apiExterneBlobus.models.Keye;
 //import com.blobus.apiExterneBlobus.services.implementations.KeyServiceImpl;
+import com.blobus.apiExterneBlobus.dto.KeyDto;
 import com.blobus.apiExterneBlobus.services.interfaces.KeyGeneratorService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -18,8 +20,8 @@ public class KeyController {
     private final KeyGeneratorService keyGenerator;
 
     @GetMapping
-    public String get() throws IOException {
-       return keyGenerator.getPublicKeyFromFile();
+    public ResponseEntity<KeyDto> get() throws IOException {
+       return ResponseEntity.ok().body(keyGenerator.getPublicKeyFromFile());
     }
 
 

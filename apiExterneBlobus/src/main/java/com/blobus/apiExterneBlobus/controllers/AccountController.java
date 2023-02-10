@@ -5,11 +5,19 @@ import com.blobus.apiExterneBlobus.dto.BalanceDto;
 import com.blobus.apiExterneBlobus.dto.CreateOrEditAccountDto;
 import com.blobus.apiExterneBlobus.models.Account;
 import com.blobus.apiExterneBlobus.services.implementations.AccountServiceImpl;
+import com.blobus.apiExterneBlobus.services.implementations.KeyGeneratorImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +27,8 @@ import java.util.Optional;
 public class AccountController {
     @Autowired
     private final AccountServiceImpl transferAccountService;
+    @Autowired
+    private final KeyGeneratorImpl keyGenerator;
 
     @GetMapping("retailer/balance")
     public double getBalance(@RequestBody GetRetailerBalanceDto getRetailerBalanceDto){
@@ -44,13 +54,14 @@ public class AccountController {
     }
 
     @PostMapping("customer/{id}")
-    public ResponseEntity<CreateOrEditAccountDto>saveCustomer(@RequestBody CreateOrEditAccountDto transferAccount,
-                                                              @PathVariable Long id){
+    public ResponseEntity<CreateOrEditAccountDto>saveCustomer(@RequestBody CreateOrEditAccountDto transferAccount, @PathVariable Long id) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
+        transferAccount.setEncryptedPinCode(keyGenerator.encrypt(transferAccount.getEncryptedPinCode()));
         return ResponseEntity.ok().body(transferAccountService.createCustomerTransfertAccount(transferAccount,id));
     }
     @PostMapping("/retailer/{id}")
     public ResponseEntity<CreateOrEditAccountDto>saveRetailer(@RequestBody CreateOrEditAccountDto transferAccount,
-                                                              @PathVariable Long id){
+                                                              @PathVariable Long id) throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
+        transferAccount.setEncryptedPinCode(keyGenerator.encrypt(transferAccount.getEncryptedPinCode()));
         return ResponseEntity.ok().body(transferAccountService.createRetailerTransfertAccount(transferAccount,id));
     }
 

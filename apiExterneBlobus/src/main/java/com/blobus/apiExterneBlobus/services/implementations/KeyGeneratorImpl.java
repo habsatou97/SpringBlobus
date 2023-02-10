@@ -1,6 +1,8 @@
 package com.blobus.apiExterneBlobus.services.implementations;
 
+import com.blobus.apiExterneBlobus.dto.KeyDto;
 import com.blobus.apiExterneBlobus.services.interfaces.KeyGeneratorService;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.BadPaddingException;
@@ -20,9 +22,13 @@ public class KeyGeneratorImpl implements KeyGeneratorService {
 
 
     @Override
-    public  String getPublicKeyFromFile() throws IOException {
+    public KeyDto getPublicKeyFromFile() throws IOException {
+        KeyDto keyDto=new KeyDto();
         String path = "RSA/pubkey";
-         return readFromFile(path);
+        keyDto.setKeySize(1024);
+        keyDto.setKeyType("RSA");
+        keyDto.setKey(readFromFile(path));
+        return keyDto;
     }
 
     @Override

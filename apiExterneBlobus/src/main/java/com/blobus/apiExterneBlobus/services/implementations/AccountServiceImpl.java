@@ -46,7 +46,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public CreateOrEditAccountDto createRetailerTransfertAccount(CreateOrEditAccountDto transferAccount,Long id) throws IOException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, InvalidKeySpecException {
+    public CreateOrEditAccountDto createRetailerTransfertAccount(CreateOrEditAccountDto transferAccount,Long id) {
         Account account = new Account();
         User retailer = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         List<Account> comptes = retailer.getAccounts();

@@ -1,5 +1,6 @@
 package com.blobus.apiExterneBlobus.services.interfaces;
 
+import com.blobus.apiExterneBlobus.dto.KeyDto;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.BadPaddingException;
@@ -15,7 +16,7 @@ import java.security.spec.InvalidKeySpecException;
 @Component
 public interface KeyGeneratorService {
 
-    public String getPublicKeyFromFile() throws IOException;
+    public KeyDto getPublicKeyFromFile() throws IOException;
     public  PublicKey getPublicKey() throws IOException;
     public  PrivateKey getPrivateKey() throws IOException;
 

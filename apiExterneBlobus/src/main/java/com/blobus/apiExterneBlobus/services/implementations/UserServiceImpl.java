@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
             }
             if( user.getNinea()!= null)
                 user.setRoles(Collections.singletonList(Role.RETAILER));
-           userRepository.save(user);
+            userRepository.save(user);
             userDto.setEmail(user.getEmail());
             userDto.setPhoneNumber(user.getPhoneNumber());
             userDto.setFirstName(user.getFirstName());
