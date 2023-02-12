@@ -1,13 +1,13 @@
 package com.blobus.apiExterneBlobus.controllers;
 
-import com.blobus.apiExterneBlobus.dto.GetRetailerBalanceDto;
-import com.blobus.apiExterneBlobus.dto.BalanceDto;
-import com.blobus.apiExterneBlobus.dto.CreateOrEditAccountDto;
+import com.blobus.apiExterneBlobus.dto.*;
 import com.blobus.apiExterneBlobus.models.Account;
 import com.blobus.apiExterneBlobus.services.implementations.AccountServiceImpl;
 import com.blobus.apiExterneBlobus.services.implementations.KeyGeneratorImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -98,6 +98,22 @@ public class AccountController {
     public ResponseEntity<BalanceDto> updatedBalance(@RequestBody BalanceDto balanceDto,
                                                      @PathVariable("id") Long id){
         return ResponseEntity.ok(transferAccountService.updatedBalance(balanceDto,id));
+    }
+
+    @PostMapping("crypt")
+    public String crypt(@RequestBody String chaine) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
+        return keyGenerator.encrypt(chaine);
+    }
+
+    @PostMapping("decrypt")
+    public String decrypt(@RequestBody String chaine) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
+        String ch=keyGenerator.encrypt(chaine);
+        System.out.println(ch);
+        return keyGenerator.decrypt(ch);
+    }
+    @PostMapping(" api/eWallet/v1/account")
+    ResponseEntity<ResponseChangePinCodeDto> changePinCode(@RequestBody RequestBodyChangePinCodeDto requestBodyChangePinCodeDto,@RequestParam QueryParameterChangePinCodeDto queryParameterChangePinCodeDto) throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
+        return ResponseEntity.ok(transferAccountService.changePinCode(requestBodyChangePinCodeDto,queryParameterChangePinCodeDto));
     }
 
 }
