@@ -1,12 +1,12 @@
 package com.blobus.apiExterneBlobus.services.implementations;
 
-import com.blobus.apiExterneBlobus.dto.BalanceDto;
-import com.blobus.apiExterneBlobus.dto.CreateOrEditAccountDto;
-import com.blobus.apiExterneBlobus.dto.GetRetailerBalanceDto;
+import com.blobus.apiExterneBlobus.dto.*;
 import com.blobus.apiExterneBlobus.exception.ResourceNotFoundException;
 import com.blobus.apiExterneBlobus.models.Account;
 import com.blobus.apiExterneBlobus.models.Customer;
 import com.blobus.apiExterneBlobus.models.User;
+import com.blobus.apiExterneBlobus.models.enums.CustomerType;
+import com.blobus.apiExterneBlobus.models.enums.ErrorCode;
 import com.blobus.apiExterneBlobus.models.enums.Role;
 import com.blobus.apiExterneBlobus.models.enums.WalletType;
 import com.blobus.apiExterneBlobus.repositories.CustomerRepository;
@@ -15,6 +15,7 @@ import com.blobus.apiExterneBlobus.repositories.UserRepository;
 import com.blobus.apiExterneBlobus.services.interfaces.AccountService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.BadPaddingException;
@@ -42,7 +43,6 @@ public class AccountServiceImpl implements AccountService {
 
     public  AccountServiceImpl(AccountRepository transferAccountRepository, KeyGeneratorImpl keyGeneratorService){
         this.transferAccountRepository=transferAccountRepository;
-        this.keyGeneratorService = keyGeneratorService;
     }
 
     @Override
@@ -173,6 +173,11 @@ public class AccountServiceImpl implements AccountService {
             return dto;
         }).findAny();
 
+    }
+
+    @Override
+    public Optional<CreateOrEditAccountDto> geTransferAccountByMsisdn(String msisdn) {
+        return Optional.empty();
     }
 
     @Override
@@ -309,5 +314,58 @@ public class AccountServiceImpl implements AccountService {
             return balance;
         }
         throw new EntityNotFoundException("This account does'nt exist !!");
+    }
+
+    @Override
+    public ResponseChangePinCodeDto changePinCode(RequestBodyChangePinCodeDto requestBodyChangePinCodeDto,QueryParameterChangePinCodeDto queryParameterChangePinCodeDto) throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, InvalidKeySpecException {
+
+        KeyDto keyDto = new KeyDto();
+        ResponseChangePinCodeDto responseChangePinCodeDto = new ResponseChangePinCodeDto();
+
+        Optional<Account> account = transferAccountRepository.getAccountByPhoneNumber(queryParameterChangePinCodeDto.getMsisdn());
+        if((queryParameterChangePinCodeDto.getCustomerType())!= CustomerType.RETAILER){
+            throw new EntityNotFoundException("Only a retailer is allow to do this operation !!");
+        }
+        else if(!account.isPresent()) {
+            responseChangePinCodeDto.setErrorCode("2000");
+            responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
+            return responseChangePinCodeDto;
+        } else if (queryParameterChangePinCodeDto.getMsisdn().length() != 9) {
+            responseChangePinCodeDto.setErrorCode(ErrorCode.CUSTOMER_MSISDN_IS_INVALID.getErrorCode());
+            responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
+            return responseChangePinCodeDto;
+
+        } else if (requestBodyChangePinCodeDto == null) {
+            responseChangePinCodeDto.setErrorCode("21");
+            responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
+            return responseChangePinCodeDto;
+
+        } else if (requestBodyChangePinCodeDto.getEncryptedNewPinCode() == null || requestBodyChangePinCodeDto.getEncryptedPinCode() == null) {
+            responseChangePinCodeDto.setErrorCode("22");
+            responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
+            return responseChangePinCodeDto;
+        } else if (queryParameterChangePinCodeDto==null) {
+            responseChangePinCodeDto.setErrorCode("27");
+            responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
+            return responseChangePinCodeDto;
+
+        } else {
+            String enc = keyGeneratorService.decrypt(account.get().getEncryptedPinCode());
+
+            if(enc.equals(requestBodyChangePinCodeDto.getEncryptedPinCode())){
+               String ch= keyGeneratorService.encrypt(requestBodyChangePinCodeDto.getEncryptedNewPinCode());
+               account.get().setEncryptedPinCode(ch);
+               responseChangePinCodeDto.setStatus(HttpStatus.ACCEPTED);
+               return responseChangePinCodeDto;
+
+
+              // responseChangePinCodeDto.getEncryptedNewPinCode(requestBodyChangePinCodeDto.setEncryptedNewPinCode(requestBodyChangePinCodeDto.getEncryptedPinCode()));
+            }
+            else
+            {
+                throw new RuntimeException("Les deux pincodes ne correspondent pas");
+            }
+        }
+            //return null;
     }
 }
