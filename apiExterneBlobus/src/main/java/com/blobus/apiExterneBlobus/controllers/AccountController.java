@@ -100,17 +100,6 @@ public class AccountController {
         return ResponseEntity.ok(transferAccountService.updatedBalance(balanceDto,id));
     }
 
-    @PostMapping("crypt")
-    public String crypt(@RequestBody String chaine) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
-        return keyGenerator.encrypt(chaine);
-    }
-
-    @PostMapping("decrypt")
-    public String decrypt(@RequestBody String chaine) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
-        String ch=keyGenerator.encrypt(chaine);
-        System.out.println(ch);
-        return keyGenerator.decrypt(ch);
-    }
     @PostMapping(" api/eWallet/v1/account")
     ResponseEntity<ResponseChangePinCodeDto> changePinCode(@RequestBody RequestBodyChangePinCodeDto requestBodyChangePinCodeDto,@RequestParam QueryParameterChangePinCodeDto queryParameterChangePinCodeDto) throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
         return ResponseEntity.ok(transferAccountService.changePinCode(requestBodyChangePinCodeDto,queryParameterChangePinCodeDto));
