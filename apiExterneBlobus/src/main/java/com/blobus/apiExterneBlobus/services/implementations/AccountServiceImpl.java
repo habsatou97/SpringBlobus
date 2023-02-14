@@ -324,6 +324,7 @@ public class AccountServiceImpl implements AccountService {
                  NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, InvalidKeySpecException {
 
         KeyDto keyDto = new KeyDto();
+        KeyDto keyDto1=new KeyDto();
         DecryptDto decryptDto=new DecryptDto();
         ResponseChangePinCodeDto responseChangePinCodeDto = new ResponseChangePinCodeDto();
 
