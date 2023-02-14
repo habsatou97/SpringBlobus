@@ -104,6 +104,11 @@ public class TransactionServiceImpl implements TransactionService {
         }
     }
 
+    /**
+     * Cette methode retourne le status d'une transaction
+     * @param transactionId
+     * @return
+     */
     @Override
     @Transactional
     public TransactionDto getTransactionStatus(Long transactionId) {
@@ -116,6 +121,11 @@ public class TransactionServiceImpl implements TransactionService {
         return null;
     }
 
+    /**
+     * Cette methode retourne les information d'une transaction
+     * @param transactionId
+     * @return
+     */
     @Override
     @Transactional
     public GetTransactionDto getTransaction(Long transactionId) {

@@ -53,7 +53,7 @@ public class UserController {
     }
 
     /**
-     * Cette methoden permet d'afficher un seul itilisateur via son idntifiant
+     * Cette methode permet d'afficher un seul utilisateur via son idntifiant
      * @param id
      * @return
      */
