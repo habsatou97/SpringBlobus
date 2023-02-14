@@ -2,6 +2,7 @@ package com.blobus.apiExterneBlobus.controllers;
 
 import com.blobus.apiExterneBlobus.dto.RequestBodyUserProfileDto;
 import com.blobus.apiExterneBlobus.dto.UserDto;
+import com.blobus.apiExterneBlobus.dto.UserWithNineaDto;
 import com.blobus.apiExterneBlobus.models.User;
 import com.blobus.apiExterneBlobus.repositories.UserRepository;
 import com.blobus.apiExterneBlobus.services.implementations.UserServiceImpl;
@@ -78,7 +79,7 @@ public class UserController {
      * @return
      */
     @PostMapping
-    public ResponseEntity<UserDto> addUser(@RequestBody User user){
+    public ResponseEntity<UserDto> addUser(@RequestBody UserWithNineaDto user){
         return ResponseEntity.ok(userService.addSingleUser(user));
     }
 
@@ -89,7 +90,7 @@ public class UserController {
      * @return
      */
     @PutMapping("{id}")
-    public ResponseEntity<UserDto> updateUser(@RequestBody User user, @PathVariable("id") Long id){
+    public ResponseEntity<UserDto> updateUser(@RequestBody UserWithNineaDto user, @PathVariable("id") Long id){
         return ResponseEntity.ok(userService.updateSingleUser(user,id));
     }
 
