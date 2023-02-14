@@ -31,9 +31,7 @@ public class ApiExterneBlobusApplication
 		keyGen.initialize(1024);
 		KeyPair pair = keyGen.generateKeyPair();
 		String pub_key = Base64.getEncoder().encodeToString(pair.getPublic().getEncoded());
-		System.out.println("PubKey: "+pub_key);
 		String priv_key = Base64.getEncoder().encodeToString(pair.getPrivate().getEncoded());
-		System.out.println("PrivKey: "+priv_key);
 		writeToFileString(pub_key, priv_key);
 	}
 

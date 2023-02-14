@@ -34,7 +34,6 @@ public class KeyGeneratorImpl implements KeyGeneratorService {
 
     @Override
     public PublicKey getPublicKey() throws IOException {
-        //PublicKey publicKey = null;
         try{
             X509EncodedKeySpec keySpec = new X509EncodedKeySpec(Base64.getDecoder().decode(readFromFile("RSA/pubkey").getBytes()));
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
@@ -51,7 +50,6 @@ public class KeyGeneratorImpl implements KeyGeneratorService {
     @Override
     public PrivateKey getPrivateKey() throws IOException {
         PrivateKey cle = null;
-        //privateKey=readFromFile("RSA/pubkey");
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(readFromFile("RSA/privkey").getBytes()));
         KeyFactory keyFactory=null;
         try {
@@ -80,10 +78,8 @@ public class KeyGeneratorImpl implements KeyGeneratorService {
     public  String encrypt(DecryptDto decryptDto) throws NoSuchPaddingException, NoSuchAlgorithmException, IOException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, InvalidKeySpecException {
 
             PublicKey key=(PublicKey) getPublicKey();
-            System.out.println(key);
             Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
             cipher.init(Cipher.ENCRYPT_MODE,key);
-            System.out.println(" Encrypted:"+cipher.doFinal(decryptDto.getEncryptedPinCode().getBytes()));
             byte[] crypt= cipher.doFinal(decryptDto.getEncryptedPinCode().getBytes());
             return new String(Base64.getEncoder().encodeToString(crypt));
 

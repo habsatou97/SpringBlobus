@@ -2,6 +2,8 @@ package com.blobus.apiExterneBlobus.controllers;
 
 import com.blobus.apiExterneBlobus.dto.*;
 import com.blobus.apiExterneBlobus.models.Account;
+import com.blobus.apiExterneBlobus.models.enums.CustomerType;
+import com.blobus.apiExterneBlobus.models.enums.WalletType;
 import com.blobus.apiExterneBlobus.services.implementations.AccountServiceImpl;
 import com.blobus.apiExterneBlobus.services.implementations.KeyGeneratorImpl;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,16 +39,25 @@ public class AccountController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CreateOrEditAccountDto>>getAll()
-    {
-
+    public ResponseEntity<List<CreateOrEditAccountDto>>getAll() throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+        DecryptDto decryptDto=new DecryptDto();
+        List<CreateOrEditAccountDto> createOrEditAccountDtos=new ArrayList<>(transferAccountService.getAllTransfertAccount());
+        for ( CreateOrEditAccountDto account:createOrEditAccountDtos)
+             {
+                 decryptDto.setEncryptedPinCode(account.getEncryptedPinCode());
+                 account.setEncryptedPinCode(keyGenerator.decrypt(decryptDto));
+             }
         return ResponseEntity
-                .ok(transferAccountService.getAllTransfertAccount());
+                .ok(createOrEditAccountDtos);
 
     }
     @GetMapping("{id}")
-    public ResponseEntity<Optional<CreateOrEditAccountDto>> getOne(@PathVariable Long id){
-        return ResponseEntity.ok().body(transferAccountService.getTransfertAccountById(id));
+    public ResponseEntity<Optional<CreateOrEditAccountDto>> getOne(@PathVariable Long id) throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+        Optional<CreateOrEditAccountDto> accountDto=transferAccountService.getTransfertAccountById(id);
+        DecryptDto decryptDto=new DecryptDto();
+        decryptDto.setEncryptedPinCode(accountDto.get().getEncryptedPinCode());
+        accountDto.get().setEncryptedPinCode(keyGenerator.decrypt(decryptDto));
+        return ResponseEntity.ok().body(accountDto);
     }
     @RequestMapping(value = "phoneNumber/{id}",method = RequestMethod.GET)
     public String getPhoneNumber(@PathVariable Long id)
@@ -56,31 +68,50 @@ public class AccountController {
     @PostMapping("customer/{id}")
     public ResponseEntity<CreateOrEditAccountDto>saveCustomer(@RequestBody CreateOrEditAccountDto transferAccount, @PathVariable Long id) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
         transferAccount.setEncryptedPinCode(keyGenerator.encrypt(new DecryptDto(transferAccount.getEncryptedPinCode())));
-        return ResponseEntity.ok().body(transferAccountService.createCustomerTransfertAccount(transferAccount,id));
+        DecryptDto decryptDto=new DecryptDto();
+        CreateOrEditAccountDto accountDto=transferAccountService.createCustomerTransfertAccount(transferAccount,id);
+        decryptDto.setEncryptedPinCode(accountDto.getEncryptedPinCode());
+        accountDto.setEncryptedPinCode(keyGenerator.decrypt(decryptDto));
+        return ResponseEntity.ok().body(accountDto);
     }
     @PostMapping("/retailer/{id}")
     public ResponseEntity<CreateOrEditAccountDto>saveRetailer(@RequestBody CreateOrEditAccountDto transferAccount,
                                                               @PathVariable Long id) throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
         transferAccount.setEncryptedPinCode(keyGenerator.encrypt(new DecryptDto(transferAccount.getEncryptedPinCode())));
-        return ResponseEntity.ok().body(transferAccountService.createRetailerTransfertAccount(transferAccount,id));
+        DecryptDto decryptDto=new DecryptDto();
+        CreateOrEditAccountDto accountDto=transferAccountService.createRetailerTransfertAccount(transferAccount,id);
+        decryptDto.setEncryptedPinCode(accountDto.getEncryptedPinCode());
+        accountDto.setEncryptedPinCode(keyGenerator.decrypt(decryptDto));
+        return ResponseEntity.ok().body(accountDto);
     }
 
 
     @RequestMapping(value = "{id}",method = RequestMethod.PUT)
     public ResponseEntity<CreateOrEditAccountDto> update(@RequestBody CreateOrEditAccountDto transferAccount,
-                                                         @PathVariable Long id){
-        return ResponseEntity.ok().body(transferAccountService.updateTranfertAccount(transferAccount,id));
+                                                         @PathVariable Long id) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
+        transferAccount.setEncryptedPinCode(keyGenerator.encrypt(new DecryptDto(transferAccount.getEncryptedPinCode())));
+        DecryptDto decryptDto=new DecryptDto();
+        CreateOrEditAccountDto accountDto=transferAccountService.updateTranfertAccount(transferAccount,id);
+        decryptDto.setEncryptedPinCode(accountDto.getEncryptedPinCode());
+        accountDto.setEncryptedPinCode(keyGenerator.decrypt(decryptDto));
+        return ResponseEntity.ok().body(accountDto);
     }
     @RequestMapping(value = "enable/{id}",method = RequestMethod.PUT)
-    public ResponseEntity<CreateOrEditAccountDto> enable(@PathVariable Long id)
-   {
-    return ResponseEntity.ok().body(transferAccountService.EnableTransfertAccount(id));
+    public ResponseEntity<CreateOrEditAccountDto> enable(@PathVariable Long id) throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+       DecryptDto decryptDto=new DecryptDto();
+       CreateOrEditAccountDto accountDto=transferAccountService.EnableTransfertAccount(id);
+       decryptDto.setEncryptedPinCode(accountDto.getEncryptedPinCode());
+       accountDto.setEncryptedPinCode(keyGenerator.decrypt(decryptDto));
+    return ResponseEntity.ok().body(accountDto);
    }
 
     @RequestMapping( value = "disable/{id}",method = RequestMethod.PUT)
-     public ResponseEntity<CreateOrEditAccountDto> disable(@PathVariable Long id)
-    {
-       return ResponseEntity.ok().body(transferAccountService.DiseableTranfertAccount(id));
+     public ResponseEntity<CreateOrEditAccountDto> disable(@PathVariable Long id) throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+        DecryptDto decryptDto=new DecryptDto();
+        CreateOrEditAccountDto accountDto=transferAccountService.DiseableTranfertAccount(id);
+        decryptDto.setEncryptedPinCode(accountDto.getEncryptedPinCode());
+        accountDto.setEncryptedPinCode(keyGenerator.decrypt(decryptDto));
+       return ResponseEntity.ok().body(accountDto);
     }
 
     @RequestMapping(value = "{id}",method = RequestMethod.DELETE)
@@ -100,9 +131,9 @@ public class AccountController {
         return ResponseEntity.ok(transferAccountService.updatedBalance(balanceDto,id));
     }
 
-    /*@PostMapping(" api/eWallet/v1/account")
-    ResponseEntity<ResponseChangePinCodeDto> changePinCode(@RequestBody RequestBodyChangePinCodeDto requestBodyChangePinCodeDto,@RequestParam QueryParameterChangePinCodeDto queryParameterChangePinCodeDto) throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
-        return ResponseEntity.ok(transferAccountService.changePinCode(requestBodyChangePinCodeDto,queryParameterChangePinCodeDto));
-    }*/
+    @PostMapping("changePinCode")
+    ResponseEntity<ResponseChangePinCodeDto> changePinCode(@RequestBody RequestBodyChangePinCodeDto requestBodyChangePinCodeDto, @RequestParam String msisdn, @RequestParam CustomerType customerType, @RequestParam WalletType walletType) throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
+        return ResponseEntity.ok(transferAccountService.changePinCode(requestBodyChangePinCodeDto,msisdn,customerType,walletType));
+    }
 
 }
