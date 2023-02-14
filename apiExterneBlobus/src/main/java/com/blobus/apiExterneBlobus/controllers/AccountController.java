@@ -30,8 +30,8 @@ public class AccountController {
     @Autowired
     private final KeyGeneratorImpl keyGenerator;
 
-    @GetMapping("retailer/balance")
-    public double getBalance(@RequestBody GetRetailerBalanceDto getRetailerBalanceDto){
+    @PostMapping("retailer/balance")
+    public double getBalance(@RequestBody GetRetailerBalanceDto getRetailerBalanceDto) throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         return transferAccountService.getBalance(getRetailerBalanceDto);
     }
 

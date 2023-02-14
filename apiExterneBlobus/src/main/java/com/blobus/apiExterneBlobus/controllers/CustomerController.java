@@ -36,9 +36,10 @@ public class CustomerController {
         return ResponseEntity.ok().body(customerService.saveDto(customer));
     }
 
-    @PutMapping
-    public ResponseEntity<CustomerEditCreateDto> edit(@RequestBody Customer customer){
-        return ResponseEntity.ok().body(customerService.editDto(customer));
+    @PutMapping("{id}")
+    public ResponseEntity<CustomerEditCreateDto> edit(@PathVariable Long id,@RequestBody Customer customer){
+
+        return ResponseEntity.ok().body(customerService.editDto(id,customer));
     }
 
 }

@@ -4,20 +4,36 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.io.*;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 @Data
 @AllArgsConstructor
 
 public class KeyGenerator {
-        public static void writeToFileString(String pub, String priv) throws IOException {
-        FileWriter pubkey = new FileWriter("RSA/pubkey");
-        FileWriter privkey = new FileWriter("RSA/privkey");
 
-        pubkey.write(pub);
-        pubkey.close();
-        privkey.write(priv);
-        privkey.close();
+        private static boolean isDirEmpty(final Path directory) throws IOException {
+            try(DirectoryStream<Path> dirStream = Files.newDirectoryStream(directory)) {
+                return !dirStream.iterator().hasNext();
+            }
+        }
+        public static void writeToFileString(String pub, String priv) throws IOException {
+
+
+        if (isDirEmpty(Path.of("RSA"))){
+            System.out.println("*********************************");
+            System.out.println("Le dossier est vide !");
+            FileWriter pubkey = new FileWriter("RSA/pubkey");
+            FileWriter privkey = new FileWriter("RSA/privkey");
+            pubkey.write(pub);
+            pubkey.close();
+            privkey.write(priv);
+            privkey.close();
+        }else{
+            System.out.println("**************");
+            System.out.println("The directory is not empty!");
+        }
 
     }
     public void writeToFile(String path, byte[] key) throws IOException {

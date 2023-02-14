@@ -16,7 +16,10 @@ import com.blobus.apiExterneBlobus.services.implementations.CustomerImpl;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import com.blobus.apiExterneBlobus.services.interfaces.CustomerService;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.http.ResponseEntity;
 
 class CustomerControllerTest {
@@ -40,7 +43,7 @@ class CustomerControllerTest {
         assertTrue(actualFindAllResult.hasBody());
         assertEquals(200, actualFindAllResult.getStatusCodeValue());
         assertTrue(actualFindAllResult.getHeaders().isEmpty());
-        assertTrue(2 == Objects.requireNonNull(actualFindAllResult.getBody()).size());
+        assertEquals(2, Objects.requireNonNull(actualFindAllResult.getBody()).size());
         verify(customerRepository).findAll();
     }
 
@@ -87,7 +90,7 @@ class CustomerControllerTest {
         customer.setFirstName("hello");
         customer.setPhoneNumber("451258");
         ResponseEntity<CustomerEditCreateDto> actualSaveResult = customerController.save(customer);
-        assertEquals(customer.getEmail(), actualSaveResult.getBody().getEmail());
+        assertEquals(customer.getEmail(), Objects.requireNonNull(actualSaveResult.getBody()).getEmail());
         assertTrue(actualSaveResult.getHeaders().isEmpty());
         assertEquals(200, actualSaveResult.getStatusCodeValue());
         verify(customerRepository).save((Customer) any());
@@ -96,19 +99,21 @@ class CustomerControllerTest {
 
     @Test
     void testEdit() {
+
         CustomerRepository customerRepository = mock(CustomerRepository.class);
         when(customerRepository.save((Customer) any())).thenReturn(new Customer());
         CustomerController customerController = new CustomerController(new CustomerImpl(customerRepository));
         Customer customer = new Customer();
+        customer.setEmail("ablaye@gmail.com");
         customer.setLastName("Faye");
         customer.setFirstName("hello");
         customer.setPhoneNumber("451258");
-        customer.setEmail("hello@gmail.com");
-        ResponseEntity<CustomerEditCreateDto> actualEditResult = customerController.edit(customer);
-        assertEquals(customer.getEmail(), actualEditResult.getBody().getEmail());
-        assertTrue(actualEditResult.getHeaders().isEmpty());
-        assertEquals(200, actualEditResult.getStatusCodeValue());
+        ResponseEntity<CustomerEditCreateDto> actualSaveResult = customerController.save(customer);
+        assertEquals(customer.getEmail(), Objects.requireNonNull(actualSaveResult.getBody()).getEmail());
+        assertTrue(actualSaveResult.getHeaders().isEmpty());
+        assertEquals(200, actualSaveResult.getStatusCodeValue());
         verify(customerRepository).save((Customer) any());
+
     }
 
 

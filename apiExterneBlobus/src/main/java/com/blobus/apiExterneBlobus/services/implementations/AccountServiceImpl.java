@@ -258,11 +258,19 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public double getBalance(GetRetailerBalanceDto getRetailerBalanceDto) {
-        return transferAccountRepository.findByPhoneNumberAndWalletTypeAndEncryptedPinCode(
+    public double getBalance(GetRetailerBalanceDto getRetailerBalanceDto) throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+        Account account = transferAccountRepository.findByPhoneNumberAndWalletType( getRetailerBalanceDto.getPhoneNumber(),
+                getRetailerBalanceDto.getWalletType()).orElseThrow();
+        System.out.println("********************************************************************");
+        String pinCode = keyGeneratorService.decrypt(new DecryptDto(account.getEncryptedPinCode()));
+        System.out.println(pinCode);
+
+        if (!pinCode.equals(getRetailerBalanceDto.getEncryptedPinCode())){
+            throw new IllegalStateException("Les deux code pinde ne correspodent pas.");
+        }
+        return transferAccountRepository.findByPhoneNumberAndWalletType(
                 getRetailerBalanceDto.getPhoneNumber(),
-                getRetailerBalanceDto.getWalletType(),
-                getRetailerBalanceDto.getEncryptedPinCode()).orElseThrow().getBalance();
+                getRetailerBalanceDto.getWalletType()).orElseThrow().getBalance();
     }
 
     /**
@@ -316,7 +324,9 @@ public class AccountServiceImpl implements AccountService {
         throw new EntityNotFoundException("This account does'nt exist !!");
     }
 
-    /*@Override
+    /*
+    @Override
+
     public ResponseChangePinCodeDto changePinCode(RequestBodyChangePinCodeDto requestBodyChangePinCodeDto,
                                                   QueryParameterChangePinCodeDto queryParameterChangePinCodeDto)
             throws NoSuchPaddingException,
@@ -373,5 +383,7 @@ public class AccountServiceImpl implements AccountService {
             }
         }
             //return null;
-    }*/
+    }
+
+     */
 }

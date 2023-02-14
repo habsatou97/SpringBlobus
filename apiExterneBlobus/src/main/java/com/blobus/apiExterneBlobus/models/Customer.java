@@ -2,6 +2,7 @@ package com.blobus.apiExterneBlobus.models;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -11,7 +12,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "customers")
-@RequiredArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
@@ -21,12 +21,12 @@ public class Customer {
     @Id
     @GeneratedValue
     private Long id;
-    @NotNull
+    @Column(nullable = false)
     private String firstName;
-    @NonNull
+
     private String lastName;
-    @NonNull
     @Column(nullable = false, unique = true)
+    @Email
     private String email;
     @Column(nullable = false, unique = true, length = 9)
     private String phoneNumber;
