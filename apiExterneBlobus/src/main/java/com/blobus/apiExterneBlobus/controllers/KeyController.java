@@ -1,7 +1,6 @@
 package com.blobus.apiExterneBlobus.controllers;
 
-//import com.blobus.apiExterneBlobus.models.Keye;
-//import com.blobus.apiExterneBlobus.services.implementations.KeyServiceImpl;
+
 import com.blobus.apiExterneBlobus.dto.DecryptDto;
 import com.blobus.apiExterneBlobus.dto.KeyDto;
 import com.blobus.apiExterneBlobus.services.interfaces.KeyGeneratorService;
@@ -33,15 +32,24 @@ public class KeyController {
 
 
     @PostMapping("crypt")
-    public ResponseEntity<DecryptDto> encrypt(@RequestBody DecryptDto decryptDto) throws NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
+    public ResponseEntity<DecryptDto> encrypt(@RequestBody DecryptDto decryptDto)
+                                     throws NoSuchAlgorithmException,
+                                            NoSuchPaddingException,
+                                            IllegalBlockSizeException,
+                                            NoSuchAlgorithmException,
+                                            IOException,
+                                            BadPaddingException,
+                                            InvalidKeySpecException,
+                                            InvalidKeyException {
         //key.getKey();
-        DecryptDto decryptDto1 = new DecryptDto();
+        DecryptDto decryptDto1=new DecryptDto();
         decryptDto1.setEncryptedPinCode(keyGenerator.encrypt(decryptDto));
-         return ResponseEntity.ok().body(decryptDto1);
+        return ResponseEntity.ok().body(decryptDto1);
     }
     @PostMapping("decrypt")
-    public String decrypt(@RequestBody  DecryptDto decryptDto) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, InvalidKeyException {
-         return keyGenerator.decrypt(decryptDto);
+    public String decrypt(@RequestBody  DecryptDto decryptDto) throws NoSuchPaddingException,
+            IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, InvalidKeyException {
+        return keyGenerator.decrypt(decryptDto);
     }
 }
 
