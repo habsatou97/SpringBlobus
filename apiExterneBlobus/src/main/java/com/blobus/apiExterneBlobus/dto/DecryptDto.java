@@ -1,14 +1,12 @@
 package com.blobus.apiExterneBlobus.dto;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Data
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class DecryptDto {
     String encryptedPinCode;
-
-
 }
