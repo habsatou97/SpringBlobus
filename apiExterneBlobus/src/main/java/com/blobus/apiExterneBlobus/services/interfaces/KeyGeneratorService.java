@@ -1,5 +1,6 @@
 package com.blobus.apiExterneBlobus.services.interfaces;
 
+import com.blobus.apiExterneBlobus.dto.DecryptDto;
 import com.blobus.apiExterneBlobus.dto.KeyDto;
 import org.springframework.stereotype.Component;
 
@@ -23,8 +24,8 @@ public interface KeyGeneratorService {
    // PrivateKey getPrivateKey(String privateKey) throws IOException;
 
     public String  getPrivateKeyFromFile() throws  IOException;
-    public String encrypt(String data) throws NoSuchPaddingException, NoSuchAlgorithmException, IOException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, InvalidKeySpecException;
-    public String decrypt(String data) throws NoSuchPaddingException, NoSuchAlgorithmException, IOException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException;
+    public String encrypt(DecryptDto decryptDto) throws NoSuchPaddingException, NoSuchAlgorithmException, IOException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, InvalidKeySpecException;
+    public String decrypt(DecryptDto decryptDto) throws NoSuchPaddingException, NoSuchAlgorithmException, IOException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException;
 
     //public  String decrypt(byte[] data, PrivateKey privateKey) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, IOException;
 }

@@ -55,13 +55,13 @@ public class AccountController {
 
     @PostMapping("customer/{id}")
     public ResponseEntity<CreateOrEditAccountDto>saveCustomer(@RequestBody CreateOrEditAccountDto transferAccount, @PathVariable Long id) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
-        transferAccount.setEncryptedPinCode(keyGenerator.encrypt(transferAccount.getEncryptedPinCode()));
+        transferAccount.setEncryptedPinCode(keyGenerator.encrypt(new DecryptDto(transferAccount.getEncryptedPinCode())));
         return ResponseEntity.ok().body(transferAccountService.createCustomerTransfertAccount(transferAccount,id));
     }
     @PostMapping("/retailer/{id}")
     public ResponseEntity<CreateOrEditAccountDto>saveRetailer(@RequestBody CreateOrEditAccountDto transferAccount,
                                                               @PathVariable Long id) throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
-        transferAccount.setEncryptedPinCode(keyGenerator.encrypt(transferAccount.getEncryptedPinCode()));
+        transferAccount.setEncryptedPinCode(keyGenerator.encrypt(new DecryptDto(transferAccount.getEncryptedPinCode())));
         return ResponseEntity.ok().body(transferAccountService.createRetailerTransfertAccount(transferAccount,id));
     }
 
@@ -100,9 +100,9 @@ public class AccountController {
         return ResponseEntity.ok(transferAccountService.updatedBalance(balanceDto,id));
     }
 
-    @PostMapping(" api/eWallet/v1/account")
+    /*@PostMapping(" api/eWallet/v1/account")
     ResponseEntity<ResponseChangePinCodeDto> changePinCode(@RequestBody RequestBodyChangePinCodeDto requestBodyChangePinCodeDto,@RequestParam QueryParameterChangePinCodeDto queryParameterChangePinCodeDto) throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
         return ResponseEntity.ok(transferAccountService.changePinCode(requestBodyChangePinCodeDto,queryParameterChangePinCodeDto));
-    }
+    }*/
 
 }

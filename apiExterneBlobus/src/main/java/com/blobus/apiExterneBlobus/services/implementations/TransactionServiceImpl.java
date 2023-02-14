@@ -10,12 +10,21 @@ import com.blobus.apiExterneBlobus.repositories.BulkRepository;
 import com.blobus.apiExterneBlobus.repositories.TransactionRepository;
 import com.blobus.apiExterneBlobus.repositories.AccountRepository;
 import com.blobus.apiExterneBlobus.repositories.UserRepository;
+import com.blobus.apiExterneBlobus.services.interfaces.KeyGeneratorService;
 import com.blobus.apiExterneBlobus.services.interfaces.TransactionService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -32,6 +41,7 @@ public class TransactionServiceImpl implements TransactionService {
     private final TransactionRepository transactionRepository;
     private final BulkRepository bulkRepository;
     private final UserRepository userRepository;
+    private final KeyGeneratorService keyGeneratorService;
     @Override
     public Transaction convertDtoToEntityTransaction(RequestBodyTransactionDto requestBodyTransactionDto) {
        Optional<Account> retailerAccount = transferAccountRepository
@@ -227,7 +237,7 @@ public class TransactionServiceImpl implements TransactionService {
                     );
 
             if (retailerAccount.isPresent()) {
-                if (codePinIsvalid(retailerAccount.get(), requestBodyTransactionDto.getRetailer().getEncryptedPinCode())) {
+                if (codePinIsvalid(retailerAccount.get(),requestBodyTransactionDto.getRetailer().getEncryptedPinCode())) {
                     if (customerAccount.isPresent()) {
                         Transaction transaction = convertDtoToEntityTransaction(requestBodyTransactionDto);
                         if (balanceIsSufficient(transaction.getRetailerTransferAccount(), transaction.getAmount())) {
@@ -295,8 +305,24 @@ public class TransactionServiceImpl implements TransactionService {
         return account.getBalance() - montantASoustraire >= 0 ? true : false;
     }
     // pour verifier si le codePin est valide
-    private boolean codePinIsvalid(Account account,String codePin){
-        return account.getEncryptedPinCode().equals(codePin) ? true : false;
+    private boolean codePinIsvalid(Account account,String encryptedPinCode){
+        try {
+            String ch1 = keyGeneratorService.decrypt(new DecryptDto(account.getEncryptedPinCode()));
+            String ch2 = keyGeneratorService.decrypt(new DecryptDto(encryptedPinCode));
+            return ch1.equals(ch2) ? true : false;
+        } catch (NoSuchPaddingException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalBlockSizeException e) {
+            throw new RuntimeException(e);
+        } catch (BadPaddingException e) {
+            throw new RuntimeException(e);
+        } catch (InvalidKeyException e) {
+            throw new RuntimeException(e);
+        }
     }
     // pour verifier si le numero de telephone du retailer ou du customer est valide
     private boolean phoneNumberIsvalid(Account account,String phoneNumber){
