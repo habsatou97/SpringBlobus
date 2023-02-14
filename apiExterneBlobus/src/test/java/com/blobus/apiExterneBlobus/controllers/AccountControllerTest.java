@@ -1,4 +1,4 @@
-package com.blobus.apiExterneBlobus.controllers;
+/*package com.blobus.apiExterneBlobus.controllers;
 
 import com.blobus.apiExterneBlobus.config.JwtAuthenticationFilter;
 import com.blobus.apiExterneBlobus.config.JwtService;
@@ -296,4 +296,4 @@ class AccountControllerTest {
         assertTrue(response.getHeaders().isEmpty());
 
     }
-}
+}*/

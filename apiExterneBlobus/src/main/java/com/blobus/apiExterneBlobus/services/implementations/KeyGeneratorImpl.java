@@ -1,5 +1,6 @@
 package com.blobus.apiExterneBlobus.services.implementations;
 
+import com.blobus.apiExterneBlobus.dto.DecryptDto;
 import com.blobus.apiExterneBlobus.dto.KeyDto;
 import com.blobus.apiExterneBlobus.services.interfaces.KeyGeneratorService;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -76,24 +77,24 @@ public class KeyGeneratorImpl implements KeyGeneratorService {
     }
 
     @Override
-    public  String encrypt(String data) throws NoSuchPaddingException, NoSuchAlgorithmException, IOException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, InvalidKeySpecException {
+    public  String encrypt(DecryptDto decryptDto) throws NoSuchPaddingException, NoSuchAlgorithmException, IOException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, InvalidKeySpecException {
 
             PublicKey key=(PublicKey) getPublicKey();
             System.out.println(key);
             Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
             cipher.init(Cipher.ENCRYPT_MODE,key);
-            System.out.println(" Encrypted:"+cipher.doFinal(data.getBytes()));
-            byte[] crypt= cipher.doFinal(data.getBytes());
+            System.out.println(" Encrypted:"+cipher.doFinal(decryptDto.getEncryptedPinCode().getBytes()));
+            byte[] crypt= cipher.doFinal(decryptDto.getEncryptedPinCode().getBytes());
             return new String(Base64.getEncoder().encodeToString(crypt));
 
     }
 
     @Override
-    public String decrypt(String data) throws IOException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+    public String decrypt(DecryptDto decryptDto) throws IOException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         PrivateKey privateKey=getPrivateKey();
         Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
         cipher.init(Cipher.DECRYPT_MODE, privateKey);
-        return new String(cipher.doFinal(Base64.getDecoder().decode(data)));
+        return new String(cipher.doFinal(Base64.getDecoder().decode(decryptDto.getEncryptedPinCode())));
     }
 /*
     public  String decrypt(String data) throws NoSuchAlgorithmException, NoSuchPaddingException, IOException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
