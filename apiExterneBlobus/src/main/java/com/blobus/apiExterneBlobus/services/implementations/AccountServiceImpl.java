@@ -41,7 +41,7 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private KeyGeneratorImpl keyGeneratorService;
 
-    public  AccountServiceImpl(AccountRepository transferAccountRepository, KeyGeneratorImpl keyGeneratorService){
+    public  AccountServiceImpl(AccountRepository transferAccountRepository){
         this.transferAccountRepository=transferAccountRepository;
     }
 
@@ -317,7 +317,12 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public ResponseChangePinCodeDto changePinCode(RequestBodyChangePinCodeDto requestBodyChangePinCodeDto,QueryParameterChangePinCodeDto queryParameterChangePinCodeDto) throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, InvalidKeySpecException {
+    public ResponseChangePinCodeDto changePinCode(RequestBodyChangePinCodeDto requestBodyChangePinCodeDto,
+                                                  QueryParameterChangePinCodeDto queryParameterChangePinCodeDto)
+            throws NoSuchPaddingException,
+                 IllegalBlockSizeException,
+                 IOException,
+                 NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, InvalidKeySpecException {
 
         KeyDto keyDto = new KeyDto();
         ResponseChangePinCodeDto responseChangePinCodeDto = new ResponseChangePinCodeDto();
@@ -340,7 +345,8 @@ public class AccountServiceImpl implements AccountService {
             responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
             return responseChangePinCodeDto;
 
-        } else if (requestBodyChangePinCodeDto.getEncryptedNewPinCode() == null || requestBodyChangePinCodeDto.getEncryptedPinCode() == null) {
+        } else if (requestBodyChangePinCodeDto.getEncryptedNewPinCode() == null ||
+                requestBodyChangePinCodeDto.getEncryptedPinCode() == null) {
             responseChangePinCodeDto.setErrorCode("22");
             responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
             return responseChangePinCodeDto;
