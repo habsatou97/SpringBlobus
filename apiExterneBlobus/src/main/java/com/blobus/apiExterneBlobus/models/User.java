@@ -2,6 +2,7 @@ package com.blobus.apiExterneBlobus.models;
 
 import com.blobus.apiExterneBlobus.models.enums.Role;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -26,8 +27,8 @@ public class User implements UserDetails {
     @Column(
             name = "email",
             unique = true,
-            nullable = false
-    )
+            nullable = false)
+    @Email
     private String email;
     private List<Role> roles = new ArrayList<>();
     private String ninea;

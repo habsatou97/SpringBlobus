@@ -48,6 +48,7 @@ public class UserServiceImpl implements UserService {
                           .firstName(user.getFirstName())
                           .lastName(user.getLastName())
                           .email(user.getEmail())
+                          .phoneNumber(user.getPhoneNumber())
                           .roles(user.getRoles())
                           .ninea(user.getNinea())
                                   .build();
