@@ -316,7 +316,7 @@ public class AccountServiceImpl implements AccountService {
         throw new EntityNotFoundException("This account does'nt exist !!");
     }
 
-    @Override
+    /*@Override
     public ResponseChangePinCodeDto changePinCode(RequestBodyChangePinCodeDto requestBodyChangePinCodeDto,
                                                   QueryParameterChangePinCodeDto queryParameterChangePinCodeDto)
             throws NoSuchPaddingException,
@@ -373,5 +373,5 @@ public class AccountServiceImpl implements AccountService {
             }
         }
             //return null;
-    }
+    }*/
 }
