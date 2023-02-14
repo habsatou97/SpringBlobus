@@ -32,7 +32,7 @@ public class KeyController {
 
 
     @PostMapping("crypt")
-    public ResponseEntity<DecryptDto> encrypt(@RequestBody String encryptedPinCode)
+    public ResponseEntity<DecryptDto> encrypt(@RequestBody DecryptDto decryptDto)
                                      throws NoSuchAlgorithmException,
                                             NoSuchPaddingException,
                                             IllegalBlockSizeException,
@@ -42,14 +42,14 @@ public class KeyController {
                                             InvalidKeySpecException,
                                             InvalidKeyException {
         //key.getKey();
-        DecryptDto decryptDto=new DecryptDto();
-        decryptDto.setEncryptedPinCode(keyGenerator.encrypt(encryptedPinCode));
-        return ResponseEntity.ok().body(decryptDto);
+        DecryptDto decryptDto1=new DecryptDto();
+        decryptDto1.setEncryptedPinCode(keyGenerator.encrypt(decryptDto));
+        return ResponseEntity.ok().body(decryptDto1);
     }
     @PostMapping("decrypt")
     public String decrypt(@RequestBody  DecryptDto decryptDto) throws NoSuchPaddingException,
             IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, InvalidKeyException {
-        return keyGenerator.decrypt(decryptDto.getEncryptedPinCode());
+        return keyGenerator.decrypt(decryptDto);
     }
 }
 
