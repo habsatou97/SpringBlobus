@@ -31,6 +31,7 @@ import com.blobus.apiExterneBlobus.services.implementations.TransactionServiceIm
 import java.time.LocalDate;
 import java.util.Optional;
 
+import com.blobus.apiExterneBlobus.services.interfaces.KeyGeneratorService;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
@@ -45,14 +46,17 @@ class TransactionControllerTest {
         when(accountRepository.findByPhoneNumberAndWalletType((String) any(), (WalletType) any()))
                 .thenReturn(Optional.empty());
         TransactionController transactionController = new TransactionController(
-                new TransactionServiceImpl(accountRepository, mock(TransactionRepository.class), mock(BulkRepository.class),
-                        mock(UserRepository.class)));
+                new TransactionServiceImpl(accountRepository,
+                        mock(TransactionRepository.class), mock(BulkRepository.class),
+                        mock(UserRepository.class),mock(KeyGeneratorService.class)));
         AmountDto amount = new AmountDto();
         CustomerDto customer = new CustomerDto("4105551212", WalletType.BONUS);
 
         ResponseEntity<ResponseCashInTransactionDto> actualCashInTransactionResult = transactionController
                 .CashInTransaction(new RequestBodyTransactionDto(amount, customer,
-                        new RetailerDto("4105551212", "Encrypted Pin Code", WalletType.BONUS), "Reference", true,
+                        new RetailerDto("4105551212",
+                                "Encrypted Pin Code", WalletType.BONUS),
+                        "Reference", true,
                         LocalDate.ofEpochDay(1L), TransactionType.CASHIN));
         assertTrue(actualCashInTransactionResult.hasBody());
         assertTrue(actualCashInTransactionResult.getHeaders().isEmpty());
@@ -65,7 +69,8 @@ class TransactionControllerTest {
         assertEquals(TransactionStatus.REJECTED, body.getStatus());
         assertNull(body.getReference());
         assertEquals("Retailer account does not exist", body.getErrorMessage());
-        verify(accountRepository, atLeast(1)).findByPhoneNumberAndWalletType((String) any(), (WalletType) any());
+        verify(accountRepository, atLeast(1))
+                .findByPhoneNumberAndWalletType((String) any(), (WalletType) any());
     }
 
     @Test
@@ -73,8 +78,11 @@ class TransactionControllerTest {
         TransactionRepository transactionRepository = mock(TransactionRepository.class);
         when(transactionRepository.findById((Long) any())).thenReturn(Optional.of(new Transaction()));
         assertNull(
-                (new TransactionController(new TransactionServiceImpl(mock(AccountRepository.class), transactionRepository,
-                        mock(BulkRepository.class), mock(UserRepository.class)))).getTransactionStatus(123L).getStatus());
+                (new TransactionController(new TransactionServiceImpl(
+                        mock(AccountRepository.class), transactionRepository,
+                        mock(BulkRepository.class), mock(UserRepository.class),
+                        mock(KeyGeneratorService.class))))
+                        .getTransactionStatus(123L).getStatus());
         verify(transactionRepository).findById((Long) any());
     }
 
@@ -114,12 +122,16 @@ class TransactionControllerTest {
         LocalDate requestDate = LocalDate.ofEpochDay(1L);
         Account retailerTransferAccount = new Account();
         Account customerTransferAccount = new Account();
-        when(transactionRepository.findById((Long) any())).thenReturn(Optional.of(new Transaction(123L, "Reference",
-                createdDate, true, requestDate, TransactionStatus.ACCEPTED, TransactionType.CASHIN, 10.0d,
+        when(transactionRepository.findById((Long) any())).thenReturn(Optional.of(
+                new Transaction(123L, "Reference",
+                createdDate, true, requestDate,
+                        TransactionStatus.ACCEPTED, TransactionType.CASHIN, 10.0d,
                 TransactionCurrency.XOF, retailerTransferAccount, customerTransferAccount, new Bulk())));
         GetTransactionDto actualTransaction = (new TransactionController(
-                new TransactionServiceImpl(mock(AccountRepository.class), transactionRepository, mock(BulkRepository.class),
-                        mock(UserRepository.class)))).getTransaction(123L);
+                new TransactionServiceImpl(mock(AccountRepository.class),
+                        transactionRepository, mock(BulkRepository.class),
+                        mock(UserRepository.class),mock(KeyGeneratorService.class))))
+                .getTransaction(123L);
         assertTrue(actualTransaction.isReceiveNotification());
         assertEquals("1970-01-02", actualTransaction.getCreatedAt().toString());
         assertNull(actualTransaction.getPartner());
