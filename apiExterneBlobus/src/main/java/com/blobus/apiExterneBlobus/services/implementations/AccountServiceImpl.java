@@ -324,6 +324,11 @@ public class AccountServiceImpl implements AccountService {
         throw new EntityNotFoundException("This account does'nt exist !!");
     }
 
+    @Override
+    public ResponseChangePinCodeDto changePinCode(RequestBodyChangePinCodeDto requestBodyChangePinCodeDto, String msisdn, CustomerType customerType, WalletType walletType) throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, InvalidKeySpecException {
+        return null;
+    }
+
     /*
     @Override
 
