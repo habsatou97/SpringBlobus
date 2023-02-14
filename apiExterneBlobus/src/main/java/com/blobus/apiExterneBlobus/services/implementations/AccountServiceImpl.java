@@ -316,26 +316,26 @@ public class AccountServiceImpl implements AccountService {
         throw new EntityNotFoundException("This account does'nt exist !!");
     }
 
-    @Override
-    public ResponseChangePinCodeDto changePinCode(RequestBodyChangePinCodeDto requestBodyChangePinCodeDto, String msisdn,CustomerType customerType,WalletType walletType)
+    /*@Override
+    public ResponseChangePinCodeDto changePinCode(RequestBodyChangePinCodeDto requestBodyChangePinCodeDto,
+                                                  QueryParameterChangePinCodeDto queryParameterChangePinCodeDto)
             throws NoSuchPaddingException,
                  IllegalBlockSizeException,
                  IOException,
                  NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, InvalidKeySpecException {
 
         KeyDto keyDto = new KeyDto();
-        DecryptDto decryptDto=new DecryptDto();
         ResponseChangePinCodeDto responseChangePinCodeDto = new ResponseChangePinCodeDto();
 
-        Optional<Account> account = transferAccountRepository.findByPhoneNumberAndWalletType(msisdn,walletType);
-        if(customerType!= CustomerType.RETAILER){
+        Optional<Account> account = transferAccountRepository.getAccountByPhoneNumber(queryParameterChangePinCodeDto.getMsisdn());
+        if((queryParameterChangePinCodeDto.getCustomerType())!= CustomerType.RETAILER){
             throw new EntityNotFoundException("Only a retailer is allow to do this operation !!");
         }
         else if(!account.isPresent()) {
             responseChangePinCodeDto.setErrorCode("2000");
             responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
             return responseChangePinCodeDto;
-        } else if (msisdn.length() != 9) {
+        } else if (queryParameterChangePinCodeDto.getMsisdn().length() != 9) {
             responseChangePinCodeDto.setErrorCode(ErrorCode.CUSTOMER_MSISDN_IS_INVALID.getErrorCode());
             responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
             return responseChangePinCodeDto;
@@ -350,28 +350,20 @@ public class AccountServiceImpl implements AccountService {
             responseChangePinCodeDto.setErrorCode("22");
             responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
             return responseChangePinCodeDto;
-        } else if (msisdn==null || customerType==null || walletType==null) {
+        } else if (queryParameterChangePinCodeDto==null) {
             responseChangePinCodeDto.setErrorCode("27");
             responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
             return responseChangePinCodeDto;
 
         } else {
-
-            decryptDto.setEncryptedPinCode(account.get().getEncryptedPinCode());
-            String enc = keyGeneratorService.decrypt(decryptDto);
+            String enc = keyGeneratorService.decrypt(account.get().getEncryptedPinCode());
 
             if(enc.equals(requestBodyChangePinCodeDto.getEncryptedPinCode())){
-                DecryptDto dto=new DecryptDto();
-                dto.setEncryptedPinCode(requestBodyChangePinCodeDto.getEncryptedNewPinCode());
-               String ch= keyGeneratorService.encrypt(dto);
+               String ch= keyGeneratorService.encrypt(requestBodyChangePinCodeDto.getEncryptedNewPinCode());
                account.get().setEncryptedPinCode(ch);
-               transferAccountRepository.saveAndFlush(account.get());
                responseChangePinCodeDto.setStatus(HttpStatus.ACCEPTED);
-               responseChangePinCodeDto.setCustomerType(customerType);
-               responseChangePinCodeDto.setMsisdn(msisdn);
-               responseChangePinCodeDto.setEncryptedNewPinCode(requestBodyChangePinCodeDto.getEncryptedNewPinCode());
-               responseChangePinCodeDto.setEncryptedPinCode(keyGeneratorService.decrypt(new DecryptDto(account.get().getEncryptedPinCode())));
                return responseChangePinCodeDto;
+
 
               // responseChangePinCodeDto.getEncryptedNewPinCode(requestBodyChangePinCodeDto.setEncryptedNewPinCode(requestBodyChangePinCodeDto.getEncryptedPinCode()));
             }
@@ -381,5 +373,5 @@ public class AccountServiceImpl implements AccountService {
             }
         }
             //return null;
-    }
+    }*/
 }
