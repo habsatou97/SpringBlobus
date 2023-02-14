@@ -9,6 +9,7 @@ import com.blobus.apiExterneBlobus.controllers.AccountController;
 import com.blobus.apiExterneBlobus.controllers.TransactionController;
 import com.blobus.apiExterneBlobus.controllers.UserController;
 import com.blobus.apiExterneBlobus.dto.UserDto;
+import com.blobus.apiExterneBlobus.dto.UserWithNineaDto;
 import com.blobus.apiExterneBlobus.models.User;
 import com.blobus.apiExterneBlobus.models.enums.Role;
 import com.blobus.apiExterneBlobus.repositories.AccountRepository;
@@ -166,7 +167,14 @@ class UserServiceImplTest {
     @AutoConfigureTestDatabase
     void addSingleUser()  throws Exception{
         // given
-        User user=createUser();
+        UserWithNineaDto user=UserWithNineaDto.builder()
+                .ninea("vbfggtrt")
+                .firstName("Rokhya")
+                .lastName("Ndiaye")
+                .email("rokhya-ndiaye@avimtoo.com")
+                .phoneNumber("768954362")
+                .roles(Collections.singletonList(Role.RETAILER))
+                .build();
 
         //when
 
@@ -193,11 +201,14 @@ class UserServiceImplTest {
         userRepository.save(user);
 
         // je recuper l'utilisateur
-       User user1= new User();
-       // je modifie l'utlisateur
-       user1.setLastName("El-seydi");
-       user1.setFirstName("Ba");
-       user1.setEmail("barry.pape-dame@avimtoo.com");
+       UserWithNineaDto user1 =UserWithNineaDto.builder()
+               .ninea("vbfggtrt")
+               .firstName("Rokhya")
+               .lastName("Ndiaye")
+               .email("rokhya-ndiaye@avimtoo.com")
+               .phoneNumber("768954362")
+               .roles(Collections.singletonList(Role.RETAILER))
+               .build();
        //
        when(service.updateSingleUser(user1,user.getId())).thenReturn(new UserDto());
         Assertions.assertThat(service.updateSingleUser(user1,user.getId())).isNotNull();

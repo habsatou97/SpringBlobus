@@ -6,6 +6,7 @@ import com.blobus.apiExterneBlobus.config.SecurityConfiguration;
 import com.blobus.apiExterneBlobus.dto.AmountDto;
 import com.blobus.apiExterneBlobus.dto.RequestBodyUserProfileDto;
 import com.blobus.apiExterneBlobus.dto.UserDto;
+import com.blobus.apiExterneBlobus.dto.UserWithNineaDto;
 import com.blobus.apiExterneBlobus.models.User;
 import com.blobus.apiExterneBlobus.models.enums.Role;
 import com.blobus.apiExterneBlobus.models.enums.TransactionCurrency;
@@ -223,16 +224,15 @@ class UserControllerTest {
 
         UserController userController= new UserController(new UserServiceImpl(userRepository1,accountRepository1), userRepository1);
 
-                User user= new  User(
-                4l,
-                "Rokhya",
-                "Ndiaye",
-                "rokhya-ndiaye@avimtoo.com" ,
-                Role.RETAILER,
-                "vimto1245",
-                "768954362",
-                "fzivbedfegjd",
-                "fohfgfyf78");
+                UserWithNineaDto user=UserWithNineaDto.builder()
+                        .ninea("vbfggtrt")
+                        .firstName("Rokhya")
+                        .lastName("Ndiaye")
+                        .email("rokhya-ndiaye@avimtoo.com")
+                        .phoneNumber("768954362")
+                        .roles(Collections.singletonList(Role.RETAILER))
+                        .build();
+
             ResponseEntity<UserDto>  userResult = userController.addUser(user);
             assertTrue(userResult.getHeaders().isEmpty());
             assertEquals(200,userResult.getStatusCodeValue());
@@ -245,19 +245,19 @@ class UserControllerTest {
 
         UserRepository userRepository2= mock(UserRepository.class);
         UserServiceImpl userService2 = mock(UserServiceImpl.class);
-        when(userRepository2.save((User) any())).thenReturn( new  User(
-                4l,
-                "Rokhya",
-                "Ndiaye",
-                "rokhya-ndiaye@avimtoo.com" ,
-                Role.RETAILER,
-                "vimto1245",
-                "768954362",
-                "fzivbedfegjd",
-                "fohfgfyf78"));
+        UserWithNineaDto user =UserWithNineaDto.builder()
+                .ninea("vbfggtrt")
+                .firstName("Rokhya")
+                .lastName("Ndiaye")
+                .email("rokhya-ndiaye@avimtoo.com")
+                .phoneNumber("768954362")
+                .roles(Collections.singletonList(Role.RETAILER))
+                .build();
+
+        when(userRepository2.save((User) any())).thenReturn(new User());
 
         UserController userController= new UserController(userService2, userRepository2);
-        User user= new  User(
+        User user1= new  User(
                 4l,
                 "Rokhya",
                 "Ndiaye",
@@ -267,7 +267,7 @@ class UserControllerTest {
                 "768954362",
                 "fzivbedfegjd",
                 "fohfgfyf78");
-        ResponseEntity<UserDto>  userResult = userController.updateUser(user,user.getId());
+        ResponseEntity<UserDto>  userResult = userController.updateUser(user,user1.getId());
         assertTrue(userResult.getHeaders().isEmpty());
         assertEquals(200,userResult.getStatusCodeValue());
 

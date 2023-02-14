@@ -3,6 +3,7 @@ package com.blobus.apiExterneBlobus.services.implementations;
 import com.blobus.apiExterneBlobus.dto.AmountDto;
 import com.blobus.apiExterneBlobus.dto.RequestBodyUserProfileDto;
 import com.blobus.apiExterneBlobus.dto.UserDto;
+import com.blobus.apiExterneBlobus.dto.UserWithNineaDto;
 import com.blobus.apiExterneBlobus.exception.ResourceNotFoundException;
 import com.blobus.apiExterneBlobus.models.Account;
 import com.blobus.apiExterneBlobus.models.User;
@@ -27,8 +28,9 @@ public class UserServiceImpl implements UserService {
     private final AccountRepository transferAccountRepository;
 
     @Override
-    public UserDto addSingleUser(User user) {
+    public UserDto addSingleUser(UserWithNineaDto user) {
         UserDto userDto=new UserDto();
+
         if(
                 user.getFirstName()!=null &&
                 user.getLastName()!=null &&
@@ -42,7 +44,15 @@ public class UserServiceImpl implements UserService {
             }
             if( user.getNinea()!= null)
                 user.setRoles(Collections.singletonList(Role.RETAILER));
-            userRepository.save(user);
+           User user1= User.builder()
+                          .firstName(user.getFirstName())
+                          .lastName(user.getLastName())
+                          .email(user.getEmail())
+                          .roles(user.getRoles())
+                          .ninea(user.getNinea())
+                                  .build();
+
+            userRepository.save(user1);
             userDto.setEmail(user.getEmail());
             userDto.setPhoneNumber(user.getPhoneNumber());
             userDto.setFirstName(user.getFirstName());
@@ -54,7 +64,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDto updateSingleUser(User user, Long id) {
+    public UserDto updateSingleUser(UserWithNineaDto user, Long id) {
         UserDto userDto= new UserDto();
       User user1 = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("updated failled ,user_id not found"));
       if (user.getFirstName()!=null && user.getFirstName().length()>0
