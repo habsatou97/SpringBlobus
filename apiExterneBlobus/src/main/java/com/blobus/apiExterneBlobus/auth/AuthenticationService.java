@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +27,11 @@ public class AuthenticationService {
     var user = new User();
     String userId = RandomStringUtils.random(5,"azertyuiopqsdfghjklmwxcvbn1223456789");
     String userSecret = RandomStringUtils.random(4,"123456789");
+    Optional<User> userOptional = repository.findUserByEmail(request.getEmail());
+    Optional<User> userOptional1 = repository.findUserByPhoneNumber(user.getPhoneNumber());
+    if(userOptional.isPresent() || userOptional1.isPresent()){
+      throw new IllegalStateException("Email et/ou mot de passe déjà existant.");
+    }
 
     user.setFirstName(request.getFirstname());
     user.setLastName(request.getLastname());
