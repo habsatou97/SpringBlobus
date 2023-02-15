@@ -27,7 +27,7 @@ public interface AccountService {
   public String GetAccountPhoneNumber(Long id);
   public CreateOrEditAccountDto updateTranfertAccount(CreateOrEditAccountDto transferAccount, Long id);
   public void deleteTransfertAccountById(Long id);
-  public double getBalance(GetRetailerBalanceDto getRetailerBalanceDto);
+  public double getBalance(GetRetailerBalanceDto getRetailerBalanceDto) throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException;
   public CreateOrEditAccountDto modifyTransferAccountRetailer(Long id, CreateOrEditAccountDto account, Role role);
   public void deleteByPhoneNumber(String phoneNumber);
 

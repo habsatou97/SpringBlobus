@@ -89,7 +89,7 @@ public class CustomerImpl implements CustomerService {
     }
 
     @Override
-    public CustomerEditCreateDto editDto(Customer customer) {
+    public CustomerEditCreateDto editDto(Long id, Customer customer) {
         if (customer.getPhoneNumber().length() > 9 ) throw new IllegalStateException("The phone number cannot be more than 9 characters.");
         if (customer.getPhoneNumber().isEmpty() ||
                 customer.getFirstName().isEmpty() ||
@@ -97,12 +97,24 @@ public class CustomerImpl implements CustomerService {
                 customer.getEmail().isEmpty()
         ) throw new IllegalStateException("Firstname, lastname, email or phone Number connot be empty.");
 
+
+        Customer customer1 = customerRepository.findById(id).orElseThrow();
+        System.out.println("*********************************************");
+        System.out.println(customer.getFirstName());
+        System.out.println(customer.getPhoneNumber());
+        System.out.println(customer.getLastName());
+        customer1.setPhoneNumber(customer.getPhoneNumber());
+        customer1.setLastName(customer.getLastName());
+        customer1.setEmail(customer.getEmail());
+        customer1.setFirstName(customer.getFirstName());
+
+
         CustomerEditCreateDto customerEditCreateDto = new CustomerEditCreateDto();
-        customerEditCreateDto.setEmail(customer.getEmail());
-        customerEditCreateDto.setFirstName(customer.getFirstName());
-        customerEditCreateDto.setPhoneNumber(customer.getPhoneNumber());
-        customerEditCreateDto.setLastName(customer.getLastName());
-        customerRepository.save(customer);
+        customerEditCreateDto.setEmail(customer1.getEmail());
+        customerEditCreateDto.setFirstName(customer1.getFirstName());
+        customerEditCreateDto.setPhoneNumber(customer1.getPhoneNumber());
+        customerEditCreateDto.setLastName(customer1.getLastName());
+        customerRepository.save(customer1);
         return customerEditCreateDto;
     }
 

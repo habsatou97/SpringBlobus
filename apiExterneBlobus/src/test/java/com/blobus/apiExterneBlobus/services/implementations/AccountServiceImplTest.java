@@ -280,7 +280,7 @@ class AccountServiceImplTest {
     }
 
     @Test
-    void getBalance() {
+    void getBalance() throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         String email ="dtdvf.fffrgfby@avimtoo.com";
         User user = new User();
         user.setNinea("vimto1245");

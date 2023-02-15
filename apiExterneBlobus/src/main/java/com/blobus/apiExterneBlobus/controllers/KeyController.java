@@ -43,8 +43,8 @@ public class KeyController {
                                             InvalidKeyException {
         //key.getKey();
         DecryptDto decryptDto1=new DecryptDto();
-        decryptDto.setEncryptedPinCode(keyGenerator.encrypt(decryptDto1));
-        return ResponseEntity.ok().body(decryptDto);
+        decryptDto1.setEncryptedPinCode(keyGenerator.encrypt(decryptDto));
+        return ResponseEntity.ok().body(decryptDto1);
     }
     @PostMapping("decrypt")
     public String decrypt(@RequestBody  DecryptDto decryptDto) throws NoSuchPaddingException,
