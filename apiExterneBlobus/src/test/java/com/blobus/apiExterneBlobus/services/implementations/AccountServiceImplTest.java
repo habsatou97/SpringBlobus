@@ -1,5 +1,6 @@
 package com.blobus.apiExterneBlobus.services.implementations;
 
+import com.blobus.apiExterneBlobus.dto.AmountDto;
 import com.blobus.apiExterneBlobus.dto.BalanceDto;
 import com.blobus.apiExterneBlobus.dto.GetRetailerBalanceDto;
 import com.blobus.apiExterneBlobus.dto.CreateOrEditAccountDto;
@@ -8,6 +9,7 @@ import com.blobus.apiExterneBlobus.models.Account;
 import com.blobus.apiExterneBlobus.models.Customer;
 import com.blobus.apiExterneBlobus.models.User;
 import com.blobus.apiExterneBlobus.models.enums.Role;
+import com.blobus.apiExterneBlobus.models.enums.TransactionCurrency;
 import com.blobus.apiExterneBlobus.models.enums.WalletType;
 import com.blobus.apiExterneBlobus.repositories.AccountRepository;
 import com.blobus.apiExterneBlobus.repositories.CustomerRepository;
@@ -280,7 +282,7 @@ class AccountServiceImplTest {
     }
 
     @Test
-    void getBalance() {
+    void getBalance() throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         String email ="dtdvf.fffrgfby@avimtoo.com";
         User user = new User();
         user.setNinea("vimto1245");
@@ -310,7 +312,7 @@ class AccountServiceImplTest {
 
         when(service.getBalance(
                 new GetRetailerBalanceDto(encryptedPinCode,phoneNumber,walletType)))
-                .thenReturn(account.getBalance());
+                .thenReturn(new AmountDto(account.getBalance(), TransactionCurrency.XOF));
         Assertions.assertThat(service.getBalance(
                 new GetRetailerBalanceDto(encryptedPinCode,phoneNumber,walletType)))
                 .isNotNull();

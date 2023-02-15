@@ -1,9 +1,6 @@
 package com.blobus.apiExterneBlobus.controllers;
 
-import com.blobus.apiExterneBlobus.auth.AuthenticationRequest;
-import com.blobus.apiExterneBlobus.auth.AuthenticationResponse;
-import com.blobus.apiExterneBlobus.auth.AuthenticationService;
-import com.blobus.apiExterneBlobus.auth.RegisterRequest;
+import com.blobus.apiExterneBlobus.auth.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +16,7 @@ public class AuthenticationController {
   private final AuthenticationService service;
 
   @PostMapping("/register")
-  public ResponseEntity<AuthenticationResponse> register(
+  public ResponseEntity<RegisterResponse> register(
       @RequestBody RegisterRequest request
   ) {
     return ResponseEntity.ok(service.register(request));

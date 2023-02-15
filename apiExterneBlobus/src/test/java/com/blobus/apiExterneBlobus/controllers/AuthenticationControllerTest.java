@@ -42,7 +42,7 @@ class AuthenticationControllerTest {
         AuthenticationController authenticationController = new AuthenticationController(
                 new AuthenticationService(userRepository, passwordEncoder, new JwtService(), authenticationManager));
         ResponseEntity<AuthenticationResponse> actualRegisterResult = authenticationController
-                .register(new RegisterRequest("Jane", "Doe", "42", "User Secret", "jane.doe@example.org"));
+                .register(new RegisterRequest("Jane", "Doe", "42", "User Secret", "jane.doe@example.org","",new ArrayList<>()));
         assertTrue(actualRegisterResult.hasBody());
         assertTrue(actualRegisterResult.getHeaders().isEmpty());
         assertEquals(200, actualRegisterResult.getStatusCodeValue());
@@ -70,7 +70,7 @@ class AuthenticationControllerTest {
         AuthenticationController authenticationController = new AuthenticationController(
                 new AuthenticationService(userRepository, new BCryptPasswordEncoder(), jwtService, authenticationManager));
         ResponseEntity<AuthenticationResponse> actualRegisterResult = authenticationController
-                .register(new RegisterRequest("Jane", "Doe", "42", "User Secret", "jane.doe@example.org"));
+                .register(new RegisterRequest("Jane", "Doe", "42", "User Secret", "jane.doe@example.org","", new ArrayList<>()));
         assertTrue(actualRegisterResult.hasBody());
         assertTrue(actualRegisterResult.getHeaders().isEmpty());
         assertEquals(200, actualRegisterResult.getStatusCodeValue());
@@ -92,7 +92,7 @@ class AuthenticationControllerTest {
         when(authenticationService.register((RegisterRequest) any())).thenReturn(new AuthenticationResponse("ABC123"));
         AuthenticationController authenticationController = new AuthenticationController(authenticationService);
         ResponseEntity<AuthenticationResponse> actualRegisterResult = authenticationController
-                .register(new RegisterRequest("Jane", "Doe", "42", "User Secret", "jane.doe@example.org"));
+                .register(new RegisterRequest("Jane", "Doe", "42", "User Secret", "jane.doe@example.org","", new ArrayList<>()));
         assertTrue(actualRegisterResult.hasBody());
         assertTrue(actualRegisterResult.getHeaders().isEmpty());
         assertEquals(200, actualRegisterResult.getStatusCodeValue());

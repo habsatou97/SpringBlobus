@@ -5,10 +5,7 @@ import com.blobus.apiExterneBlobus.exception.ResourceNotFoundException;
 import com.blobus.apiExterneBlobus.models.Account;
 import com.blobus.apiExterneBlobus.models.Customer;
 import com.blobus.apiExterneBlobus.models.User;
-import com.blobus.apiExterneBlobus.models.enums.CustomerType;
-import com.blobus.apiExterneBlobus.models.enums.ErrorCode;
-import com.blobus.apiExterneBlobus.models.enums.Role;
-import com.blobus.apiExterneBlobus.models.enums.WalletType;
+import com.blobus.apiExterneBlobus.models.enums.*;
 import com.blobus.apiExterneBlobus.repositories.CustomerRepository;
 import com.blobus.apiExterneBlobus.repositories.AccountRepository;
 import com.blobus.apiExterneBlobus.repositories.UserRepository;
@@ -258,19 +255,19 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public double getBalance(GetRetailerBalanceDto getRetailerBalanceDto) throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+    public AmountDto getBalance(GetRetailerBalanceDto getRetailerBalanceDto) throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         Account account = transferAccountRepository.findByPhoneNumberAndWalletType( getRetailerBalanceDto.getPhoneNumber(),
                 getRetailerBalanceDto.getWalletType()).orElseThrow();
-        System.out.println("********************************************************************");
         String pinCode = keyGeneratorService.decrypt(new DecryptDto(account.getEncryptedPinCode()));
-        System.out.println(pinCode);
+
 
         if (!pinCode.equals(getRetailerBalanceDto.getEncryptedPinCode())){
             throw new IllegalStateException("Les deux code pinde ne correspodent pas.");
         }
-        return transferAccountRepository.findByPhoneNumberAndWalletType(
+        double balance = transferAccountRepository.findByPhoneNumberAndWalletType(
                 getRetailerBalanceDto.getPhoneNumber(),
                 getRetailerBalanceDto.getWalletType()).orElseThrow().getBalance();
+        return new AmountDto(balance, TransactionCurrency.XOF);
     }
 
     /**
