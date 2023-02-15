@@ -34,7 +34,8 @@ public class AccountController {
     private final KeyGeneratorImpl keyGenerator;
 
     @PostMapping("retailer/balance")
-    public ResponseEntity<AmountDto> getBalance(@RequestBody GetRetailerBalanceDto getRetailerBalanceDto) throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+    public ResponseEntity<AmountDto> getBalance(@RequestBody GetRetailerBalanceDto getRetailerBalanceDto)
+            throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         transferAccountService.getBalance(getRetailerBalanceDto);
         return ResponseEntity.ok().body(transferAccountService.getBalance(getRetailerBalanceDto));
     }
@@ -78,7 +79,7 @@ public class AccountController {
 
     @PostMapping("customer/{id}")
     public ResponseEntity<CreateOrEditAccountDto>saveCustomer(
-            @RequestBody CreateOrEditAccountDto transferAccount,
+            @RequestBody CreateAccountDto transferAccount,
             @PathVariable Long id)
             throws NoSuchPaddingException, IllegalBlockSizeException,
             NoSuchAlgorithmException, IOException, BadPaddingException,
@@ -94,7 +95,7 @@ public class AccountController {
         return ResponseEntity.ok().body(accountDto);
     }
     @PostMapping("/retailer/{id}")
-    public ResponseEntity<CreateOrEditAccountDto>saveRetailer(@RequestBody CreateOrEditAccountDto transferAccount,
+    public ResponseEntity<CreateOrEditAccountDto>saveRetailer(@RequestBody CreateAccountDto transferAccount,
                                                               @PathVariable Long id)
             throws NoSuchPaddingException, IllegalBlockSizeException,
             IOException, NoSuchAlgorithmException, BadPaddingException,

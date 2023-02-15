@@ -8,9 +8,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class CreateOrEditAccountDto {
+public class CreateAccountDto {
     private WalletType walletType;
     private String phoneNumber;
     private String encryptedPinCode;
-    private double balance;
 }

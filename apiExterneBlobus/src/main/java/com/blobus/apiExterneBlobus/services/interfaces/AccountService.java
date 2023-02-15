@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AccountService {
-  public CreateOrEditAccountDto createCustomerTransfertAccount(CreateOrEditAccountDto transferAccount, Long id);
-  public CreateOrEditAccountDto createRetailerTransfertAccount(CreateOrEditAccountDto transferAccount,Long id);
+  public CreateOrEditAccountDto createCustomerTransfertAccount(CreateAccountDto transferAccount, Long id);
+  public CreateOrEditAccountDto createRetailerTransfertAccount(CreateAccountDto transferAccount,Long id);
   public List<CreateOrEditAccountDto> getAllTransfertAccount();
   public Optional<CreateOrEditAccountDto> getTransfertAccountById(Long id);
   public Optional<CreateOrEditAccountDto>  geTransferAccountByMsisdn(String msisdn);
