@@ -127,8 +127,6 @@ public class AccountServiceImpl implements AccountService {
         }
         if (i != 0) {
             throw new IllegalStateException("Ce customer : "  +id + " Possede deja un compte de ce type");
-            //System.out.println("Ce customer possede deja un compte de ce type");
-            //return null;
         } else {
 
             if(transferAccount.getPhoneNumber()!=null && transferAccount.getPhoneNumber().length() ==9
@@ -370,18 +368,15 @@ public class AccountServiceImpl implements AccountService {
                responseChangePinCodeDto.setStatus(HttpStatus.ACCEPTED);
                responseChangePinCodeDto.setCustomerType(customerType);
                responseChangePinCodeDto.setMsisdn(msisdn);
-               //System.out.println("bonjour");
                responseChangePinCodeDto.setEncryptedNewPinCode(requestBodyChangePinCodeDto.getEncryptedNewPinCode());
                responseChangePinCodeDto.setEncryptedPinCode(keyGeneratorService.decrypt(new DecryptDto(account.get().getEncryptedPinCode())));
                return responseChangePinCodeDto;
-
-              // responseChangePinCodeDto.getEncryptedNewPinCode(requestBodyChangePinCodeDto.setEncryptedNewPinCode(requestBodyChangePinCodeDto.getEncryptedPinCode()));
             }
             else
             {
                 throw new RuntimeException("Les deux pincodes ne correspondent pas");
             }
         }
-            //return null;
+
     }
 }
