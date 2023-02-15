@@ -351,7 +351,7 @@ public class AccountServiceImpl implements AccountService {
             responseChangePinCodeDto.setErrorCode("22");
             responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
             return responseChangePinCodeDto;
-        } else if (msisdn==null || customerType==null || walletType==null) {
+        } else if (msisdn==null|| customerType==null || walletType==null) {
             responseChangePinCodeDto.setErrorCode("27");
             responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
             return responseChangePinCodeDto;
@@ -370,7 +370,7 @@ public class AccountServiceImpl implements AccountService {
                responseChangePinCodeDto.setStatus(HttpStatus.ACCEPTED);
                responseChangePinCodeDto.setCustomerType(customerType);
                responseChangePinCodeDto.setMsisdn(msisdn);
-               System.out.println("bonjour");
+               //System.out.println("bonjour");
                responseChangePinCodeDto.setEncryptedNewPinCode(requestBodyChangePinCodeDto.getEncryptedNewPinCode());
                responseChangePinCodeDto.setEncryptedPinCode(keyGeneratorService.decrypt(new DecryptDto(account.get().getEncryptedPinCode())));
                return responseChangePinCodeDto;
