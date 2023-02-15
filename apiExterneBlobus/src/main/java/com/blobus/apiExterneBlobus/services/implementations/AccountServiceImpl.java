@@ -124,8 +124,6 @@ public class AccountServiceImpl implements AccountService {
         }
         if (i != 0) {
             throw new IllegalStateException("Ce customer : "  +id + " Possede deja un compte de ce type");
-            //System.out.println("Ce customer possede deja un compte de ce type");
-            //return null;
         } else {
 
             if(transferAccount.getPhoneNumber()!=null && transferAccount.getPhoneNumber().length() ==9
@@ -322,32 +320,26 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public ResponseChangePinCodeDto changePinCode(RequestBodyChangePinCodeDto requestBodyChangePinCodeDto, String msisdn, CustomerType customerType, WalletType walletType) throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, InvalidKeySpecException {
-        return null;
-    }
-
-    /*
-    @Override
-
-    public ResponseChangePinCodeDto changePinCode(RequestBodyChangePinCodeDto requestBodyChangePinCodeDto,
-                                                  QueryParameterChangePinCodeDto queryParameterChangePinCodeDto)
+    public ResponseChangePinCodeDto changePinCode(RequestBodyChangePinCodeDto requestBodyChangePinCodeDto, String msisdn,CustomerType customerType,WalletType walletType)
             throws NoSuchPaddingException,
                  IllegalBlockSizeException,
                  IOException,
                  NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, InvalidKeySpecException {
 
         KeyDto keyDto = new KeyDto();
+        KeyDto keyDto1=new KeyDto();
+        DecryptDto decryptDto=new DecryptDto();
         ResponseChangePinCodeDto responseChangePinCodeDto = new ResponseChangePinCodeDto();
 
-        Optional<Account> account = transferAccountRepository.getAccountByPhoneNumber(queryParameterChangePinCodeDto.getMsisdn());
-        if((queryParameterChangePinCodeDto.getCustomerType())!= CustomerType.RETAILER){
+        Optional<Account> account = transferAccountRepository.findByPhoneNumberAndWalletType(msisdn,walletType);
+        if(customerType!= CustomerType.RETAILER){
             throw new EntityNotFoundException("Only a retailer is allow to do this operation !!");
         }
         else if(!account.isPresent()) {
             responseChangePinCodeDto.setErrorCode("2000");
             responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
             return responseChangePinCodeDto;
-        } else if (queryParameterChangePinCodeDto.getMsisdn().length() != 9) {
+        } else if (msisdn.length() != 9) {
             responseChangePinCodeDto.setErrorCode(ErrorCode.CUSTOMER_MSISDN_IS_INVALID.getErrorCode());
             responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
             return responseChangePinCodeDto;
@@ -362,28 +354,34 @@ public class AccountServiceImpl implements AccountService {
             responseChangePinCodeDto.setErrorCode("22");
             responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
             return responseChangePinCodeDto;
-        } else if (queryParameterChangePinCodeDto==null) {
+        } else if (msisdn==null|| customerType==null || walletType==null) {
             responseChangePinCodeDto.setErrorCode("27");
             responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
             return responseChangePinCodeDto;
 
         } else {
-            String enc = keyGeneratorService.decrypt(account.get().getEncryptedPinCode());
+
+            decryptDto.setEncryptedPinCode(account.get().getEncryptedPinCode());
+            String enc = keyGeneratorService.decrypt(decryptDto);
 
             if(enc.equals(requestBodyChangePinCodeDto.getEncryptedPinCode())){
-               String ch= keyGeneratorService.encrypt(requestBodyChangePinCodeDto.getEncryptedNewPinCode());
+                DecryptDto dto=new DecryptDto();
+                dto.setEncryptedPinCode(requestBodyChangePinCodeDto.getEncryptedNewPinCode());
+               String ch= keyGeneratorService.encrypt(dto);
                account.get().setEncryptedPinCode(ch);
+               transferAccountRepository.saveAndFlush(account.get());
                responseChangePinCodeDto.setStatus(HttpStatus.ACCEPTED);
+               responseChangePinCodeDto.setCustomerType(customerType);
+               responseChangePinCodeDto.setMsisdn(msisdn);
+               responseChangePinCodeDto.setEncryptedNewPinCode(requestBodyChangePinCodeDto.getEncryptedNewPinCode());
+               responseChangePinCodeDto.setEncryptedPinCode(keyGeneratorService.decrypt(new DecryptDto(account.get().getEncryptedPinCode())));
                return responseChangePinCodeDto;
-
-
-              // responseChangePinCodeDto.getEncryptedNewPinCode(requestBodyChangePinCodeDto.setEncryptedNewPinCode(requestBodyChangePinCodeDto.getEncryptedPinCode()));
             }
             else
             {
                 throw new RuntimeException("Les deux pincodes ne correspondent pas");
             }
         }
-            //return null;
-    }*/
+
+    }
 }

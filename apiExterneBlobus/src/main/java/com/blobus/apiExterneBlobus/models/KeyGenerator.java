@@ -64,10 +64,6 @@ public class KeyGenerator {
         }
         return null;
     }
-    public static void main(String [] args) throws IOException {
-            String ch=readFromFile("RSA/pubkey");
-            System.out.println(ch);
-    }
 
 
 
