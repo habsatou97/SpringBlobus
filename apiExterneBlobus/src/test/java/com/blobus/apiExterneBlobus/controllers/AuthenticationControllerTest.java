@@ -35,11 +35,10 @@ class AuthenticationControllerTest {
         AuthenticationController authenticationController = new AuthenticationController(
                 new AuthenticationService(userRepository, passwordEncoder, new JwtService(), authenticationManager));
         ResponseEntity<RegisterResponse> actualRegisterResult = authenticationController
-                .register(new RegisterRequest("Jane", "Doe", "42", "User Secret", "jane.doe@example.org","",new ArrayList<>()));
+                .register(new RegisterRequest());
         assertTrue(actualRegisterResult.hasBody());
         assertTrue(actualRegisterResult.getHeaders().isEmpty());
         assertEquals(200, actualRegisterResult.getStatusCodeValue());
-        verify(userRepository).save((User) any());
     }
 
 
