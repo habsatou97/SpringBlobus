@@ -3,10 +3,7 @@ package com.blobus.apiExterneBlobus.controllers;
 import com.blobus.apiExterneBlobus.config.JwtAuthenticationFilter;
 import com.blobus.apiExterneBlobus.config.JwtService;
 import com.blobus.apiExterneBlobus.config.SecurityConfiguration;
-import com.blobus.apiExterneBlobus.dto.AmountDto;
-import com.blobus.apiExterneBlobus.dto.BalanceDto;
-import com.blobus.apiExterneBlobus.dto.CreateOrEditAccountDto;
-import com.blobus.apiExterneBlobus.dto.GetRetailerBalanceDto;
+import com.blobus.apiExterneBlobus.dto.*;
 import com.blobus.apiExterneBlobus.models.Account;
 import com.blobus.apiExterneBlobus.models.Customer;
 import com.blobus.apiExterneBlobus.models.User;
@@ -204,14 +201,20 @@ class AccountControllerTest {
 
         customerRepository.save(customer);
 
-        CreateOrEditAccountDto dto = new  CreateOrEditAccountDto();
-        dto.setPhoneNumber("788564426");
-        dto.setEncryptedPinCode("92952595");
-        dto.setWalletType(WalletType.INTERNATIONAL);
+        CreateAccountDto createDto = CreateAccountDto.builder()
+                .phoneNumber("788564426")
+                .encryptedPinCode("92952595")
+                .walletType(WalletType.INTERNATIONAL)
+                .build();
 
-        when(service.createCustomerTransfertAccount(dto,customer.getId())).thenReturn(dto);
+        CreateOrEditAccountDto dto =   CreateOrEditAccountDto.builder().build();
+        dto.setPhoneNumber(createDto.getPhoneNumber());
+        dto.setEncryptedPinCode(createDto.getEncryptedPinCode());
+        dto.setWalletType(createDto.getWalletType());
+
+        when(service.createCustomerTransfertAccount(createDto,customer.getId())).thenReturn(dto);
         org.assertj.core.api.Assertions.assertThat(
-                service.createCustomerTransfertAccount(dto,customer.getId())).isNotNull();
+                service.createCustomerTransfertAccount(createDto,customer.getId())).isNotNull();
     }
 
     @Test
@@ -223,12 +226,17 @@ class AccountControllerTest {
 
         userRepository.save(user);
 
-        CreateOrEditAccountDto dto = new  CreateOrEditAccountDto();
-        dto.setPhoneNumber("788564426");
-        dto.setEncryptedPinCode("92952595");
-        dto.setWalletType(WalletType.INTERNATIONAL);
+        CreateAccountDto dto = CreateAccountDto.builder()
+                .phoneNumber("788564426")
+                .encryptedPinCode("92952595")
+                .walletType(WalletType.INTERNATIONAL)
+                .build();
+        CreateOrEditAccountDto createDto =  CreateOrEditAccountDto.builder().build();
+        createDto.setPhoneNumber(dto.getPhoneNumber());
+        createDto.setEncryptedPinCode(dto.getEncryptedPinCode());
+        createDto.setWalletType(dto.getWalletType());
 
-        when(service.createRetailerTransfertAccount(dto,user.getId())).thenReturn(dto);
+        when(service.createRetailerTransfertAccount(dto,user.getId())).thenReturn(createDto);
         org.assertj.core.api.Assertions.assertThat(service.createRetailerTransfertAccount(dto,user.getId())).isNotNull();
     }
 
@@ -251,7 +259,7 @@ class AccountControllerTest {
         when(repository.save((Account) any())).thenReturn(ct);
 
         AccountController controller= new AccountController(service,key);
-        CreateOrEditAccountDto dto= new CreateOrEditAccountDto();
+        CreateOrEditAccountDto dto=  CreateOrEditAccountDto.builder().build();
         accountRepository.save(account1);
         Optional<Account> account = repository.findById(account1.getId());
 

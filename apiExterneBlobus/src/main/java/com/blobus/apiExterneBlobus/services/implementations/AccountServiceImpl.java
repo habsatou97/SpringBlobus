@@ -43,7 +43,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public CreateOrEditAccountDto createRetailerTransfertAccount(CreateOrEditAccountDto transferAccount,Long id) {
+    public CreateOrEditAccountDto createRetailerTransfertAccount(CreateAccountDto transferAccount,Long id) {
         Account account = new Account();
         User retailer = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         List<Account> comptes = retailer.getAccounts();
@@ -67,7 +67,13 @@ public class AccountServiceImpl implements AccountService {
                     account.setBalance(0.0);
                     Account compte = transferAccountRepository.save(account);
                     retailer.addTransferAccounts(compte);
-                    return transferAccount;
+                    CreateOrEditAccountDto dto = CreateOrEditAccountDto.builder()
+                            .balance(account.getBalance())
+                            .encryptedPinCode(transferAccount.getEncryptedPinCode())
+                            .phoneNumber(transferAccount.getPhoneNumber())
+                            .walletType(transferAccount.getWalletType())
+                            .build();
+                    return dto;
                 }
                 throw new IllegalStateException("Veuillez renseignez les données correctement");
 
@@ -100,7 +106,13 @@ public class AccountServiceImpl implements AccountService {
                         account.setBalance(0.0);
                         Account compte = transferAccountRepository.save(account);
                         retailer.addTransferAccounts(compte);
-                        return transferAccount;
+                        CreateOrEditAccountDto dto = CreateOrEditAccountDto.builder()
+                                .balance(account.getBalance())
+                                .encryptedPinCode(transferAccount.getEncryptedPinCode())
+                                .phoneNumber(transferAccount.getPhoneNumber())
+                                .walletType(transferAccount.getWalletType())
+                                .build();
+                        return dto;
 
                     } throw new IllegalStateException("Veuillez renseignez les donnez correctement");
 
@@ -110,7 +122,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public CreateOrEditAccountDto createCustomerTransfertAccount(CreateOrEditAccountDto transferAccount, Long id) {
+    public CreateOrEditAccountDto createCustomerTransfertAccount(CreateAccountDto transferAccount, Long id) {
 
         Customer customer = customerRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
         Account account= new Account();
@@ -137,7 +149,13 @@ public class AccountServiceImpl implements AccountService {
                 account.setBalance(0.0);
                 Account compte = transferAccountRepository.save(account);
                 customer.addTransferAccounts(compte);
-                return transferAccount;
+                CreateOrEditAccountDto dto = CreateOrEditAccountDto.builder()
+                        .balance(account.getBalance())
+                        .encryptedPinCode(transferAccount.getEncryptedPinCode())
+                        .phoneNumber(transferAccount.getPhoneNumber())
+                        .walletType(transferAccount.getWalletType())
+                        .build();
+                return dto;
             }
             throw new IllegalStateException("Veuillez renseignez les donnez correctement");
 
@@ -148,7 +166,7 @@ public class AccountServiceImpl implements AccountService {
     public List <CreateOrEditAccountDto> getAllTransfertAccount() {
 
         return transferAccountRepository.findAll().stream().map( account -> {
-            CreateOrEditAccountDto dto = new CreateOrEditAccountDto();
+            CreateOrEditAccountDto dto =  CreateOrEditAccountDto.builder().build();
             dto.setPhoneNumber(account.getPhoneNumber());
             dto.setWalletType(account.getWalletType());
             dto.setEncryptedPinCode(account.getEncryptedPinCode());
@@ -160,7 +178,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Optional<CreateOrEditAccountDto> getTransfertAccountById(Long id) {
         return transferAccountRepository.findById(id).stream().map(account -> {
-            CreateOrEditAccountDto dto = new CreateOrEditAccountDto();
+            CreateOrEditAccountDto dto =  CreateOrEditAccountDto.builder().build();
             dto.setPhoneNumber(account.getPhoneNumber());
             dto.setWalletType(account.getWalletType());
             dto.setEncryptedPinCode(account.getEncryptedPinCode());
@@ -178,7 +196,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public CreateOrEditAccountDto enableTransfertAccount(Long id) {
         Optional<Account> existingAccount = transferAccountRepository.findById(id);
-        CreateOrEditAccountDto dto = new CreateOrEditAccountDto();
+        CreateOrEditAccountDto dto =  CreateOrEditAccountDto.builder().build();
         if (existingAccount.isPresent()) {
             existingAccount.get().set_active(TRUE);
             dto.setPhoneNumber(existingAccount.get().getPhoneNumber());
@@ -194,7 +212,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public CreateOrEditAccountDto diseableTranfertAccount(Long id) {
         Optional<Account> existingAccount = transferAccountRepository.findById(id);
-        CreateOrEditAccountDto dto = new CreateOrEditAccountDto();
+        CreateOrEditAccountDto dto =  CreateOrEditAccountDto.builder().build();
 
         if (existingAccount.isPresent()) {
             existingAccount.get().set_active(FALSE);
@@ -232,7 +250,7 @@ public class AccountServiceImpl implements AccountService {
             existingAccount.get().setEncryptedPinCode(transferAccount.getEncryptedPinCode());
            }
            Account compte = transferAccountRepository.save(existingAccount.get());
-               CreateOrEditAccountDto account = new CreateOrEditAccountDto();
+               CreateOrEditAccountDto account =  CreateOrEditAccountDto.builder().build();
                account.setBalance(compte.getBalance());
                account.setWalletType(compte.getWalletType());
                account.setEncryptedPinCode(compte.getEncryptedPinCode());

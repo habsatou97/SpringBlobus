@@ -33,7 +33,10 @@ class AuthenticationControllerTest {
         ProviderManager authenticationManager = new ProviderManager(authenticationProviderList);
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         AuthenticationController authenticationController = new AuthenticationController(
-                new AuthenticationService(userRepository, passwordEncoder, new JwtService(), authenticationManager));
+                new AuthenticationService(userRepository,
+                        passwordEncoder,
+                        new JwtService(),
+                        authenticationManager));
         ResponseEntity<RegisterResponse> actualRegisterResult = authenticationController
                 .register(new RegisterRequest());
         assertTrue(actualRegisterResult.hasBody());
@@ -49,7 +52,8 @@ class AuthenticationControllerTest {
         AuthenticationService authenticationService = mock(AuthenticationService.class);
         when(authenticationService.authenticate((AuthenticationRequest) any()))
                 .thenReturn(new AuthenticationResponse("ABC123"));
-        AuthenticationController authenticationController = new AuthenticationController(authenticationService);
+        AuthenticationController authenticationController =
+                new AuthenticationController(authenticationService);
         ResponseEntity<AuthenticationResponse> actualAuthenticateResult = authenticationController
                 .authenticate(new AuthenticationRequest("42", "User Secret"));
         assertTrue(actualAuthenticateResult.hasBody());

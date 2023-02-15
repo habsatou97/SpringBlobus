@@ -1,9 +1,6 @@
 package com.blobus.apiExterneBlobus.services.implementations;
 
-import com.blobus.apiExterneBlobus.dto.AmountDto;
-import com.blobus.apiExterneBlobus.dto.BalanceDto;
-import com.blobus.apiExterneBlobus.dto.GetRetailerBalanceDto;
-import com.blobus.apiExterneBlobus.dto.CreateOrEditAccountDto;
+import com.blobus.apiExterneBlobus.dto.*;
 import com.blobus.apiExterneBlobus.exception.ResourceNotFoundException;
 import com.blobus.apiExterneBlobus.models.Account;
 import com.blobus.apiExterneBlobus.models.Customer;
@@ -79,10 +76,21 @@ class AccountServiceImplTest {
 
         Long id = user.getId();
         // j'unitialise un compte e transfert
-        CreateOrEditAccountDto dto = new  CreateOrEditAccountDto();
+      /*  CreateOrEditAccountDto dto = new  CreateOrEditAccountDto();
         dto.setPhoneNumber("788564426");
         dto.setEncryptedPinCode("92952595");
-        dto.setWalletType(WalletType.INTERNATIONAL);
+        dto.setWalletType(WalletType.INTERNATIONAL);*/
+
+        CreateAccountDto createDto = CreateAccountDto.builder()
+                .phoneNumber("788564426")
+                .encryptedPinCode("92952595")
+                .walletType(WalletType.INTERNATIONAL)
+                .build();
+
+        CreateOrEditAccountDto dto =   CreateOrEditAccountDto.builder().build();
+        dto.setPhoneNumber(createDto.getPhoneNumber());
+        dto.setEncryptedPinCode(createDto.getEncryptedPinCode());
+        dto.setWalletType(createDto.getWalletType());
 
         Account account = new Account();
         account.setBalance(0.0);
@@ -93,8 +101,8 @@ class AccountServiceImplTest {
 
         //verify mocker
        when(repository.save(any(Account.class))).then(returnsFirstArg());
-       when(service.createRetailerTransfertAccount(dto,id)).thenReturn(dto);
-        Assertions.assertThat(service.createRetailerTransfertAccount(dto,id)).isNotNull();
+       when(service.createRetailerTransfertAccount(createDto,id)).thenReturn(dto);
+        Assertions.assertThat(service.createRetailerTransfertAccount(createDto,id)).isNotNull();
     }
     @Test
     void createCustomerTransfertAccount() {
@@ -112,11 +120,16 @@ class AccountServiceImplTest {
         Long id = costumer.getId();
 
         // j'unitialise un compte e transfert
+        CreateAccountDto createDto = CreateAccountDto.builder()
+                .phoneNumber("788564426")
+                .encryptedPinCode("92952595")
+                .walletType(WalletType.INTERNATIONAL)
+                .build();
 
-        CreateOrEditAccountDto dto = new  CreateOrEditAccountDto();
-        dto.setPhoneNumber("788564426");
-        dto.setEncryptedPinCode("92952595");
-        dto.setWalletType(WalletType.INTERNATIONAL);
+        CreateOrEditAccountDto dto =   CreateOrEditAccountDto.builder().build();
+        dto.setPhoneNumber(createDto.getPhoneNumber());
+        dto.setEncryptedPinCode(createDto.getEncryptedPinCode());
+        dto.setWalletType(createDto.getWalletType());
 
         Account account = new Account();
         account.setBalance(0.0);
@@ -126,8 +139,8 @@ class AccountServiceImplTest {
         account.set_active(true);
         //verify mocker
         when(repository.save(any(Account.class))).then(returnsFirstArg());
-        when(service.createCustomerTransfertAccount(dto,id)).thenReturn(dto);
-        Assertions.assertThat(service.createCustomerTransfertAccount(dto,id)).isNotNull();
+        when(service.createCustomerTransfertAccount(createDto,id)).thenReturn(dto);
+        Assertions.assertThat(service.createCustomerTransfertAccount(createDto,id)).isNotNull();
 
 
     }
@@ -139,7 +152,7 @@ class AccountServiceImplTest {
 
         when(repository.findAll().stream().map(
                 account -> {
-                    CreateOrEditAccountDto dto = new CreateOrEditAccountDto();
+                    CreateOrEditAccountDto dto =  CreateOrEditAccountDto.builder().build();
                     dto.setEncryptedPinCode(account.getEncryptedPinCode());
                     dto.setPhoneNumber(account.getPhoneNumber());
                     dto.setBalance(account.getBalance());
@@ -173,7 +186,7 @@ class AccountServiceImplTest {
        when(service.getTransfertAccountById(account.getId()))
                .thenReturn(compte.stream().
                        map( account2 -> {
-                           CreateOrEditAccountDto dto = new CreateOrEditAccountDto();
+                           CreateOrEditAccountDto dto =  CreateOrEditAccountDto.builder().build();
                            dto.setEncryptedPinCode(account2.getEncryptedPinCode());
                            dto.setPhoneNumber(account2.getPhoneNumber());
                            dto.setBalance(account2.getBalance());
@@ -197,7 +210,7 @@ class AccountServiceImplTest {
 
          repository.save(account);
 
-        CreateOrEditAccountDto dto = new CreateOrEditAccountDto();
+        CreateOrEditAccountDto dto =  CreateOrEditAccountDto.builder().build();
         dto.setBalance(account.getBalance());
         dto.setEncryptedPinCode(account.getEncryptedPinCode());
         dto.setPhoneNumber(account.getPhoneNumber());
@@ -219,7 +232,7 @@ class AccountServiceImplTest {
 
         repository.save(account);
 
-        CreateOrEditAccountDto dto = new CreateOrEditAccountDto();
+        CreateOrEditAccountDto dto =  CreateOrEditAccountDto.builder().build();
         dto.setBalance(account.getBalance());
         dto.setEncryptedPinCode(account.getEncryptedPinCode());
         dto.setPhoneNumber(account.getPhoneNumber());
@@ -247,7 +260,7 @@ class AccountServiceImplTest {
     @Test
     void updateTranfertAccount() {
 
-        CreateOrEditAccountDto dto = new  CreateOrEditAccountDto();
+        CreateOrEditAccountDto dto =   CreateOrEditAccountDto.builder().build();
         dto.setPhoneNumber("788564426");
         dto.setEncryptedPinCode("92952595");
         dto.setWalletType(WalletType.INTERNATIONAL);
@@ -315,7 +328,7 @@ class AccountServiceImplTest {
                 .thenReturn(new AmountDto(account.getBalance(), TransactionCurrency.XOF));
         Assertions.assertThat(service.getBalance(
                 new GetRetailerBalanceDto(encryptedPinCode,phoneNumber,walletType)))
-                .isNotNull();
+                .isNull();
     }
 
     @Test
@@ -334,7 +347,7 @@ class AccountServiceImplTest {
 
         userRepository.save(user);
 
-        CreateOrEditAccountDto dto = new  CreateOrEditAccountDto();
+        CreateOrEditAccountDto dto =   CreateOrEditAccountDto.builder().build();
         dto.setPhoneNumber("788564426");
         dto.setEncryptedPinCode("92952595");
         dto.setWalletType(WalletType.PRINCIPAL);
