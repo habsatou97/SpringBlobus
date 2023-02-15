@@ -1,9 +1,6 @@
 package com.blobus.apiExterneBlobus.auth;
 import com.blobus.apiExterneBlobus.config.JwtService;
-import com.blobus.apiExterneBlobus.dto.UserDto;
-import com.blobus.apiExterneBlobus.dto.UserRegisterDto;
 import com.blobus.apiExterneBlobus.models.User;
-import com.blobus.apiExterneBlobus.models.enums.Role;
 import com.blobus.apiExterneBlobus.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -12,7 +9,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +23,11 @@ public class AuthenticationService {
     var user = new User();
     String userId = RandomStringUtils.random(5,"azertyuiopqsdfghjklmwxcvbn1223456789");
     String userSecret = RandomStringUtils.random(4,"123456789");
+    Optional<User> userOptional = repository.findUserByEmail(request.getEmail());
+    Optional<User> userOptional1 = repository.findUserByPhoneNumber(user.getPhoneNumber());
+    if(userOptional.isPresent() || userOptional1.isPresent()){
+      throw new IllegalStateException("Email et/ou mot de passe déjà existant.");
+    }
 
     user.setFirstName(request.getFirstname());
     user.setLastName(request.getLastname());
