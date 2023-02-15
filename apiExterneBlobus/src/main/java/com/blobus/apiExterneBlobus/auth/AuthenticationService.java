@@ -26,11 +26,11 @@ public class AuthenticationService {
     var user = new User();
     String userId = RandomStringUtils.random(5,"azertyuiopqsdfghjklmwxcvbn1223456789");
     String userSecret = RandomStringUtils.random(4,"123456789");
-    System.out.println("******************************");
-    user.setFirstName(request.getLastname());
+
+    user.setFirstName(request.getFirstname());
     user.setLastName(request.getLastname());
     user.setEmail(request.getEmail());
-    user.setUserSecret(userSecret);
+    user.setUserSecret(passwordEncoder.encode(userSecret));
     user.setPhoneNumber(request.getPhoneNumber());
     user.setRoles(request.getRoles());
     if (request.getNinea() != null && !request.getNinea().isBlank() && request.getNinea().length() != 0){
@@ -38,15 +38,11 @@ public class AuthenticationService {
     }
 
 
-
-
-
     User user1 = repository.save(user);
-    userId = userId + user1.getId();
-    user1.setUserId(userId);
+    user1.setUserId(user1.getId()+userId);
     repository.save(user1);
-    var jwtToken = jwtService.generateToken(user);
-    return new RegisterResponse(userId, userSecret);
+    //var jwtToken = jwtService.generateToken(user);
+    return new RegisterResponse(user.getUserId(), userSecret);
   }
 
   public AuthenticationResponse authenticate(AuthenticationRequest request) {
@@ -63,4 +59,9 @@ public class AuthenticationService {
         .token(jwtToken)
         .build();
   }
+
+
+
+
+
 }
