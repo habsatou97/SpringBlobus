@@ -370,7 +370,7 @@ public class AccountServiceImpl implements AccountService {
                responseChangePinCodeDto.setStatus(HttpStatus.ACCEPTED);
                responseChangePinCodeDto.setCustomerType(customerType);
                responseChangePinCodeDto.setMsisdn(msisdn);
-               //System.out.println("bonjour");
+               System.out.println("bonjour");
                responseChangePinCodeDto.setEncryptedNewPinCode(requestBodyChangePinCodeDto.getEncryptedNewPinCode());
                responseChangePinCodeDto.setEncryptedPinCode(keyGeneratorService.decrypt(new DecryptDto(account.get().getEncryptedPinCode())));
                return responseChangePinCodeDto;
