@@ -6,6 +6,7 @@ import com.blobus.apiExterneBlobus.models.User;
 import com.blobus.apiExterneBlobus.models.enums.Role;
 import com.blobus.apiExterneBlobus.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,20 +24,29 @@ public class AuthenticationService {
 
   public RegisterResponse register(RegisterRequest request) {
     var user = new User();
+    String userId = RandomStringUtils.random(5,"azertyuiopqsdfghjklmwxcvbn1223456789");
+    String userSecret = RandomStringUtils.random(4,"123456789");
+    System.out.println("******************************");
     user.setFirstName(request.getLastname());
     user.setLastName(request.getLastname());
-    user.setUserId(request.getUserId());
     user.setEmail(request.getEmail());
+    user.setUserSecret(userSecret);
     user.setPhoneNumber(request.getPhoneNumber());
-    user.setUserSecret(passwordEncoder.encode(request.getUserSecret()));
     user.setRoles(request.getRoles());
+    if (request.getNinea() != null && !request.getNinea().isBlank() && request.getNinea().length() != 0){
+        user.setNinea(request.getNinea());
+    }
 
 
 
 
-    repository.save(user);
+
+    User user1 = repository.save(user);
+    userId = userId + user1.getId();
+    user1.setUserId(userId);
+    repository.save(user1);
     var jwtToken = jwtService.generateToken(user);
-    return new RegisterResponse(request.getUserId(), request.getUserSecret());
+    return new RegisterResponse(userId, userSecret);
   }
 
   public AuthenticationResponse authenticate(AuthenticationRequest request) {

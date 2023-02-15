@@ -14,13 +14,11 @@ import com.blobus.apiExterneBlobus.repositories.UserRepository;
 
 import java.util.ArrayList;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.intercept.RunAsImplAuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 class AuthenticationControllerTest {
@@ -49,10 +47,6 @@ class AuthenticationControllerTest {
 
     @Test
     void testAuthenticate() {
-        //   Diffblue Cover was unable to write a Spring test,
-        //   so wrote a non-Spring test instead.
-        //   Diffblue AI was unable to find a test
-
         AuthenticationService authenticationService = mock(AuthenticationService.class);
         when(authenticationService.authenticate((AuthenticationRequest) any()))
                 .thenReturn(new AuthenticationResponse("ABC123"));
