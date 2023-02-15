@@ -1,15 +1,12 @@
 package com.blobus.apiExterneBlobus.controllers;
 
 import com.blobus.apiExterneBlobus.dto.*;
-import com.blobus.apiExterneBlobus.models.Account;
 import com.blobus.apiExterneBlobus.models.enums.CustomerType;
 import com.blobus.apiExterneBlobus.models.enums.WalletType;
 import com.blobus.apiExterneBlobus.services.implementations.AccountServiceImpl;
 import com.blobus.apiExterneBlobus.services.implementations.KeyGeneratorImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +30,7 @@ public class AccountController {
     @Autowired
     private final KeyGeneratorImpl keyGenerator;
 
-    @PostMapping("retailer/balance")
+    @PostMapping("balance")
     public ResponseEntity<AmountDto> getBalance(@RequestBody GetRetailerBalanceDto getRetailerBalanceDto)
             throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         transferAccountService.getBalance(getRetailerBalanceDto);
