@@ -142,6 +142,8 @@ public class TransactionServiceImpl implements TransactionService {
         Optional<Transaction> transaction = transactionRepository.findById(transactionId);
         GetTransactionDto transactionDto= new GetTransactionDto();
         AmountDto amountDto= new AmountDto();
+        UserDto userDto= new UserDto();
+        CustomerEditCreateDto customerDto = new CustomerEditCreateDto();
         if (transaction.isPresent()){
             transactionDto.setTransactionId(transaction.get().getId());
             transactionDto.setCreatedAt(transaction.get().getCreatedDate());
@@ -150,11 +152,23 @@ public class TransactionServiceImpl implements TransactionService {
             transactionDto.setReference(transaction.get().getReference());
             transactionDto.setType(String.valueOf(transaction.get().getType()));
             transactionDto.setStatus(String.valueOf(transaction.get().getStatus()));
-            transactionDto.setCustomer(transaction.get().getCustomerTransferAccount().getCustomer());
-            transactionDto.setPartner(transaction.get().getRetailerTransferAccount().getRetailer());
+
+            userDto.setPhoneNumber(transaction.get().getRetailerTransferAccount().getRetailer().getPhoneNumber());
+            userDto.setFirstName(transaction.get().getRetailerTransferAccount().getRetailer().getFirstName());
+            userDto.setLastName(transaction.get().getRetailerTransferAccount().getRetailer().getLastName());
+            userDto.setEmail(transaction.get().getRetailerTransferAccount().getRetailer().getEmail());
+            transactionDto.setPartner(userDto);
+
+            customerDto.setEmail(transaction.get().getCustomerTransferAccount().getCustomer().getEmail());
+            customerDto.setFirstName(transaction.get().getCustomerTransferAccount().getCustomer().getFirstName());
+            customerDto.setLastName(transaction.get().getCustomerTransferAccount().getCustomer().getLastName());
+            customerDto.setPhoneNumber(transaction.get().getCustomerTransferAccount().getCustomer().getPhoneNumber());
+            transactionDto.setCustomer(customerDto);
+
             amountDto.setValue(transaction.get().getAmount());
             amountDto.setCurrency(transaction.get().getCurrency());
             transactionDto.setAmount(amountDto);
+
             return transactionDto;
         }
        else

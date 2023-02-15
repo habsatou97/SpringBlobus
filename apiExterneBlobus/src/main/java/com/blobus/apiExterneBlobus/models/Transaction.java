@@ -36,6 +36,7 @@ public class Transaction {
     @JoinColumn(name = "customer_transfert_account_id")
     private Account customerTransferAccount;
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "bulk_id",nullable = true)
     private Bulk bulk;
 }

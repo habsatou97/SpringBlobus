@@ -259,14 +259,21 @@ class AccountControllerTest {
         when(repository.save((Account) any())).thenReturn(ct);
 
         AccountController controller= new AccountController(service,key);
-        CreateOrEditAccountDto dto=  CreateOrEditAccountDto.builder().build();
+        EditAccountDto dto=  EditAccountDto.builder().build();
         accountRepository.save(account1);
         Optional<Account> account = repository.findById(account1.getId());
 
         dto.setBalance(100000);
         dto.setPhoneNumber("78541236");
         dto.setEncryptedPinCode("sftruf65489");
-        dto.setWalletType(WalletType.BONUS);
+
+
+        CreateOrEditAccountDto accountDto= CreateOrEditAccountDto.builder().build();
+
+        accountDto.setBalance(dto.getBalance());
+        accountDto.setEncryptedPinCode(dto.getEncryptedPinCode());
+        accountDto.setPhoneNumber(dto.getPhoneNumber());
+
         ResponseEntity<CreateOrEditAccountDto> response = accountController.update(dto,ct.getId());
 
         /*assertEquals(200,response.getStatusCodeValue());

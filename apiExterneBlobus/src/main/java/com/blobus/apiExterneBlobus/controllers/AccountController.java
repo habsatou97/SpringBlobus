@@ -3,6 +3,7 @@ package com.blobus.apiExterneBlobus.controllers;
 import com.blobus.apiExterneBlobus.dto.*;
 import com.blobus.apiExterneBlobus.models.Account;
 import com.blobus.apiExterneBlobus.models.enums.CustomerType;
+import com.blobus.apiExterneBlobus.models.enums.Role;
 import com.blobus.apiExterneBlobus.models.enums.WalletType;
 import com.blobus.apiExterneBlobus.services.implementations.AccountServiceImpl;
 import com.blobus.apiExterneBlobus.services.implementations.KeyGeneratorImpl;
@@ -114,7 +115,7 @@ public class AccountController {
 
 
     @RequestMapping(value = "{id}",method = RequestMethod.PUT)
-    public ResponseEntity<CreateOrEditAccountDto> update(@RequestBody CreateOrEditAccountDto transferAccount,
+    public ResponseEntity<CreateOrEditAccountDto> update(@RequestBody EditAccountDto transferAccount,
                                                          @PathVariable Long id)
             throws NoSuchPaddingException, IllegalBlockSizeException,
             NoSuchAlgorithmException, IOException, BadPaddingException,
@@ -172,10 +173,41 @@ public class AccountController {
         transferAccountService.deleteByPhoneNumber(phoneNumber);
     }
 
+    /**
+     * ce endpoint permet de modifier le solde d'un compte d'un transfert
+     * @param balanceDto
+     * @param id
+     * @return
+     */
     @PutMapping("/edit/balance/{id}")
     public ResponseEntity<BalanceDto> updatedBalance(@RequestBody BalanceDto balanceDto,
                                                      @PathVariable("id") Long id){
         return ResponseEntity.ok(transferAccountService.updatedBalance(balanceDto,id));
+    }
+
+    /**
+     * Ce endpoint permet à l'administrateur de mettre à jour le compte de transfert d'un retailer
+     * @param id
+     * @param account
+     * @param role
+     * @return
+     */
+    @PutMapping("/edit/retailer/{id}")
+    public ResponseEntity<CreateOrEditAccountDto> updatedRetailerTransferAccount(
+            @PathVariable("id") Long id,
+            @RequestBody EditAccountDto account) throws NoSuchPaddingException,
+            IllegalBlockSizeException, NoSuchAlgorithmException,
+            IOException, BadPaddingException,
+            InvalidKeySpecException, InvalidKeyException {
+
+        account.setEncryptedPinCode(
+                keyGenerator.encrypt(new DecryptDto(account.getEncryptedPinCode())));
+        DecryptDto decryptDto=new DecryptDto();
+        CreateOrEditAccountDto accountDto =
+                transferAccountService.modifyTransferAccountRetailer(id,account);
+        decryptDto.setEncryptedPinCode(accountDto.getEncryptedPinCode());
+        accountDto.setEncryptedPinCode(keyGenerator.decrypt(decryptDto));
+       return   ResponseEntity.ok(accountDto);
     }
 
     @PostMapping("changePinCode")
