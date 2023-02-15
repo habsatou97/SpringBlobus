@@ -34,12 +34,9 @@ public class AccountController {
     private final KeyGeneratorImpl keyGenerator;
 
     @PostMapping("retailer/balance")
-    public double getBalance(@RequestBody GetRetailerBalanceDto getRetailerBalanceDto)
-            throws NoSuchPaddingException, IllegalBlockSizeException,
-            IOException, NoSuchAlgorithmException,
-            BadPaddingException, InvalidKeyException {
-
-        return transferAccountService.getBalance(getRetailerBalanceDto);
+    public ResponseEntity<AmountDto> getBalance(@RequestBody GetRetailerBalanceDto getRetailerBalanceDto) throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+        transferAccountService.getBalance(getRetailerBalanceDto);
+        return ResponseEntity.ok().body(transferAccountService.getBalance(getRetailerBalanceDto));
     }
 
     @GetMapping
@@ -143,7 +140,6 @@ public class AccountController {
        CreateOrEditAccountDto accountDto=transferAccountService.enableTransfertAccount(id);
        decryptDto.setEncryptedPinCode(accountDto.getEncryptedPinCode());
        accountDto.setEncryptedPinCode(keyGenerator.decrypt(decryptDto));
-
     return ResponseEntity.ok().body(accountDto);
    }
 

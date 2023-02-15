@@ -2,7 +2,10 @@ package com.blobus.apiExterneBlobus.controllers;
 
 import com.blobus.apiExterneBlobus.dto.CustomerEditCreateDto;
 import com.blobus.apiExterneBlobus.models.Customer;
+import com.blobus.apiExterneBlobus.models.User;
+import com.blobus.apiExterneBlobus.repositories.UserRepository;
 import com.blobus.apiExterneBlobus.services.interfaces.CustomerService;
+import com.blobus.apiExterneBlobus.services.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +17,17 @@ import java.util.List;
 @RequestMapping("api/ewallet/v1/customers/")
 public class CustomerController {
     private final CustomerService customerService;
+    /*
 
+
+    private final UserRepository repository;
+
+    @GetMapping("findAllUsers")
+    public ResponseEntity<List<User>> findAllUsers(){
+        return ResponseEntity.ok().body(repository.findAll());
+    }
+
+     */
 
     @GetMapping
     public ResponseEntity<List<CustomerEditCreateDto>> findAll(){

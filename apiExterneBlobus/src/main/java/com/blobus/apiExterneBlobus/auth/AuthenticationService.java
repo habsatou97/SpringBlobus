@@ -1,5 +1,7 @@
 package com.blobus.apiExterneBlobus.auth;
 import com.blobus.apiExterneBlobus.config.JwtService;
+import com.blobus.apiExterneBlobus.dto.UserDto;
+import com.blobus.apiExterneBlobus.dto.UserRegisterDto;
 import com.blobus.apiExterneBlobus.models.User;
 import com.blobus.apiExterneBlobus.models.enums.Role;
 import com.blobus.apiExterneBlobus.repositories.UserRepository;
@@ -19,20 +21,22 @@ public class AuthenticationService {
   private final JwtService jwtService;
   private final AuthenticationManager authenticationManager;
 
-  public AuthenticationResponse register(RegisterRequest request) {
+  public RegisterResponse register(RegisterRequest request) {
     var user = new User();
     user.setFirstName(request.getLastname());
     user.setLastName(request.getLastname());
     user.setUserId(request.getUserId());
     user.setEmail(request.getEmail());
+    user.setPhoneNumber(request.getPhoneNumber());
     user.setUserSecret(passwordEncoder.encode(request.getUserSecret()));
-    user.setRoles(List.of(Role.RETAILER));
+    user.setRoles(request.getRoles());
+
+
+
 
     repository.save(user);
     var jwtToken = jwtService.generateToken(user);
-    return AuthenticationResponse.builder()
-        .token(jwtToken)
-        .build();
+    return new RegisterResponse(request.getUserId(), request.getUserSecret());
   }
 
   public AuthenticationResponse authenticate(AuthenticationRequest request) {

@@ -1,9 +1,12 @@
 package com.blobus.apiExterneBlobus.auth;
 
+import com.blobus.apiExterneBlobus.models.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @Builder
@@ -16,4 +19,6 @@ public class RegisterRequest {
   private String userId;
   private String userSecret;
   private String email;
+  private String phoneNumber;
+  private List<Role> roles;
 }
