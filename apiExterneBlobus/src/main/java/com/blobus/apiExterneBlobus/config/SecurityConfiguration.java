@@ -25,6 +25,7 @@ public class SecurityConfiguration {
             .disable()
             .authorizeHttpRequests()
             .requestMatchers("/api/ewallet/v1/auth/**","/swagger-ui/**","/v3/api-docs/**")
+
             //.requestMatchers("/**")
             .permitAll()
             .anyRequest()
