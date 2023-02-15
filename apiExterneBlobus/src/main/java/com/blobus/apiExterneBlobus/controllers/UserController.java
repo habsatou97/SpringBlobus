@@ -47,7 +47,8 @@ public class UserController {
      * cette methode affiche le profile d'un utilisateur via son msisdn autrement dit via le numero de telephone de son compte tranfert
      */
     @GetMapping("find/{phoneNumber}")
-    public  ResponseEntity<RequestBodyUserProfileDto> getUserProfileByMsisdn(@PathVariable("phoneNumber") String phoneNumber){
+    public  ResponseEntity<RequestBodyUserProfileDto> getUserProfileByMsisdn(
+            @PathVariable("phoneNumber") String phoneNumber){
 
         return ResponseEntity.ok(userService.getUserProfileByMsisdn(phoneNumber));
     }
@@ -90,7 +91,10 @@ public class UserController {
      * @return
      */
     @PutMapping("{id}")
-    public ResponseEntity<UserDto> updateUser(@RequestBody UserWithNineaDto user, @PathVariable("id") Long id){
+    public ResponseEntity<UserDto> updateUser(
+            @RequestBody UserWithNineaDto user,
+            @PathVariable("id") Long id){
+
         return ResponseEntity.ok(userService.updateSingleUser(user,id));
     }
 
@@ -101,9 +105,11 @@ public class UserController {
      */
     @DeleteMapping("{id}")
     public  ResponseEntity<Map<String,Boolean>> deleteUser(@PathVariable("id") Long id){
+
         Map<String,Boolean> response = new HashMap<>();
         userService.deleteUser(id);
         response.put("deleted",true);
+
         return ResponseEntity.ok(response);
     }
 }

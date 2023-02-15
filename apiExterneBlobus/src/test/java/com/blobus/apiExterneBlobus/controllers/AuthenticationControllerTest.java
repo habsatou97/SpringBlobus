@@ -27,11 +27,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 class AuthenticationControllerTest {
-    /**
-     * Method under test: {@link AuthenticationController#register(RegisterRequest)}
-     */
+
     @Test
-    void testRegister2() {
+    void testRegister() {
         UserRepository userRepository = mock(UserRepository.class);
         when(userRepository.save((User) any())).thenReturn(new User());
 
@@ -40,24 +38,24 @@ class AuthenticationControllerTest {
         ProviderManager authenticationManager = new ProviderManager(authenticationProviderList);
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         AuthenticationController authenticationController = new AuthenticationController(
-                new AuthenticationService(userRepository, passwordEncoder, new JwtService(), authenticationManager));
+                new AuthenticationService(
+                        userRepository, passwordEncoder, new JwtService(), authenticationManager));
         ResponseEntity<AuthenticationResponse> actualRegisterResult = authenticationController
-                .register(new RegisterRequest("Jane", "Doe", "42", "User Secret", "jane.doe@example.org"));
+                .register(new RegisterRequest(
+                        "Jane",
+                        "Doe",
+                        "42",
+                        "User Secret",
+                        "jane.doe@example.org"));
+
         assertTrue(actualRegisterResult.hasBody());
         assertTrue(actualRegisterResult.getHeaders().isEmpty());
         assertEquals(200, actualRegisterResult.getStatusCodeValue());
         verify(userRepository).save((User) any());
     }
 
-
-    /**
-     * Method under test: {@link AuthenticationController#register(RegisterRequest)}
-     */
     @Test
     void testRegister4() {
-        //   Diffblue Cover was unable to write a Spring test,
-        //   so wrote a non-Spring test instead.
-        //   Diffblue AI was unable to find a test
 
         UserRepository userRepository = mock(UserRepository.class);
         when(userRepository.save((User) any())).thenReturn(new User());
@@ -68,9 +66,16 @@ class AuthenticationControllerTest {
         authenticationProviderList.add(new RunAsImplAuthenticationProvider());
         ProviderManager authenticationManager = new ProviderManager(authenticationProviderList);
         AuthenticationController authenticationController = new AuthenticationController(
-                new AuthenticationService(userRepository, new BCryptPasswordEncoder(), jwtService, authenticationManager));
+                new AuthenticationService(
+                        userRepository, new BCryptPasswordEncoder(), jwtService, authenticationManager));
         ResponseEntity<AuthenticationResponse> actualRegisterResult = authenticationController
-                .register(new RegisterRequest("Jane", "Doe", "42", "User Secret", "jane.doe@example.org"));
+                .register(new RegisterRequest(
+                        "Jane",
+                        "Doe",
+                        "42",
+                        "User Secret",
+                        "jane.doe@example.org"));
+
         assertTrue(actualRegisterResult.hasBody());
         assertTrue(actualRegisterResult.getHeaders().isEmpty());
         assertEquals(200, actualRegisterResult.getStatusCodeValue());
@@ -79,39 +84,19 @@ class AuthenticationControllerTest {
         verify(jwtService).generateToken((UserDetails) any());
     }
 
-    /**
-     * Method under test: {@link AuthenticationController#register(RegisterRequest)}
-     */
-    @Test
-    void testRegister5() {
-        //   Diffblue Cover was unable to write a Spring test,
-        //   so wrote a non-Spring test instead.
-        //   Diffblue AI was unable to find a test
-
-        AuthenticationService authenticationService = mock(AuthenticationService.class);
-        when(authenticationService.register((RegisterRequest) any())).thenReturn(new AuthenticationResponse("ABC123"));
-        AuthenticationController authenticationController = new AuthenticationController(authenticationService);
-        ResponseEntity<AuthenticationResponse> actualRegisterResult = authenticationController
-                .register(new RegisterRequest("Jane", "Doe", "42", "User Secret", "jane.doe@example.org"));
-        assertTrue(actualRegisterResult.hasBody());
-        assertTrue(actualRegisterResult.getHeaders().isEmpty());
-        assertEquals(200, actualRegisterResult.getStatusCodeValue());
-        verify(authenticationService).register((RegisterRequest) any());
-    }
-
-
     @Test
     void testAuthenticate() {
-        //   Diffblue Cover was unable to write a Spring test,
-        //   so wrote a non-Spring test instead.
-        //   Diffblue AI was unable to find a test
 
         AuthenticationService authenticationService = mock(AuthenticationService.class);
         when(authenticationService.authenticate((AuthenticationRequest) any()))
                 .thenReturn(new AuthenticationResponse("ABC123"));
-        AuthenticationController authenticationController = new AuthenticationController(authenticationService);
-        ResponseEntity<AuthenticationResponse> actualAuthenticateResult = authenticationController
-                .authenticate(new AuthenticationRequest("42", "User Secret"));
+        AuthenticationController authenticationController =
+                new AuthenticationController(authenticationService);
+        ResponseEntity<AuthenticationResponse> actualAuthenticateResult =
+                authenticationController.authenticate(new AuthenticationRequest(
+                        "42",
+                        "User Secret"));
+
         assertTrue(actualAuthenticateResult.hasBody());
         assertTrue(actualAuthenticateResult.getHeaders().isEmpty());
         assertEquals(200, actualAuthenticateResult.getStatusCodeValue());

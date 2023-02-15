@@ -22,9 +22,9 @@ public interface AccountService {
   public List<CreateOrEditAccountDto> getAllTransfertAccount();
   public Optional<CreateOrEditAccountDto> getTransfertAccountById(Long id);
   public Optional<CreateOrEditAccountDto>  geTransferAccountByMsisdn(String msisdn);
-  public CreateOrEditAccountDto EnableTransfertAccount(Long id);
-  public CreateOrEditAccountDto DiseableTranfertAccount(Long id);
-  public String GetAccountPhoneNumber(Long id);
+  public CreateOrEditAccountDto enableTransfertAccount(Long id);
+  public CreateOrEditAccountDto diseableTranfertAccount(Long id);
+  public String getAccountPhoneNumber(Long id);
   public CreateOrEditAccountDto updateTranfertAccount(CreateOrEditAccountDto transferAccount, Long id);
   public void deleteTransfertAccountById(Long id);
   public double getBalance(GetRetailerBalanceDto getRetailerBalanceDto) throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException;

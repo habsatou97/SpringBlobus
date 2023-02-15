@@ -154,7 +154,9 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(2)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].firstName", Matchers.is("Cheikh Yangkhouba")));
+                .andExpect(MockMvcResultMatchers.jsonPath(
+                        "$[1].firstName",
+                        Matchers.is("Cheikh Yangkhouba")));
 
     }
 
@@ -181,7 +183,9 @@ class UserControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(jsonPath("$",notNullValue()))
-               .andExpect(MockMvcResultMatchers.jsonPath("$.msisdn", Matchers.is("782654489")));
+               .andExpect(MockMvcResultMatchers.jsonPath(
+                       "$.msisdn",
+                       Matchers.is("782654489")));
 
     }
 
@@ -222,7 +226,8 @@ class UserControllerTest {
                 "fzivbedfegjd",
                 "fohfgfyf78"));
 
-        UserController userController= new UserController(new UserServiceImpl(userRepository1,accountRepository1), userRepository1);
+        UserController userController= new UserController(
+                new UserServiceImpl(userRepository1,accountRepository1), userRepository1);
 
                 UserWithNineaDto user=UserWithNineaDto.builder()
                         .ninea("vbfggtrt")
@@ -268,6 +273,7 @@ class UserControllerTest {
                 "fzivbedfegjd",
                 "fohfgfyf78");
         ResponseEntity<UserDto>  userResult = userController.updateUser(user,user1.getId());
+
         assertTrue(userResult.getHeaders().isEmpty());
         assertEquals(200,userResult.getStatusCodeValue());
 

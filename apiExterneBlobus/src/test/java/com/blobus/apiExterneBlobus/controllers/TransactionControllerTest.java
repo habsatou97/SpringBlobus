@@ -43,8 +43,10 @@ class TransactionControllerTest {
     void testCashInTransaction() {
 
         AccountRepository accountRepository = mock(AccountRepository.class);
+
         when(accountRepository.findByPhoneNumberAndWalletType((String) any(), (WalletType) any()))
                 .thenReturn(Optional.empty());
+
         TransactionController transactionController = new TransactionController(
                 new TransactionServiceImpl(accountRepository,
                         mock(TransactionRepository.class), mock(BulkRepository.class),
@@ -52,12 +54,13 @@ class TransactionControllerTest {
         AmountDto amount = new AmountDto();
         CustomerDto customer = new CustomerDto("4105551212", WalletType.BONUS);
 
-        ResponseEntity<ResponseCashInTransactionDto> actualCashInTransactionResult = transactionController
-                .CashInTransaction(new RequestBodyTransactionDto(amount, customer,
+        ResponseEntity<ResponseCashInTransactionDto> actualCashInTransactionResult =
+                transactionController.CashInTransaction(new RequestBodyTransactionDto(amount, customer,
                         new RetailerDto("4105551212",
                                 "Encrypted Pin Code", WalletType.BONUS),
                         "Reference", true,
                         LocalDate.ofEpochDay(1L), TransactionType.CASHIN));
+
         assertTrue(actualCashInTransactionResult.hasBody());
         assertTrue(actualCashInTransactionResult.getHeaders().isEmpty());
         assertEquals(200, actualCashInTransactionResult.getStatusCodeValue());
@@ -76,6 +79,7 @@ class TransactionControllerTest {
     @Test
     void testGetTransactionStatus() {
         TransactionRepository transactionRepository = mock(TransactionRepository.class);
+
         when(transactionRepository.findById((Long) any())).thenReturn(Optional.of(new Transaction()));
         assertNull(
                 (new TransactionController(new TransactionServiceImpl(
@@ -89,7 +93,6 @@ class TransactionControllerTest {
     @Test
     void testBulkCashInTransaction() {
 
-
         ResponseCashInTransactionDto responseCashInTransactionDto = new ResponseCashInTransactionDto();
         responseCashInTransactionDto.setBulkId(123L);
         responseCashInTransactionDto.setDescription("The characteristics of someone or something");
@@ -99,16 +102,26 @@ class TransactionControllerTest {
         responseCashInTransactionDto.setStatus(TransactionStatus.ACCEPTED);
         responseCashInTransactionDto.setTransactionId(123L);
         TransactionServiceImpl transactionServiceImpl = mock(TransactionServiceImpl.class);
+
         when(transactionServiceImpl.BulkCashInTransaction((RequestBodyTransactionDto[]) any()))
                 .thenReturn(responseCashInTransactionDto);
+
         TransactionController transactionController = new TransactionController(transactionServiceImpl);
         AmountDto amount = new AmountDto();
         CustomerDto customer = new CustomerDto("4105551212", WalletType.BONUS);
 
-        ResponseEntity<ResponseCashInTransactionDto> actualBulkCashInTransactionResult = transactionController
-                .BulkCashInTransaction(new RequestBodyTransactionDto[]{new RequestBodyTransactionDto(amount, customer,
-                        new RetailerDto("4105551212", "Encrypted Pin Code", WalletType.BONUS), "Reference", true,
-                        LocalDate.ofEpochDay(1L), TransactionType.CASHIN)});
+        ResponseEntity<ResponseCashInTransactionDto> actualBulkCashInTransactionResult =
+                transactionController.BulkCashInTransaction(new RequestBodyTransactionDto[]{
+                        new RequestBodyTransactionDto(amount, customer,
+                        new RetailerDto(
+                                "4105551212",
+                                "Encrypted Pin Code",
+                                WalletType.BONUS),
+                                "Reference",
+                                true,
+                                 LocalDate.ofEpochDay(1L),
+                                TransactionType.CASHIN)});
+
         assertTrue(actualBulkCashInTransactionResult.hasBody());
         assertTrue(actualBulkCashInTransactionResult.getHeaders().isEmpty());
         assertEquals(200, actualBulkCashInTransactionResult.getStatusCodeValue());
@@ -122,16 +135,27 @@ class TransactionControllerTest {
         LocalDate requestDate = LocalDate.ofEpochDay(1L);
         Account retailerTransferAccount = new Account();
         Account customerTransferAccount = new Account();
+
         when(transactionRepository.findById((Long) any())).thenReturn(Optional.of(
-                new Transaction(123L, "Reference",
-                createdDate, true, requestDate,
-                        TransactionStatus.ACCEPTED, TransactionType.CASHIN, 10.0d,
-                TransactionCurrency.XOF, retailerTransferAccount, customerTransferAccount, new Bulk())));
+                new Transaction(
+                        123L,
+                        "Reference",
+                         createdDate,
+                        true,
+                        requestDate,
+                        TransactionStatus.ACCEPTED,
+                        TransactionType.CASHIN,
+                        10.0d,
+                        TransactionCurrency.XOF,
+                        retailerTransferAccount,
+                        customerTransferAccount,
+                        new Bulk())));
         GetTransactionDto actualTransaction = (new TransactionController(
                 new TransactionServiceImpl(mock(AccountRepository.class),
                         transactionRepository, mock(BulkRepository.class),
                         mock(UserRepository.class),mock(KeyGeneratorService.class))))
                 .getTransaction(123L);
+
         assertTrue(actualTransaction.isReceiveNotification());
         assertEquals("1970-01-02", actualTransaction.getCreatedAt().toString());
         assertNull(actualTransaction.getPartner());
@@ -142,6 +166,7 @@ class TransactionControllerTest {
         assertEquals("Reference", actualTransaction.getReference());
         assertNull(actualTransaction.getCustomer());
         AmountDto amount = actualTransaction.getAmount();
+
         assertEquals(TransactionCurrency.XOF, amount.getCurrency());
         assertEquals(10.0d, amount.getValue().doubleValue());
         verify(transactionRepository).findById((Long) any());

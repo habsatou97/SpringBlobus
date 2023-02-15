@@ -181,7 +181,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public CreateOrEditAccountDto EnableTransfertAccount(Long id) {
+    public CreateOrEditAccountDto enableTransfertAccount(Long id) {
         Optional<Account> existingAccount = transferAccountRepository.findById(id);
         CreateOrEditAccountDto dto = new CreateOrEditAccountDto();
         if (existingAccount.isPresent()) {
@@ -197,7 +197,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public CreateOrEditAccountDto DiseableTranfertAccount(Long id) {
+    public CreateOrEditAccountDto diseableTranfertAccount(Long id) {
         Optional<Account> existingAccount = transferAccountRepository.findById(id);
         CreateOrEditAccountDto dto = new CreateOrEditAccountDto();
 
@@ -214,7 +214,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public String GetAccountPhoneNumber(Long id) {
+    public String getAccountPhoneNumber(Long id) {
         Optional<Account> existingAccount = transferAccountRepository.findById(id);
         if (existingAccount.isPresent())
             return existingAccount.get().getPhoneNumber();

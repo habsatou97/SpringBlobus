@@ -201,8 +201,8 @@ class AccountServiceImplTest {
         dto.setPhoneNumber(account.getPhoneNumber());
         dto.setWalletType(account.getWalletType());
 
-        when(service.EnableTransfertAccount(account.getId())).thenReturn(dto);
-        Assertions.assertThat(service.EnableTransfertAccount(account.getId())).isNotNull();
+        when(service.enableTransfertAccount(account.getId())).thenReturn(dto);
+        Assertions.assertThat(service.enableTransfertAccount(account.getId())).isNotNull();
     }
 
     @Test
@@ -223,8 +223,8 @@ class AccountServiceImplTest {
         dto.setPhoneNumber(account.getPhoneNumber());
         dto.setWalletType(account.getWalletType());
 
-        when(service.DiseableTranfertAccount(account.getId())).thenReturn(dto);
-        Assertions.assertThat(service.DiseableTranfertAccount(account.getId())).isNotNull();
+        when(service.diseableTranfertAccount(account.getId())).thenReturn(dto);
+        Assertions.assertThat(service.diseableTranfertAccount(account.getId())).isNotNull();
     }
 
     @Test
@@ -239,8 +239,8 @@ class AccountServiceImplTest {
 
         repository.save(account);
 
-        when(service.GetAccountPhoneNumber(account.getId())).thenReturn(account.getPhoneNumber());
-        Assertions.assertThat(service.GetAccountPhoneNumber(account.getId())).isNotNull();
+        when(service.getAccountPhoneNumber(account.getId())).thenReturn(account.getPhoneNumber());
+        Assertions.assertThat(service.getAccountPhoneNumber(account.getId())).isNotNull();
     }
     @Test
     void updateTranfertAccount() {

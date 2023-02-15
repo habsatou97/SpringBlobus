@@ -35,7 +35,8 @@ public class KeyGeneratorImpl implements KeyGeneratorService {
     @Override
     public PublicKey getPublicKey() throws IOException {
         try{
-            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(Base64.getDecoder().decode(readFromFile("RSA/pubkey").getBytes()));
+            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(
+                    Base64.getDecoder().decode(readFromFile("RSA/pubkey").getBytes()));
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             return keyFactory.generatePublic(keySpec);
             //return publicKey;
@@ -50,7 +51,8 @@ public class KeyGeneratorImpl implements KeyGeneratorService {
     @Override
     public PrivateKey getPrivateKey() throws IOException {
         PrivateKey cle = null;
-        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(readFromFile("RSA/privkey").getBytes()));
+        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(
+                Base64.getDecoder().decode(readFromFile("RSA/privkey").getBytes()));
         KeyFactory keyFactory=null;
         try {
              keyFactory = KeyFactory.getInstance("RSA");

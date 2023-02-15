@@ -91,8 +91,6 @@ class UserServiceImplTest {
             "fzivbeegjd",
             "fohfyf78");
 
-
-
     @Before()
     public void setup()
     {
@@ -100,11 +98,6 @@ class UserServiceImplTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     }
 
-
-   /* @BeforeEach
-    public void setUp() throws Exception  {
-       userService = new UserServiceImpl(userRepository,accountRepository);
-    }*/
 
     @Test
     void getAllUsers() {

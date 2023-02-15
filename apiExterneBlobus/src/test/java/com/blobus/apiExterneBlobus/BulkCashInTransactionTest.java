@@ -169,7 +169,8 @@ public class BulkCashInTransactionTest {
                 LocalDate.of(2023,02,03),
                 BULKCASHIN
         );
-        RequestBodyTransactionDto[] requestBodyTransactionDtos = {requestBodyTransactionDto1,requestBodyTransactionDto2};
+        RequestBodyTransactionDto[] requestBodyTransactionDtos =
+                {requestBodyTransactionDto1,requestBodyTransactionDto2};
 
         ResponseCashInTransactionDto responseCashInTransactionDto = ResponseCashInTransactionDto
                 .builder()
@@ -177,9 +178,11 @@ public class BulkCashInTransactionTest {
                 .bulkId(1L)
                 .build();
 
-        Mockito.when(transactionService.BulkCashInTransaction(requestBodyTransactionDtos)).thenReturn(responseCashInTransactionDto);
+        Mockito.when(transactionService.BulkCashInTransaction(requestBodyTransactionDtos))
+                .thenReturn(responseCashInTransactionDto);
 
-        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.post("/api/ewallet/v1/bulkcashins").with(csrf())
+        MockHttpServletRequestBuilder mockRequest =
+                MockMvcRequestBuilders.post("/api/ewallet/v1/bulkcashins").with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 //.header(HttpHeaders.AUTHORIZATION,"Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJlbCIsImlhdCI6MTY3NTM1ODYyNCwiZXhwIjoxNjc1MzYwMDY0fQ.J_HNwr_romXql1KBuXTKZTSXm6-Np7lcCcE7Hg3Ldr0")

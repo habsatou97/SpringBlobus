@@ -159,9 +159,11 @@ public class CashInTransactionTest {
                 .transactionId(1L)
                 .build();
 
-        Mockito.when(transactionService.CashInTransaction(requestBodyTransactionDto)).thenReturn(responseCashInTransactionDto);
+        Mockito.when(transactionService.CashInTransaction(requestBodyTransactionDto))
+                .thenReturn(responseCashInTransactionDto);
 
-        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.post("/api/ewallet/v1/cashins").with(csrf())
+        MockHttpServletRequestBuilder mockRequest =
+                MockMvcRequestBuilders.post("/api/ewallet/v1/cashins").with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 //.header(HttpHeaders.AUTHORIZATION,"Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJlbCIsImlhdCI6MTY3NTM1ODYyNCwiZXhwIjoxNjc1MzYwMDY0fQ.J_HNwr_romXql1KBuXTKZTSXm6-Np7lcCcE7Hg3Ldr0")

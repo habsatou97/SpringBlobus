@@ -115,7 +115,12 @@ class CustomerImplTest {
         customer1.setLastName("Faye");
         customer1.setEmail("laye@gmail.com");
         customer1.setFirstName("Ablaye");
-        when(service.saveDto(customer1 )).thenReturn(new CustomerEditCreateDto("dzedez","dezfef","csdcsdc","fsdffds"));
+        when(service.saveDto(customer1 )).thenReturn(
+                new CustomerEditCreateDto(
+                        "dzedez",
+                        "dezfef",
+                        "csdcsdc",
+                        "fsdffds"));
         Customer customer = new Customer();
         customer.setEmail("ablaye@gmail.com");
 
