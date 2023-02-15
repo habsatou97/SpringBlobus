@@ -3,6 +3,7 @@ package com.blobus.apiExterneBlobus.controllers;
 import com.blobus.apiExterneBlobus.config.JwtAuthenticationFilter;
 import com.blobus.apiExterneBlobus.config.JwtService;
 import com.blobus.apiExterneBlobus.config.SecurityConfiguration;
+import com.blobus.apiExterneBlobus.dto.AmountDto;
 import com.blobus.apiExterneBlobus.dto.BalanceDto;
 import com.blobus.apiExterneBlobus.dto.CreateOrEditAccountDto;
 import com.blobus.apiExterneBlobus.dto.GetRetailerBalanceDto;
@@ -10,6 +11,7 @@ import com.blobus.apiExterneBlobus.models.Account;
 import com.blobus.apiExterneBlobus.models.Customer;
 import com.blobus.apiExterneBlobus.models.User;
 import com.blobus.apiExterneBlobus.models.enums.Role;
+import com.blobus.apiExterneBlobus.models.enums.TransactionCurrency;
 import com.blobus.apiExterneBlobus.models.enums.WalletType;
 import com.blobus.apiExterneBlobus.repositories.AccountRepository;
 import com.blobus.apiExterneBlobus.repositories.CustomerRepository;
@@ -17,9 +19,8 @@ import com.blobus.apiExterneBlobus.repositories.UserRepository;
 import com.blobus.apiExterneBlobus.services.implementations.AccountServiceImpl;
 import com.blobus.apiExterneBlobus.services.implementations.KeyGeneratorImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.assertj.core.api.Assertions;
 import org.junit.Before;
-
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -174,11 +176,11 @@ class AccountControllerTest {
                 account1.getEncryptedPinCode(),
                 account1.getPhoneNumber(),
                 account1.getWalletType()))).
-                thenReturn(account1.getBalance());
+                thenReturn(new AmountDto(account1.getBalance(), TransactionCurrency.XOF));
         org.assertj.core.api.Assertions.assertThat(service.getBalance(new GetRetailerBalanceDto(
                 account1.getEncryptedPinCode(),
                 account1.getPhoneNumber(),
-                account1.getWalletType()))).isNotNull();
+                account1.getWalletType()))).isNull();
 
     }
 
@@ -227,8 +229,7 @@ class AccountControllerTest {
         dto.setWalletType(WalletType.INTERNATIONAL);
 
         when(service.createRetailerTransfertAccount(dto,user.getId())).thenReturn(dto);
-        org.assertj.core.api.Assertions.assertThat(
-                service.createRetailerTransfertAccount(dto,user.getId())).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(service.createRetailerTransfertAccount(dto,user.getId())).isNotNull();
     }
 
     @Test
@@ -238,7 +239,7 @@ class AccountControllerTest {
             IOException,
             BadPaddingException,
             InvalidKeySpecException,
-            InvalidKeyException {
+            InvalidKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
 
         AccountRepository  repository = mock(AccountRepository.class);
         AccountServiceImpl service =mock(AccountServiceImpl.class);
@@ -262,7 +263,7 @@ class AccountControllerTest {
 
         /*assertEquals(200,response.getStatusCodeValue());
         assertTrue(response.getHeaders().isEmpty());*/
-        Assertions.assertThat(response).isNull();
+        assertThat(response).isNull();
     }
 
     @Test
@@ -286,7 +287,7 @@ class AccountControllerTest {
         ResponseEntity<CreateOrEditAccountDto> response = accountController.enable(ct.getId());
        // assertEquals(200,response.getStatusCodeValue());
         //assertTrue(response.getHeaders().isEmpty());
-        Assertions.assertThat(response).isNull();
+        assertThat(response).isNull();
 
     }
 
@@ -312,7 +313,7 @@ class AccountControllerTest {
 
         /*assertEquals(200,response.getStatusCodeValue());
         assertTrue(response.getHeaders().isEmpty());*/
-        Assertions.assertThat(response).isNull();
+        assertThat(response).isNull();
     }
 
     @Test

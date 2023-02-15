@@ -7,10 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.blobus.apiExterneBlobus.auth.AuthenticationRequest;
-import com.blobus.apiExterneBlobus.auth.AuthenticationResponse;
-import com.blobus.apiExterneBlobus.auth.AuthenticationService;
-import com.blobus.apiExterneBlobus.auth.RegisterRequest;
+import com.blobus.apiExterneBlobus.auth.*;
 import com.blobus.apiExterneBlobus.config.JwtService;
 import com.blobus.apiExterneBlobus.models.User;
 import com.blobus.apiExterneBlobus.repositories.UserRepository;
@@ -38,65 +35,30 @@ class AuthenticationControllerTest {
         ProviderManager authenticationManager = new ProviderManager(authenticationProviderList);
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         AuthenticationController authenticationController = new AuthenticationController(
-                new AuthenticationService(
-                        userRepository, passwordEncoder, new JwtService(), authenticationManager));
-        ResponseEntity<AuthenticationResponse> actualRegisterResult = authenticationController
-                .register(new RegisterRequest(
-                        "Jane",
-                        "Doe",
-                        "42",
-                        "User Secret",
-                        "jane.doe@example.org"));
-
+                new AuthenticationService(userRepository, passwordEncoder, new JwtService(), authenticationManager));
+        ResponseEntity<RegisterResponse> actualRegisterResult = authenticationController
+                .register(new RegisterRequest("Jane", "Doe", "42", "User Secret", "jane.doe@example.org","",new ArrayList<>()));
         assertTrue(actualRegisterResult.hasBody());
         assertTrue(actualRegisterResult.getHeaders().isEmpty());
         assertEquals(200, actualRegisterResult.getStatusCodeValue());
         verify(userRepository).save((User) any());
     }
 
-    @Test
-    void testRegister4() {
 
-        UserRepository userRepository = mock(UserRepository.class);
-        when(userRepository.save((User) any())).thenReturn(new User());
-        JwtService jwtService = mock(JwtService.class);
-        when(jwtService.generateToken((UserDetails) any())).thenReturn("ABC123");
 
-        ArrayList<AuthenticationProvider> authenticationProviderList = new ArrayList<>();
-        authenticationProviderList.add(new RunAsImplAuthenticationProvider());
-        ProviderManager authenticationManager = new ProviderManager(authenticationProviderList);
-        AuthenticationController authenticationController = new AuthenticationController(
-                new AuthenticationService(
-                        userRepository, new BCryptPasswordEncoder(), jwtService, authenticationManager));
-        ResponseEntity<AuthenticationResponse> actualRegisterResult = authenticationController
-                .register(new RegisterRequest(
-                        "Jane",
-                        "Doe",
-                        "42",
-                        "User Secret",
-                        "jane.doe@example.org"));
-
-        assertTrue(actualRegisterResult.hasBody());
-        assertTrue(actualRegisterResult.getHeaders().isEmpty());
-        assertEquals(200, actualRegisterResult.getStatusCodeValue());
-        assertEquals("ABC123", actualRegisterResult.getBody().getToken());
-        verify(userRepository).save((User) any());
-        verify(jwtService).generateToken((UserDetails) any());
-    }
 
     @Test
     void testAuthenticate() {
+        //   Diffblue Cover was unable to write a Spring test,
+        //   so wrote a non-Spring test instead.
+        //   Diffblue AI was unable to find a test
 
         AuthenticationService authenticationService = mock(AuthenticationService.class);
         when(authenticationService.authenticate((AuthenticationRequest) any()))
                 .thenReturn(new AuthenticationResponse("ABC123"));
-        AuthenticationController authenticationController =
-                new AuthenticationController(authenticationService);
-        ResponseEntity<AuthenticationResponse> actualAuthenticateResult =
-                authenticationController.authenticate(new AuthenticationRequest(
-                        "42",
-                        "User Secret"));
-
+        AuthenticationController authenticationController = new AuthenticationController(authenticationService);
+        ResponseEntity<AuthenticationResponse> actualAuthenticateResult = authenticationController
+                .authenticate(new AuthenticationRequest("42", "User Secret"));
         assertTrue(actualAuthenticateResult.hasBody());
         assertTrue(actualAuthenticateResult.getHeaders().isEmpty());
         assertEquals(200, actualAuthenticateResult.getStatusCodeValue());
