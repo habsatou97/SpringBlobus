@@ -26,10 +26,21 @@ public interface AccountService {
   public String getAccountPhoneNumber(Long id);
   public CreateOrEditAccountDto updateTranfertAccount(EditAccountDto transferAccount, Long id);
   public void deleteTransfertAccountById(Long id);
-  public AmountDto getBalance(GetRetailerBalanceDto getRetailerBalanceDto) throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException;
+  public AmountDto getBalance(GetRetailerBalanceDto getRetailerBalanceDto)
+          throws NoSuchPaddingException, IllegalBlockSizeException, IOException,
+          NoSuchAlgorithmException, BadPaddingException, InvalidKeyException;
   public CreateOrEditAccountDto modifyTransferAccountRetailer(Long id, EditAccountDto account);
   public void deleteByPhoneNumber(String phoneNumber);
-
     public BalanceDto updatedBalance(BalanceDto balance,Long id);
-  public ResponseChangePinCodeDto changePinCode(RequestBodyChangePinCodeDto requestBodyChangePinCodeDto, String msisdn, CustomerType customerType, WalletType walletType) throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, InvalidKeySpecException;
+  public ResponseChangePinCodeDto changePinCode(RequestBodyChangePinCodeDto requestBodyChangePinCodeDto,
+                                                String msisdn,
+                                                CustomerType customerType,
+                                                WalletType walletType) throws NoSuchPaddingException,
+                                                IllegalBlockSizeException, IOException,
+                                                NoSuchAlgorithmException, BadPaddingException,
+                                                InvalidKeyException, InvalidKeySpecException;
+
+  public RequestBodyUserProfileDto getUserProfileByMsisdn(String phoneNumber, WalletTypeDto walletType);
+
+
 }

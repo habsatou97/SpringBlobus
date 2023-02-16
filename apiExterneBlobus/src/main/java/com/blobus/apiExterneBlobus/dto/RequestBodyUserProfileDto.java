@@ -8,13 +8,14 @@ import lombok.Setter;
 @Getter
 @Setter
 public class RequestBodyUserProfileDto {
-    private String msisdn;
-    private String type;
+    private AmountDto balance;
     private String firstName;
     private String lastName;
-    private String userId;
-    private AmountDto balance;
+    private String msisdn;
     private boolean suspended;
+    private String type;
+    private String userId;
+
 
 
 

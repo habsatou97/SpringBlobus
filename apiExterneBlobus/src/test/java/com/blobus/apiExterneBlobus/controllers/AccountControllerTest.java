@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -38,6 +39,7 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -61,6 +63,8 @@ class AccountControllerTest {
     MockMvc mockMvc;
     @Autowired
     ObjectMapper mapper;
+    @MockBean
+    AccountServiceImpl accountService;
     @MockBean
     JwtAuthenticationFilter jwtAuthenticationFilter;
     @MockBean
@@ -237,17 +241,16 @@ class AccountControllerTest {
         createDto.setWalletType(dto.getWalletType());
 
         when(service.createRetailerTransfertAccount(dto,user.getId())).thenReturn(createDto);
-        org.assertj.core.api.Assertions.assertThat(service.createRetailerTransfertAccount(dto,user.getId())).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(
+                service.createRetailerTransfertAccount(dto,user.getId())).isNotNull();
     }
 
     @Test
-    void update() throws NoSuchPaddingException,
-            IllegalBlockSizeException,
-            NoSuchAlgorithmException,
-            IOException,
-            BadPaddingException,
-            InvalidKeySpecException,
-            InvalidKeyException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
+    void update() throws NoSuchPaddingException, IllegalBlockSizeException,
+            NoSuchAlgorithmException, IOException, BadPaddingException,
+            InvalidKeySpecException, InvalidKeyException, NoSuchPaddingException,
+            IllegalBlockSizeException, NoSuchAlgorithmException, IOException,
+            BadPaddingException, InvalidKeySpecException, InvalidKeyException {
 
         AccountRepository  repository = mock(AccountRepository.class);
         AccountServiceImpl service =mock(AccountServiceImpl.class);
@@ -372,6 +375,31 @@ class AccountControllerTest {
 
         assertEquals(200,response.getStatusCodeValue());
         assertTrue(response.getHeaders().isEmpty());
+
+    }
+
+
+    @Test
+    void getUserProfileByMsisdn() throws Exception {
+
+        String phoneNumber = "782654489";
+        AmountDto amountDto= new AmountDto();
+        amountDto.setCurrency(TransactionCurrency.XOF);
+        amountDto.setValue(10000000.06);
+        RequestBodyUserProfileDto dto = new RequestBodyUserProfileDto();
+        dto.setUserId("65+65203");
+        dto.setMsisdn("782654489");
+        dto.setFirstName("Ba");
+        dto.setLastName("El-seydi");
+        dto.setSuspended(true);
+        dto.setType(Collections.singletonList(Role.RETAILER).toString());
+        dto.setBalance(amountDto);
+
+        WalletTypeDto walletTypeDto= new WalletTypeDto();
+        walletTypeDto.setWalletType(WalletType.BONUS);
+
+        Mockito.when(accountService.getUserProfileByMsisdn(phoneNumber,walletTypeDto)).thenReturn(dto);
+        org.assertj.core.api.Assertions.assertThat(accountService.getUserProfileByMsisdn(phoneNumber,walletTypeDto)).isNotNull();
 
     }
 }

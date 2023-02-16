@@ -1,14 +1,12 @@
 package com.blobus.apiExterneBlobus.services.implementations;
-import com.blobus.apiExterneBlobus.dto.AmountDto;
-import com.blobus.apiExterneBlobus.dto.RequestBodyUserProfileDto;
-import com.blobus.apiExterneBlobus.dto.UserDto;
-import com.blobus.apiExterneBlobus.dto.UserWithNineaDto;
+import com.blobus.apiExterneBlobus.dto.*;
 import com.blobus.apiExterneBlobus.exception.ResourceNotFoundException;
 import com.blobus.apiExterneBlobus.models.Account;
 import com.blobus.apiExterneBlobus.models.User;
 import com.blobus.apiExterneBlobus.models.enums.CustomerType;
 import com.blobus.apiExterneBlobus.models.enums.Role;
 import com.blobus.apiExterneBlobus.models.enums.TransactionCurrency;
+import com.blobus.apiExterneBlobus.models.enums.WalletType;
 import com.blobus.apiExterneBlobus.repositories.AccountRepository;
 import com.blobus.apiExterneBlobus.repositories.UserRepository;
 import com.blobus.apiExterneBlobus.services.interfaces.UserService;
@@ -66,7 +64,8 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDto updateSingleUser(UserWithNineaDto user, Long id) {
         UserDto userDto= new UserDto();
-      User user1 = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("updated failled ,user_id not found"));
+      User user1 = userRepository.findById(id).orElseThrow(()
+              -> new ResourceNotFoundException("updated failled ,user_id not found"));
       if (user.getFirstName()!=null && user.getFirstName().length()>0
             && !Objects.equals(user1.getFirstName(),user.getFirstName()))
       {
@@ -132,34 +131,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(Long id) {
-       userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("deleted failled ,user_id "+id+" not found"));
+       userRepository.findById(id).orElseThrow(()
+               -> new ResourceNotFoundException("deleted failled ,user_id "+id+" not found"));
        userRepository.deleteById(id);
-    }
-
-    @Override
-    public RequestBodyUserProfileDto getUserProfileByMsisdn(String phoneNumber) {
-
-        RequestBodyUserProfileDto userProfileDto = new RequestBodyUserProfileDto();
-        AmountDto amountDto= new AmountDto();
-        Account account = transferAccountRepository.getAccountByPhoneNumber(phoneNumber).orElseThrow(() ->
-                new ResourceNotFoundException("msisdn invalid"));
-        amountDto.setCurrency(TransactionCurrency.XOF);
-        amountDto.setValue(account.getBalance());
-        userProfileDto.setMsisdn(account.getPhoneNumber());
-        userProfileDto.setBalance(amountDto);
-        userProfileDto.setSuspended(account.is_active());
-        if(account.getCustomer()!=null){
-            userProfileDto.setType(String.valueOf(CustomerType.CUSTOMER));
-            userProfileDto.setLastName(account.getCustomer().getLastName());
-            userProfileDto.setFirstName(account.getCustomer().getFirstName());
-        }
-        else if(account.getRetailer()!=null){
-            userProfileDto.setType(String.valueOf(CustomerType.RETAILER));
-            userProfileDto.setLastName(account.getRetailer().getLastName());
-            userProfileDto.setFirstName(account.getRetailer().getFirstName());
-            userProfileDto.setUserId(account.getRetailer().getUserId());
-        }
-        return userProfileDto;
     }
 
     @Override
