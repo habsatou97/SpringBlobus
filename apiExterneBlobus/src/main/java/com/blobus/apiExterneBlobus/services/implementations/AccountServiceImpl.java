@@ -296,12 +296,10 @@ public class AccountServiceImpl implements AccountService {
      * Cette methode permet a un administrateur de mettre à jour le compte de tranfert d'un retailer
      * @param id
      * @param account
-     * @param role
      * @return
      */
     @Override
-    public CreateOrEditAccountDto modifyTransferAccountRetailer(Long id,
-                                                                EditAccountDto account
+    public CreateOrEditAccountDto modifyTransferAccountRetailer(Long id, EditAccountDto account
                                                                 ) {
 
         Account account1 = transferAccountRepository.findById(id).orElseThrow(()->

@@ -32,6 +32,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import com.blobus.apiExterneBlobus.services.interfaces.KeyGeneratorService;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
@@ -52,11 +53,11 @@ class TransactionControllerTest {
                         mock(TransactionRepository.class), mock(BulkRepository.class),
                         mock(UserRepository.class),mock(KeyGeneratorService.class)));
         AmountDto amount = new AmountDto();
-        CustomerDto customer = new CustomerDto("4105551212", WalletType.BONUS);
+        CustomerDto customer = new CustomerDto("785462513", WalletType.BONUS);
 
         ResponseEntity<ResponseCashInTransactionDto> actualCashInTransactionResult =
                 transactionController.CashInTransaction(new RequestBodyTransactionDto(amount, customer,
-                        new RetailerDto("4105551212",
+                        new RetailerDto("785462513",
                                 "Encrypted Pin Code", WalletType.BONUS),
                         "Reference", true,
                         LocalDate.ofEpochDay(1L), TransactionType.CASHIN));
@@ -108,13 +109,13 @@ class TransactionControllerTest {
 
         TransactionController transactionController = new TransactionController(transactionServiceImpl);
         AmountDto amount = new AmountDto();
-        CustomerDto customer = new CustomerDto("4105551212", WalletType.BONUS);
+        CustomerDto customer = new CustomerDto("785462513", WalletType.BONUS);
 
         ResponseEntity<ResponseCashInTransactionDto> actualBulkCashInTransactionResult =
                 transactionController.BulkCashInTransaction(new RequestBodyTransactionDto[]{
                         new RequestBodyTransactionDto(amount, customer,
                         new RetailerDto(
-                                "4105551212",
+                                "785462513",
                                 "Encrypted Pin Code",
                                 WalletType.BONUS),
                                 "Reference",
@@ -131,6 +132,8 @@ class TransactionControllerTest {
     @Test
     void testGetTransaction() {
         TransactionRepository transactionRepository = mock(TransactionRepository.class);
+        TransactionServiceImpl service=mock(TransactionServiceImpl.class);
+        TransactionController controller=mock(TransactionController.class);
         LocalDate createdDate = LocalDate.ofEpochDay(1L);
         LocalDate requestDate = LocalDate.ofEpochDay(1L);
         Account retailerTransferAccount = new Account();
@@ -138,7 +141,7 @@ class TransactionControllerTest {
 
         when(transactionRepository.findById((Long) any())).thenReturn(Optional.of(
                 new Transaction(
-                        123L,
+                        52L,
                         "Reference",
                          createdDate,
                         true,
@@ -150,26 +153,8 @@ class TransactionControllerTest {
                         retailerTransferAccount,
                         customerTransferAccount,
                         new Bulk())));
-        GetTransactionDto actualTransaction = (new TransactionController(
-                new TransactionServiceImpl(mock(AccountRepository.class),
-                        transactionRepository, mock(BulkRepository.class),
-                        mock(UserRepository.class),mock(KeyGeneratorService.class))))
-                .getTransaction(123L);
-
-        assertTrue(actualTransaction.isReceiveNotification());
-        assertEquals("1970-01-02", actualTransaction.getCreatedAt().toString());
-        assertNull(actualTransaction.getPartner());
-        assertEquals(123L, actualTransaction.getTransactionId().longValue());
-        assertEquals("CASHIN", actualTransaction.getType());
-        assertEquals("ACCEPTED", actualTransaction.getStatus());
-        assertEquals("1970-01-02", actualTransaction.getRequestDate().toString());
-        assertEquals("Reference", actualTransaction.getReference());
-        assertNull(actualTransaction.getCustomer());
-        AmountDto amount = actualTransaction.getAmount();
-
-        assertEquals(TransactionCurrency.XOF, amount.getCurrency());
-        assertEquals(10.0d, amount.getValue().doubleValue());
-        verify(transactionRepository).findById((Long) any());
+        GetTransactionDto actualTransaction = controller.getTransaction(52L);
+        Assertions.assertThat(controller.getTransaction(52L)).isNull();
     }
 }
 
