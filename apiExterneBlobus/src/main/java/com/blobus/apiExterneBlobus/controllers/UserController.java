@@ -3,12 +3,14 @@ package com.blobus.apiExterneBlobus.controllers;
 import com.blobus.apiExterneBlobus.dto.RequestBodyUserProfileDto;
 import com.blobus.apiExterneBlobus.dto.UserDto;
 import com.blobus.apiExterneBlobus.dto.UserWithNineaDto;
+import com.blobus.apiExterneBlobus.dto.WalletTypeDto;
 import com.blobus.apiExterneBlobus.models.User;
 import com.blobus.apiExterneBlobus.repositories.UserRepository;
 import com.blobus.apiExterneBlobus.services.implementations.UserServiceImpl;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +25,7 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
+@ResponseStatus(HttpStatus.BAD_REQUEST)
 @RequestMapping("/api/ewallet/v1/users/")
 public class UserController {
 
@@ -41,17 +44,6 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    /**
-     * @param phoneNumber
-     * @return
-     * cette methode affiche le profile d'un utilisateur via son msisdn autrement dit via le numero de telephone de son compte tranfert
-     */
-    @GetMapping("find/{phoneNumber}")
-    public  ResponseEntity<RequestBodyUserProfileDto> getUserProfileByMsisdn(
-            @PathVariable("phoneNumber") String phoneNumber){
-
-        return ResponseEntity.ok(userService.getUserProfileByMsisdn(phoneNumber));
-    }
 
     /**
      * Cette methode permet d'afficher un seul utilisateur via son idntifiant
@@ -85,7 +77,7 @@ public class UserController {
     }
 
     /**
-     * Cette methode permet de modifer un utilisateur
+     * Cette methode permet à l'asministrateur de modifer un utilisateur de l'api
      * @param user
      * @param id
      * @return
@@ -99,7 +91,7 @@ public class UserController {
     }
 
     /**
-     * cette methode permet de supprimer un utilisateur
+     * cette methode permet à l'administrateur de supprimer un utilisateur de l'api
      * @param id
      * @return
      */

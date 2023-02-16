@@ -45,7 +45,8 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public CreateOrEditAccountDto createRetailerTransfertAccount(CreateAccountDto transferAccount,Long id) {
         Account account = new Account();
-        User retailer = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User retailer = userRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException("User not found"));
         List<Account> comptes = retailer.getAccounts();
         int i = 0;
         /* verifier si le retailer à deja un compte de tranfert
@@ -57,7 +58,8 @@ public class AccountServiceImpl implements AccountService {
             if (retailer.getRoles().contains(Role.RETAILER)) {
 
                 if(transferAccount.getPhoneNumber()!=null && transferAccount.getPhoneNumber().length() ==9
-                        && transferAccount.getWalletType()!=null && transferAccount.getEncryptedPinCode()!=null
+                        && transferAccount.getWalletType()!=null
+                        && transferAccount.getEncryptedPinCode()!=null
                         && transferAccount.getEncryptedPinCode().length() >0){
                     account.setRetailer(retailer);
                     account.set_active(true);
@@ -95,8 +97,10 @@ public class AccountServiceImpl implements AccountService {
             } else {
                 if (retailer.getRoles().contains(Role.RETAILER)) {
 
-                    if(transferAccount.getPhoneNumber()!=null && transferAccount.getPhoneNumber().length() ==9
-                            && transferAccount.getWalletType()!=null && transferAccount.getEncryptedPinCode()!=null
+                    if(transferAccount.getPhoneNumber()!=null &&
+                            transferAccount.getPhoneNumber().length() ==9
+                            && transferAccount.getWalletType()!=null
+                            && transferAccount.getEncryptedPinCode()!=null
                             && transferAccount.getEncryptedPinCode().length() >0){
                         account.setRetailer(retailer);
                         account.set_active(true);
@@ -124,7 +128,8 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public CreateOrEditAccountDto createCustomerTransfertAccount(CreateAccountDto transferAccount, Long id) {
 
-        Customer customer = customerRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+        Customer customer = customerRepository.findById(id).orElseThrow(()
+                -> new ResourceNotFoundException("Customer not found"));
         Account account= new Account();
         List<Account> comptes = customer.getTransferAccounts();
         int i = 0;
@@ -411,5 +416,33 @@ public class AccountServiceImpl implements AccountService {
             }
         }
 
+    }
+
+    @Override
+    public RequestBodyUserProfileDto getUserProfileByMsisdn(String phoneNumber, WalletTypeDto dto) {
+
+        RequestBodyUserProfileDto userProfileDto = new RequestBodyUserProfileDto();
+        AmountDto amountDto= new AmountDto();
+        WalletType walletType= dto.getWalletType();
+        Account account = transferAccountRepository.findByPhoneNumberAndWalletType(
+                phoneNumber,walletType).orElseThrow(() ->
+                new ResourceNotFoundException("msisdn invalid"));
+        amountDto.setCurrency(TransactionCurrency.XOF);
+        amountDto.setValue(account.getBalance());
+        userProfileDto.setMsisdn(account.getPhoneNumber());
+        userProfileDto.setBalance(amountDto);
+        userProfileDto.setSuspended(account.is_active());
+        if(account.getCustomer()!=null){
+            userProfileDto.setType(String.valueOf(CustomerType.CUSTOMER));
+            userProfileDto.setLastName(account.getCustomer().getLastName());
+            userProfileDto.setFirstName(account.getCustomer().getFirstName());
+        }
+        else if(account.getRetailer()!=null){
+            userProfileDto.setType(String.valueOf(CustomerType.RETAILER));
+            userProfileDto.setLastName(account.getRetailer().getLastName());
+            userProfileDto.setFirstName(account.getRetailer().getFirstName());
+            userProfileDto.setUserId(account.getRetailer().getUserId());
+        }
+        return userProfileDto;
     }
 }

@@ -57,7 +57,9 @@ class AccountServiceImplTest {
 
 
     @Test
-    void createRetailerTransfertAccount() throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
+    void createRetailerTransfertAccount() throws NoSuchPaddingException, IllegalBlockSizeException,
+            IOException, NoSuchAlgorithmException, BadPaddingException,
+            InvalidKeySpecException, InvalidKeyException {
 
         // initialise un retailer
         String email ="dtdvf.fffrgfby@avimtoo.com";
@@ -75,11 +77,6 @@ class AccountServiceImplTest {
         userRepository.save(user);
 
         Long id = user.getId();
-        // j'unitialise un compte e transfert
-      /*  CreateOrEditAccountDto dto = new  CreateOrEditAccountDto();
-        dto.setPhoneNumber("788564426");
-        dto.setEncryptedPinCode("92952595");
-        dto.setWalletType(WalletType.INTERNATIONAL);*/
 
         CreateAccountDto createDto = CreateAccountDto.builder()
                 .phoneNumber("788564426")

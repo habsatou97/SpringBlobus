@@ -220,4 +220,19 @@ public class AccountController {
                 .changePinCode(requestBodyChangePinCodeDto,msisdn,customerType,walletType));
     }
 
+
+    /**
+     * @param phoneNumber
+     * @param walletType
+     * @return
+     * cette methode affiche le profile d'un utilisateur via son msisdn
+     * autrement dit via le numero de telephone de son compte tranfert
+     */
+    @GetMapping("find/{phoneNumber}")
+    public  ResponseEntity<RequestBodyUserProfileDto> getUserProfileByMsisdn(
+            @PathVariable("phoneNumber") String phoneNumber, @RequestBody WalletTypeDto walletType){
+
+        return ResponseEntity.ok(transferAccountService.getUserProfileByMsisdn(phoneNumber,walletType));
+    }
+
 }
