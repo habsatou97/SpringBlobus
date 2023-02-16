@@ -29,7 +29,7 @@ import static java.lang.Boolean.TRUE;
 @Service
 public class AccountServiceImpl implements AccountService {
     @Autowired
-    private final AccountRepository transferAccountRepository;
+    private AccountRepository transferAccountRepository;
     @Autowired
     private CustomerRepository customerRepository;
     @Autowired

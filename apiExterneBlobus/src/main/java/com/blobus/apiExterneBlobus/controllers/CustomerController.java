@@ -17,17 +17,6 @@ import java.util.List;
 @RequestMapping("api/ewallet/v1/customers/")
 public class CustomerController {
     private final CustomerService customerService;
-    /*
-
-
-    private final UserRepository repository;
-
-    @GetMapping("findAllUsers")
-    public ResponseEntity<List<User>> findAllUsers(){
-        return ResponseEntity.ok().body(repository.findAll());
-    }
-
-     */
 
     @GetMapping
     public ResponseEntity<List<CustomerEditCreateDto>> findAll(){
