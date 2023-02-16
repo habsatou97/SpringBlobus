@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import com.blobus.apiExterneBlobus.auth.*;
 import com.blobus.apiExterneBlobus.config.JwtService;
 import com.blobus.apiExterneBlobus.models.User;
+import com.blobus.apiExterneBlobus.models.enums.Role;
 import com.blobus.apiExterneBlobus.repositories.UserRepository;
 
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ class AuthenticationControllerTest {
                         new JwtService(),
                         authenticationManager));
         ResponseEntity<RegisterResponse> actualRegisterResult = authenticationController
-                .register(new RegisterRequest());
+                .register(RegisterRequest.builder().phoneNumber("123456789").email("laye@gmail.com").firstname("Ablaye").lastname("Faye").ninea("asasdasd").roles(null).build());
         assertTrue(actualRegisterResult.hasBody());
         assertTrue(actualRegisterResult.getHeaders().isEmpty());
         assertEquals(200, actualRegisterResult.getStatusCodeValue());
