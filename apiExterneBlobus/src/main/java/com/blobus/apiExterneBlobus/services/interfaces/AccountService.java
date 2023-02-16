@@ -21,7 +21,6 @@ public interface AccountService {
   public CreateOrEditAccountDto createRetailerTransfertAccount(CreateAccountDto transferAccount,Long id);
   public List<CreateOrEditAccountDto> getAllTransfertAccount();
   public Optional<CreateOrEditAccountDto> getTransfertAccountById(Long id);
-  public Optional<CreateOrEditAccountDto>  geTransferAccountByMsisdn(String msisdn);
   public CreateOrEditAccountDto enableTransfertAccount(Long id);
   public CreateOrEditAccountDto diseableTranfertAccount(Long id);
   public String getAccountPhoneNumber(Long id);
