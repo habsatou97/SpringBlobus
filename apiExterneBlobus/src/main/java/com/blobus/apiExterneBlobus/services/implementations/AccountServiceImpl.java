@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.time.LocalDateTime;
 import java.util.*;
 
 import static java.lang.Boolean.FALSE;
@@ -30,7 +29,7 @@ import static java.lang.Boolean.TRUE;
 @Service
 public class AccountServiceImpl implements AccountService {
     @Autowired
-    private AccountRepository transferAccountRepository;
+    private final AccountRepository transferAccountRepository;
     @Autowired
     private CustomerRepository customerRepository;
     @Autowired
