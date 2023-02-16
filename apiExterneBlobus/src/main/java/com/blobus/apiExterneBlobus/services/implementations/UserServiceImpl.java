@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
             Optional<User> userOptional = userRepository.findUserByEmail(user.getEmail());
             Optional<User> userOptional1 = userRepository.findUserByPhoneNumber(user.getPhoneNumber());
             if(userOptional.isPresent() || userOptional1.isPresent()){
-                throw new IllegalStateException("Oups! cette email "+ user.getEmail()+" existe deja");
+                throw new IllegalStateException("Oups! cette email "+ user.getEmail() + " existe deja");
             }
             if( user.getNinea()!= null)
                 user.setRoles(Collections.singletonList(Role.RETAILER));
