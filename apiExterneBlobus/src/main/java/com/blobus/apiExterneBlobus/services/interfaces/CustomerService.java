@@ -4,6 +4,7 @@ import com.blobus.apiExterneBlobus.dto.CustomerEditCreateDto;
 import com.blobus.apiExterneBlobus.models.Customer;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CustomerService {
     public Customer findOne(Long id);
@@ -15,4 +16,6 @@ public interface CustomerService {
     public CustomerEditCreateDto editDto(Long id,Customer customer);
     public Customer edit(Customer customer);
     public void delete(Long id);
+    public boolean findByEmail(String email);
+    public boolean findByPhoneNumber(String phoneNumber);
 }

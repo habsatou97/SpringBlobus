@@ -6,12 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
-    //public static final String FIND_CUSTOMERS = "SELECT first_name, last_name, phone_number, email FROM customers";
-    //@Query(value = FIND_CUSTOMERS, nativeQuery = true)
-    //public List<Customer> findAllDto();
-
-
+    Optional<Customer> findByEmail(String email);
+    Optional<Customer> findByPhoneNumber(String phoneNumber);
 }

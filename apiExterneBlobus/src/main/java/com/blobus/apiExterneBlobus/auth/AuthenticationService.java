@@ -21,6 +21,14 @@ public class AuthenticationService {
 
   public RegisterResponse register(RegisterRequest request) {
     var user = new User();
+    if(
+                    request.getFirstname() != null ||
+                    request.getLastname() != null ||
+                    request.getEmail() != null ||
+                    request.getPhoneNumber() !=null || request.getPhoneNumber().length() == 9)
+    {
+      throw new IllegalArgumentException("There is some empty user properties.");
+    }
     String userId = RandomStringUtils.random(5,"azertyuiopqsdfghjklmwxcvbn1223456789");
     String userSecret = RandomStringUtils.random(4,"123456789");
     Optional<User> userOptional = repository.findUserByEmail(request.getEmail());

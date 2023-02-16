@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -56,19 +57,23 @@ public class CustomerImpl implements CustomerService {
 
     @Override
     public Customer save(Customer customer) {
-        if (customer.getPhoneNumber().length() > 9 ) throw new IllegalStateException("The phone number cannot be more than 9 characters.");
-        if (customer.getPhoneNumber().isEmpty() ||
+        if (customer.getPhoneNumber().length() != 9 ) throw new IllegalStateException("The phone number cannot be more than 9 characters.");
+        if (
                 customer.getFirstName().isEmpty() ||
                 customer.getLastName().isEmpty() ||
                 customer.getEmail().isEmpty()
-        ) throw new IllegalStateException("Firstname, lastname, email or phone Number connot be empty.");
+        ) throw new IllegalStateException("Firstname, lastname, email or phone Number cannot be empty.");
 
         return customerRepository.save(customer);
     }
 
     public CustomerEditCreateDto saveDto(Customer customer) {
-        if (customer.getPhoneNumber().length() > 9 ) throw new IllegalStateException("The phone number cannot be more than 9 characters.");
-        if (customer.getPhoneNumber().isEmpty() ||
+        if (!findByEmail(customer.getEmail()))
+            throw new IllegalArgumentException("This email is taken.");
+        if (!findByPhoneNumber(customer.getPhoneNumber()))
+            throw new IllegalArgumentException("This phone number is taken.");
+        if (customer.getPhoneNumber().length() != 9 ) throw new IllegalStateException("The phone number cannot be more than 9 characters.");
+        if (
                 customer.getFirstName().isEmpty() ||
                 customer.getLastName().isEmpty() ||
                 customer.getEmail().isEmpty()
@@ -90,16 +95,24 @@ public class CustomerImpl implements CustomerService {
 
     @Override
     public CustomerEditCreateDto editDto(Long id, Customer customer) {
+
         if (customer.getPhoneNumber().length() > 9 ) throw new IllegalStateException("The phone number cannot be more than 9 characters.");
         if (customer.getPhoneNumber().isEmpty() ||
                 customer.getFirstName().isEmpty() ||
                 customer.getLastName().isEmpty() ||
                 customer.getEmail().isEmpty()
-        ) throw new IllegalStateException("Firstname, lastname, email or phone Number connot be empty.");
+        ) throw new IllegalStateException("Firstname, lastname, email or phone Number cannot be empty.");
 
 
         Customer customer1 = customerRepository.findById(id).orElseThrow();
-        System.out.println("*********************************************");
+        if (!customer.getPhoneNumber().equals(customer1.getPhoneNumber())){
+            if (!findByPhoneNumber(customer.getPhoneNumber()))
+                throw new IllegalArgumentException("This phone number is taken.");
+        }
+        if (!customer.getEmail().equals(customer1.getEmail())){
+            if (!findByEmail(customer.getEmail()))
+                throw new IllegalArgumentException("This email is taken.");
+        }
         System.out.println(customer.getFirstName());
         System.out.println(customer.getPhoneNumber());
         System.out.println(customer.getLastName());
@@ -120,6 +133,24 @@ public class CustomerImpl implements CustomerService {
 
     @Override
     public void delete(Long id) {
-        customerRepository.deleteById(id);
+        Optional<Customer> customer = customerRepository.findById(id);
+        if (customer.isPresent()){
+            customerRepository.deleteById(id);
+        }else {
+            throw new EntityNotFoundException("Customer with id "+id+" doesn't exists");
+        }
+
+    }
+
+    @Override
+    public boolean findByEmail(String email) {
+        Optional<Customer> customer = customerRepository.findByEmail(email);
+        return customer.isEmpty();
+    }
+
+    @Override
+    public boolean findByPhoneNumber(String phoneNumber) {
+        Optional<Customer> customer = customerRepository.findByPhoneNumber(phoneNumber);
+        return customer.isEmpty();
     }
 }
