@@ -418,6 +418,12 @@ public class AccountServiceImpl implements AccountService {
 
     }
 
+    /**
+     *
+     * @param phoneNumber
+     * @param dto
+     * @return
+     */
     @Override
     public RequestBodyUserProfileDto getUserProfileByMsisdn(String phoneNumber, WalletTypeDto dto) {
 
