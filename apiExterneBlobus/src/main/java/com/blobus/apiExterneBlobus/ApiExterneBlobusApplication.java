@@ -37,6 +37,7 @@ public class ApiExterneBlobusApplication
 		writeToFileString(pub_key, priv_key);
 	}
 
+	/*
 	@Bean
 	 public CorsFilter corsFilter() {
 	 	CorsConfiguration corsConfiguration = new CorsConfiguration();
@@ -52,5 +53,6 @@ public class ApiExterneBlobusApplication
 	 	urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
 	 	return new CorsFilter(urlBasedCorsConfigurationSource);
 	 }
+	 */
 
 }
