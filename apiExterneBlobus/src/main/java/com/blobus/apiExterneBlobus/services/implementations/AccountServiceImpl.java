@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static java.lang.Boolean.FALSE;
@@ -334,11 +335,11 @@ public class AccountServiceImpl implements AccountService {
             transferAccountRepository.saveAndFlush(account.get());
             return balance;
         }
-        throw new EntityNotFoundException("This account does'nt exist !!");
+        throw new EntityNotFoundException("This account doesn't exist !!");
     }
 
     @Override
-    public ResponseChangePinCodeDto changePinCode(RequestBodyChangePinCodeDto requestBodyChangePinCodeDto, String msisdn,CustomerType customerType,WalletType walletType)
+    public ResponseChangePinCodeDto changePinCode(RequestBodyChangePinCodeDto requestBodyChangePinCodeDto, String msisdn, CustomerType customerType, WalletType walletType,String content_type)
             throws NoSuchPaddingException,
                  IllegalBlockSizeException,
                  IOException,
@@ -364,6 +365,11 @@ public class AccountServiceImpl implements AccountService {
 
         } else if (requestBodyChangePinCodeDto == null) {
             responseChangePinCodeDto.setErrorCode("21");
+            responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
+            return responseChangePinCodeDto;
+
+        } else if (content_type==null) {
+            responseChangePinCodeDto.setErrorCode("25");
             responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
             return responseChangePinCodeDto;
 

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -182,13 +183,14 @@ public class AccountController {
     ResponseEntity<ResponseChangePinCodeDto> changePinCode(
             @RequestBody RequestBodyChangePinCodeDto requestBodyChangePinCodeDto,
             @RequestParam String msisdn, @RequestParam CustomerType customerType,
-            @RequestParam WalletType walletType)
+            @RequestParam WalletType walletType,
+            @RequestHeader String content_type)
             throws NoSuchPaddingException, IllegalBlockSizeException,
             IOException, NoSuchAlgorithmException, BadPaddingException,
             InvalidKeySpecException, InvalidKeyException {
 
         return ResponseEntity.ok(transferAccountService
-                .changePinCode(requestBodyChangePinCodeDto,msisdn,customerType,walletType));
+                .changePinCode(requestBodyChangePinCodeDto,msisdn,customerType,walletType, content_type));
     }
 
 }
