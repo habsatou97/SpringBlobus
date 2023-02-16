@@ -1,17 +1,19 @@
 package com.blobus.apiExterneBlobus;
-
-//import com.blobus.apiExterneBlobus.repositories.AccountRepository;
-//import lombok.RequiredArgsConstructor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import java.io.IOException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.List;
 
 import static com.blobus.apiExterneBlobus.models.KeyGenerator.writeToFileString;
 
@@ -34,7 +36,7 @@ public class ApiExterneBlobusApplication
 		String priv_key = Base64.getEncoder().encodeToString(pair.getPrivate().getEncoded());
 		writeToFileString(pub_key, priv_key);
 	}
-	/*
+
 	@Bean
 	 public CorsFilter corsFilter() {
 	 	CorsConfiguration corsConfiguration = new CorsConfiguration();
@@ -50,9 +52,5 @@ public class ApiExterneBlobusApplication
 	 	urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
 	 	return new CorsFilter(urlBasedCorsConfigurationSource);
 	 }
-	 */
-
-
-
 
 }

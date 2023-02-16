@@ -22,10 +22,10 @@ public class AuthenticationService {
   public RegisterResponse register(RegisterRequest request) {
     var user = new User();
     if(
-                    request.getFirstname() != null ||
-                    request.getLastname() != null ||
-                    request.getEmail() != null ||
-                    request.getPhoneNumber() !=null || request.getPhoneNumber().length() == 9)
+                    request.getFirstname() == null ||
+                    request.getLastname() == null ||
+                    request.getEmail() == null ||
+                    request.getPhoneNumber().length() != 9)
     {
       throw new IllegalArgumentException("There is some empty user properties.");
     }
