@@ -24,17 +24,23 @@ public class AuthenticationService {
     if(
                     request.getFirstname() == null ||
                     request.getLastname() == null ||
-                    request.getEmail() == null ||
-                    request.getPhoneNumber().length() != 9)
+                    request.getEmail() == null)
     {
       throw new IllegalArgumentException("There is some empty user properties.");
     }
+
+    if(request.getPhoneNumber().length() != 9){
+      throw new IllegalArgumentException("The phone number must be 9 characters.");
+
+    }
+
+
     String userId = RandomStringUtils.random(5,"azertyuiopqsdfghjklmwxcvbn1223456789");
     String userSecret = RandomStringUtils.random(4,"123456789");
     Optional<User> userOptional = repository.findUserByEmail(request.getEmail());
     Optional<User> userOptional1 = repository.findUserByPhoneNumber(user.getPhoneNumber());
     if(userOptional.isPresent() || userOptional1.isPresent()){
-      throw new IllegalStateException("Email et/ou mot de passe déjà existant.");
+      throw new IllegalStateException("Email and/or phone number empty.");
     }
 
     user.setFirstName(request.getFirstname());
