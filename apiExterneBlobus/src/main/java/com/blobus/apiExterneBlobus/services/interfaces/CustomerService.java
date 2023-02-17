@@ -1,11 +1,11 @@
 package com.blobus.apiExterneBlobus.services.interfaces;
-
 import com.blobus.apiExterneBlobus.dto.CustomerEditCreateDto;
 import com.blobus.apiExterneBlobus.models.Customer;
-
 import java.util.List;
-import java.util.Optional;
 
+/**
+ * @author Ablaye Faye
+ */
 public interface CustomerService {
     public Customer findOne(Long id);
     public CustomerEditCreateDto findOneDto(Long id);

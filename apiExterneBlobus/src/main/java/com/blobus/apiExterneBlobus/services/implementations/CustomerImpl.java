@@ -9,11 +9,11 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
 /**
+ * @author Ablaye Faye
  * Customer Implementation that implements Customer Service
  */
 @RequiredArgsConstructor
