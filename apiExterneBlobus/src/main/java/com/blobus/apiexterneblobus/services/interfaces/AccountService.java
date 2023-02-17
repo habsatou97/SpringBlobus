@@ -29,7 +29,6 @@ public interface AccountService {
           throws NoSuchPaddingException, IllegalBlockSizeException, IOException,
           NoSuchAlgorithmException, BadPaddingException, InvalidKeyException;
   public CreateOrEditAccountDto modifyTransferAccountRetailer(Long id, EditAccountDto account);
-  public void deleteByPhoneNumber(String phoneNumber);
 
     public BalanceDto updatedBalance(BalanceDto balance,Long id);
   public ResponseChangePinCodeDto changePinCode(RequestBodyChangePinCodeDto requestBodyChangePinCodeDto, String msisdn, CustomerType customerType, WalletType walletType,  String content_type) throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, InvalidKeySpecException;

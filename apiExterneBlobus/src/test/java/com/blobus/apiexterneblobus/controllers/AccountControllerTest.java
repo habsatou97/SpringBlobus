@@ -24,6 +24,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -56,6 +57,9 @@ class AccountControllerTest {
     ObjectMapper mapper;
     @MockBean
     AccountServiceImpl accountService;
+
+    @MockBean
+    PasswordEncoder passwordEncoder;
     @MockBean
     JwtAuthenticationFilter jwtAuthenticationFilter;
     @MockBean
@@ -337,19 +341,6 @@ class AccountControllerTest {
         org.assertj.core.api.Assertions.assertThat(repository.findById(account1.getId())).isEmpty();
     }
 
-    @Test
-    void deleteByPhoneNumber() {
-
-        AccountRepository  repository = mock(AccountRepository.class);
-        AccountServiceImpl service =mock(AccountServiceImpl.class);
-        KeyGeneratorImpl key = mock(KeyGeneratorImpl.class);
-        repository.save(account1);
-        doNothing().when(repository).deleteAccountByPhoneNumber(account1.getPhoneNumber());
-        (new AccountController(service,key)).deleteByPhoneNumber(account1.getPhoneNumber());
-
-        org.assertj.core.api.Assertions.assertThat(
-                repository.getAccountByPhoneNumber(account1.getPhoneNumber())).isEmpty();
-    }
 
     @Test
     void updatedBalance() {
