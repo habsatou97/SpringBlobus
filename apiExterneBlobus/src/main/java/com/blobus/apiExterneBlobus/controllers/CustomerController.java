@@ -45,9 +45,12 @@ public class CustomerController {
      */
     @DeleteMapping("{id}")
     public ResponseEntity<Map<String,Boolean>> delete(@PathVariable Long id){
+        // create a map for the response
         Map<String,Boolean> response = new HashMap<>();
+        // delete the customer
         customerService.delete(id);
         response.put("deleted",true);
+        // return the response
         return ResponseEntity.ok(response);
     }
 
