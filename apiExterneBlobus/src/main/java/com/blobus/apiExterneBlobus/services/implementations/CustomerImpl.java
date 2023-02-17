@@ -13,6 +13,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Customer Implementation that implements Customer Service
+ */
 @RequiredArgsConstructor
 @Service
 public class CustomerImpl implements CustomerService {
@@ -20,6 +23,11 @@ public class CustomerImpl implements CustomerService {
     @PersistenceContext
     private EntityManager entityManager;
 
+    /**
+     * find single customer DTO
+     * @param id
+     * @return
+     */
     @Override
     public CustomerEditCreateDto findOneDto(Long id) {
         Customer customer = customerRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Customer with id"+": "+id+ " don't exist"));
@@ -32,17 +40,30 @@ public class CustomerImpl implements CustomerService {
     }
 
 
+    /**
+     * find single customer
+     * @param id
+     * @return
+     */
     @Override
     public Customer findOne(Long id) {
         return customerRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Customer with id"+": "+id+ " don't exist"));
     }
 
+    /**
+     * find all customer
+     * @return
+     */
     @Override
     public List<Customer> findAll() {
 
         return customerRepository.findAll();
     }
 
+    /**
+     * find all customer DTO
+     * @return
+     */
     @Override
     public List<CustomerEditCreateDto> findAllDto() {
         return customerRepository.findAll().stream().map(customer -> {
