@@ -29,6 +29,11 @@ public class UserServiceImpl implements UserService {
 
     private final AccountRepository transferAccountRepository;
 
+    /**
+     * Cette methode permet à l'administateur d'ajouter un utilisateur de l'api
+     * @param user
+     * @return
+     */
     @Override
     public UserDto addSingleUser(UserWithNineaDto user) {
         UserDto userDto=new UserDto();
@@ -71,6 +76,12 @@ public class UserServiceImpl implements UserService {
            throw new IllegalStateException("Veuillez renseignez tous les champs correctement");
     }
 
+    /**
+     * Cette methode permet à l'administrateur de modifier les information d'un utilisateur de l'api
+     * @param user
+     * @param id
+     * @return
+     */
     @Override
     @Transactional
     public UserDto updateSingleUser(UserWithNineaDto user, Long id) {
@@ -122,6 +133,10 @@ public class UserServiceImpl implements UserService {
         return  userDto;
     }
 
+    /**
+     * Cette methode permet à l'administrateur de visualiser l'ensemble des utilisateurs de l'api
+     * @return
+     */
     @Override
     public List<UserDto> getAllUsers() {
         return userRepository.findAll().stream().map(
@@ -135,6 +150,11 @@ public class UserServiceImpl implements UserService {
                 }).toList();
     }
 
+    /**
+     * Cette methode permet de visualiser un utilisateur de l'api
+     * @param id
+     * @return
+     */
     @Override
     public Optional<UserDto> getOneUser(Long id) {
         return userRepository.findById(id).stream().map(
@@ -148,6 +168,10 @@ public class UserServiceImpl implements UserService {
         }).findAny();
     }
 
+    /**
+     * cette methode permet à l'administrateur de supprimer un utilisateur de l'api
+     * @param id
+     */
     @Override
     public void deleteUser(Long id) {
        userRepository.findById(id).orElseThrow(()
@@ -155,6 +179,10 @@ public class UserServiceImpl implements UserService {
        userRepository.deleteById(id);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public List<UserDto> getAllRetailer() {
         List<User> users = new ArrayList<>();

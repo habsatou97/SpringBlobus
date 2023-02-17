@@ -36,8 +36,8 @@ public class UserController {
 
     /**
      *
-     * cette methode l'ensemble des utilisateur de l'api.
-     * @return
+     * Ce endPoint permet de visualiser l'ensemble des utilisateurs de l'api.
+     * @return ResponseEntity<List<UserDto>>
      */
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUsers(){
@@ -46,7 +46,7 @@ public class UserController {
 
 
     /**
-     * Cette methode permet d'afficher un seul utilisateur via son idntifiant
+     * Ce endPoint permet de visualiser un utilisateur de l'api via son identifiant
      * @param id
      * @return
      */
@@ -56,9 +56,9 @@ public class UserController {
     }
 
     /**
+     * Ce endPoint permet de visualiser l'ensemble des retailers de l'api
      *
-     * @return
-     * cette methode retourne la listes de tous les retailers de l'api
+     * @return ResponseEntity<List<UserDto>>
      */
     @GetMapping("retailers")
     public ResponseEntity<List<UserDto>> getAllRetailer(){
@@ -67,7 +67,7 @@ public class UserController {
 
 
     /**
-     * Cette methode permet d'ajouter un utilisateur
+     * ce endPoint permet à l'administrateur d'ajouter  un utilisateur de l'api
      * @param user
      * @return
      */
@@ -77,10 +77,10 @@ public class UserController {
     }
 
     /**
-     * Cette methode permet à l'asministrateur de modifer un utilisateur de l'api
+     * Ce endPoint permet à l'asministrateur de modifer un utilisateur de l'api
      * @param user
      * @param id
-     * @return
+     * @return ResponseEntity<UserDto>
      */
     @PutMapping("{id}")
     public ResponseEntity<UserDto> updateUser(
@@ -91,7 +91,7 @@ public class UserController {
     }
 
     /**
-     * cette methode permet à l'administrateur de supprimer un utilisateur de l'api
+     * Ce endPoint permet à l'administrateur de supprimer un utilisateur de l'api
      * @param id
      * @return
      */

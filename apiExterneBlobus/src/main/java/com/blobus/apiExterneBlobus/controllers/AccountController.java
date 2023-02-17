@@ -187,7 +187,6 @@ public class AccountController {
      * Ce endpoint permet à l'administrateur de mettre à jour le compte de transfert d'un retailer
      * @param id
      * @param account
-     * @param role
      * @return
      */
     @PutMapping("/edit/retailer/{id}")
