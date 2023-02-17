@@ -21,42 +21,78 @@ public class AuthenticationService {
 
   public RegisterResponse register(RegisterRequest request) {
     var user = new User();
+
+    // verifying if firstname, lastname and the email aren't empty
+    if(
+                    request.getFirstname() == null ||
+                    request.getLastname() == null ||
+                    request.getEmail() == null)
+    {
+      throw new IllegalArgumentException("There is some empty user properties.");
+    }
+
+    // verify if the phone number have exactly nine characters.
+    if(request.getPhoneNumber().length() != 9){
+      throw new IllegalArgumentException("The phone number must be equals than 9 characters.");
+
+    }
+
+
+    // userId and userSecret
     String userId = RandomStringUtils.random(5,"azertyuiopqsdfghjklmwxcvbn1223456789");
     String userSecret = RandomStringUtils.random(4,"123456789");
+
+    // verify if the phone number and the email exists
     Optional<User> userOptional = repository.findUserByEmail(request.getEmail());
     Optional<User> userOptional1 = repository.findUserByPhoneNumber(user.getPhoneNumber());
     if(userOptional.isPresent() || userOptional1.isPresent()){
-      throw new IllegalStateException("Email et/ou mot de passe déjà existant.");
+      // if phone number or email exists, throws an exception.
+      throw new IllegalStateException("Email and/or phone number exists.");
     }
 
+    // set user properties
     user.setFirstName(request.getFirstname());
     user.setLastName(request.getLastname());
     user.setEmail(request.getEmail());
     user.setUserSecret(passwordEncoder.encode(userSecret));
     user.setPhoneNumber(request.getPhoneNumber());
     user.setRoles(request.getRoles());
+
+    // verify if the ninea is given
     if (request.getNinea() != null && !request.getNinea().isBlank() && request.getNinea().length() != 0){
+        // save ninea if yes
         user.setNinea(request.getNinea());
     }
 
 
+    // save user and get the user with his id
     User user1 = repository.save(user);
+
+    // update userId by concatenate the generated userId and the id of the user
     user1.setUserId(user1.getId()+userId);
     repository.save(user1);
-    //var jwtToken = jwtService.generateToken(user);
+
+    // now return the userId and userSecret
     return new RegisterResponse(user.getUserId(), userSecret);
   }
 
   public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    // authenticate user with his username (userId) and his password(UserSecret)
     authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(
             request.getUserId(),
             request.getUserSecret()
         )
     );
+
+    // get authenticate user and save it in user variable
     var user = repository.findByUserId(request.getUserId())
         .orElseThrow();
+
+    // create a token
     var jwtToken = jwtService.generateToken(user);
+
+    // build and return token
     return AuthenticationResponse.builder()
         .token(jwtToken)
         .build();

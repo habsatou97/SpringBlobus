@@ -14,8 +14,8 @@ public class GetTransactionDto {
 
     private AmountDto amount;
     private LocalDate createdAt;
-    private Customer customer;
-    private User partner;
+    private CustomerEditCreateDto customer;
+    private UserDto partner;
     private boolean receiveNotification;
     private String reference;
     private LocalDate requestDate;

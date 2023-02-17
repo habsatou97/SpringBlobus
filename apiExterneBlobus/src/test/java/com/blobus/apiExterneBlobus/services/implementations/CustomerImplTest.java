@@ -111,7 +111,7 @@ class CustomerImplTest {
     @Test
     void edit() {
         Customer customer1 = new Customer();
-        customer1.setPhoneNumber("789468");
+        customer1.setPhoneNumber("123456789");
         customer1.setLastName("Faye");
         customer1.setEmail("laye@gmail.com");
         customer1.setFirstName("Ablaye");

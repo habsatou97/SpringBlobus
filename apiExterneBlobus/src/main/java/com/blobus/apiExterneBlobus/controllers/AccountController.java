@@ -8,8 +8,17 @@ import com.blobus.apiExterneBlobus.services.implementations.KeyGeneratorImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
@@ -111,7 +120,7 @@ public class AccountController {
 
 
     @RequestMapping(value = "{id}",method = RequestMethod.PUT)
-    public ResponseEntity<CreateOrEditAccountDto> update(@RequestBody CreateOrEditAccountDto transferAccount,
+    public ResponseEntity<CreateOrEditAccountDto> update(@RequestBody EditAccountDto transferAccount,
                                                          @PathVariable Long id)
             throws NoSuchPaddingException, IllegalBlockSizeException,
             NoSuchAlgorithmException, IOException, BadPaddingException,
@@ -169,23 +178,69 @@ public class AccountController {
         transferAccountService.deleteByPhoneNumber(phoneNumber);
     }
 
+    /**
+     * ce endpoint permet de modifier le solde d'un compte d'un transfert
+     * @param balanceDto
+     * @param id
+     * @return
+     */
     @PutMapping("/edit/balance/{id}")
     public ResponseEntity<BalanceDto> updatedBalance(@RequestBody BalanceDto balanceDto,
                                                      @PathVariable("id") Long id){
         return ResponseEntity.ok(transferAccountService.updatedBalance(balanceDto,id));
     }
 
+    /**
+     * Ce endpoint permet à l'administrateur de mettre à jour le compte de transfert d'un retailer
+     * @param id
+     * @param account
+     * @return
+     */
+    @PutMapping("/edit/retailer/{id}")
+    public ResponseEntity<CreateOrEditAccountDto> updatedRetailerTransferAccount(
+            @PathVariable("id") Long id,
+            @RequestBody EditAccountDto account) throws NoSuchPaddingException,
+            IllegalBlockSizeException, NoSuchAlgorithmException,
+            IOException, BadPaddingException,
+            InvalidKeySpecException, InvalidKeyException {
+
+        account.setEncryptedPinCode(
+                keyGenerator.encrypt(new DecryptDto(account.getEncryptedPinCode())));
+        DecryptDto decryptDto=new DecryptDto();
+        CreateOrEditAccountDto accountDto =
+                transferAccountService.modifyTransferAccountRetailer(id,account);
+        decryptDto.setEncryptedPinCode(accountDto.getEncryptedPinCode());
+        accountDto.setEncryptedPinCode(keyGenerator.decrypt(decryptDto));
+       return   ResponseEntity.ok(accountDto);
+    }
+
     @PostMapping("changePinCode")
     ResponseEntity<ResponseChangePinCodeDto> changePinCode(
             @RequestBody RequestBodyChangePinCodeDto requestBodyChangePinCodeDto,
             @RequestParam String msisdn, @RequestParam CustomerType customerType,
-            @RequestParam WalletType walletType)
+            @RequestParam WalletType walletType,
+            @RequestHeader String content_type)
             throws NoSuchPaddingException, IllegalBlockSizeException,
             IOException, NoSuchAlgorithmException, BadPaddingException,
             InvalidKeySpecException, InvalidKeyException {
 
         return ResponseEntity.ok(transferAccountService
-                .changePinCode(requestBodyChangePinCodeDto,msisdn,customerType,walletType));
+                .changePinCode(requestBodyChangePinCodeDto,msisdn,customerType,walletType, content_type));
+    }
+
+
+    /**
+     * @param phoneNumber
+     * @param walletType
+     * @return
+     * cette methode affiche le profile d'un utilisateur via son msisdn
+     * autrement dit via le numero de telephone de son compte tranfert
+     */
+    @GetMapping("find/{phoneNumber}")
+    public  ResponseEntity<RequestBodyUserProfileDto> getUserProfileByMsisdn(
+            @PathVariable("phoneNumber") String phoneNumber, @RequestBody WalletTypeDto walletType){
+
+        return ResponseEntity.ok(transferAccountService.getUserProfileByMsisdn(phoneNumber,walletType));
     }
 
 }

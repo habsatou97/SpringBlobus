@@ -57,7 +57,9 @@ class AccountServiceImplTest {
 
 
     @Test
-    void createRetailerTransfertAccount() throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
+    void createRetailerTransfertAccount() throws NoSuchPaddingException, IllegalBlockSizeException,
+            IOException, NoSuchAlgorithmException, BadPaddingException,
+            InvalidKeySpecException, InvalidKeyException {
 
         // initialise un retailer
         String email ="dtdvf.fffrgfby@avimtoo.com";
@@ -75,11 +77,6 @@ class AccountServiceImplTest {
         userRepository.save(user);
 
         Long id = user.getId();
-        // j'unitialise un compte e transfert
-      /*  CreateOrEditAccountDto dto = new  CreateOrEditAccountDto();
-        dto.setPhoneNumber("788564426");
-        dto.setEncryptedPinCode("92952595");
-        dto.setWalletType(WalletType.INTERNATIONAL);*/
 
         CreateAccountDto createDto = CreateAccountDto.builder()
                 .phoneNumber("788564426")
@@ -260,22 +257,28 @@ class AccountServiceImplTest {
     @Test
     void updateTranfertAccount() {
 
-        CreateOrEditAccountDto dto =   CreateOrEditAccountDto.builder().build();
+        EditAccountDto dto =   EditAccountDto.builder().build();
         dto.setPhoneNumber("788564426");
         dto.setEncryptedPinCode("92952595");
-        dto.setWalletType(WalletType.INTERNATIONAL);
         dto.setBalance(100000.02);
 
         Account account = new Account();
-        account.setBalance(dto.getBalance());
+        account.setId(1L);
+        repository.save(account);
+       /* account.setBalance(dto.getBalance());
         account.setPhoneNumber(dto.getPhoneNumber());
         account.setEncryptedPinCode(dto.getEncryptedPinCode());
-        account.setWalletType(dto.getWalletType());
+
         account.set_active(true);
 
-        repository.save(account);
+        repository.save(account);*/
 
-        when(service.updateTranfertAccount(dto,account.getId())).thenReturn(dto);
+        CreateOrEditAccountDto accountDto= CreateOrEditAccountDto.builder().build();
+        accountDto.setBalance(dto.getBalance());
+        accountDto.setEncryptedPinCode(dto.getEncryptedPinCode());
+        accountDto.setPhoneNumber(dto.getPhoneNumber());
+
+        when(service.updateTranfertAccount(dto,account.getId())).thenReturn(accountDto);
         Assertions.assertThat(service.updateTranfertAccount(dto,account.getId())).isNotNull();
     }
 
@@ -347,27 +350,32 @@ class AccountServiceImplTest {
 
         userRepository.save(user);
 
-        CreateOrEditAccountDto dto =   CreateOrEditAccountDto.builder().build();
+        EditAccountDto dto =   EditAccountDto.builder().build();
         dto.setPhoneNumber("788564426");
         dto.setEncryptedPinCode("92952595");
-        dto.setWalletType(WalletType.PRINCIPAL);
         dto.setBalance(100000.02);
 
-        Account account = new Account();
+       Account account = new Account();
         account.setBalance(dto.getBalance());
         account.setPhoneNumber(dto.getPhoneNumber());
         account.setEncryptedPinCode(dto.getEncryptedPinCode());
-        account.setWalletType(dto.getWalletType());
         account.set_active(true);
         account.setRetailer(user);
 
         repository.save(account);
 
+        CreateOrEditAccountDto accountDto= CreateOrEditAccountDto.builder().build();
+
+        accountDto.setBalance(dto.getBalance());
+        accountDto.setEncryptedPinCode(dto.getEncryptedPinCode());
+        accountDto.setPhoneNumber(dto.getPhoneNumber());
+        accountDto.setWalletType(account.getWalletType());
+
         when(service.modifyTransferAccountRetailer(
-                account.getId(),dto,user.getRoles().get(0)))
-                .thenReturn(dto);
+                account.getId(),dto))
+                .thenReturn(accountDto);
         Assertions.assertThat(service.modifyTransferAccountRetailer(
-                account.getId(),dto,user.getRoles().get(0)))
+                account.getId(),dto))
                 .isNotNull();
     }
 

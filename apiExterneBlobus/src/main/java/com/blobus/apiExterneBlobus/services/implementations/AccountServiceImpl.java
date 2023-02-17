@@ -42,10 +42,17 @@ public class AccountServiceImpl implements AccountService {
         this.transferAccountRepository=transferAccountRepository;
     }
 
+    /**
+     * Cette methode permet à l'administrteur d'ajouter un compte de tranfert pour un retailer
+     * @param transferAccount
+     * @param id
+     * @return
+     */
     @Override
     public CreateOrEditAccountDto createRetailerTransfertAccount(CreateAccountDto transferAccount,Long id) {
         Account account = new Account();
-        User retailer = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User retailer = userRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException("User not found"));
         List<Account> comptes = retailer.getAccounts();
         int i = 0;
         /* verifier si le retailer à deja un compte de tranfert
@@ -57,7 +64,8 @@ public class AccountServiceImpl implements AccountService {
             if (retailer.getRoles().contains(Role.RETAILER)) {
 
                 if(transferAccount.getPhoneNumber()!=null && transferAccount.getPhoneNumber().length() ==9
-                        && transferAccount.getWalletType()!=null && transferAccount.getEncryptedPinCode()!=null
+                        && transferAccount.getWalletType()!=null
+                        && transferAccount.getEncryptedPinCode()!=null
                         && transferAccount.getEncryptedPinCode().length() >0){
                     account.setRetailer(retailer);
                     account.set_active(true);
@@ -95,8 +103,10 @@ public class AccountServiceImpl implements AccountService {
             } else {
                 if (retailer.getRoles().contains(Role.RETAILER)) {
 
-                    if(transferAccount.getPhoneNumber()!=null && transferAccount.getPhoneNumber().length() ==9
-                            && transferAccount.getWalletType()!=null && transferAccount.getEncryptedPinCode()!=null
+                    if(transferAccount.getPhoneNumber()!=null &&
+                            transferAccount.getPhoneNumber().length() ==9
+                            && transferAccount.getWalletType()!=null
+                            && transferAccount.getEncryptedPinCode()!=null
                             && transferAccount.getEncryptedPinCode().length() >0){
                         account.setRetailer(retailer);
                         account.set_active(true);
@@ -121,10 +131,17 @@ public class AccountServiceImpl implements AccountService {
         }
     }
 
+    /**
+     * Cette methode permet à l'administrteur d'ajouter un compte de tranfert pour un customer
+     * @param transferAccount
+     * @param id
+     * @return
+     */
     @Override
     public CreateOrEditAccountDto createCustomerTransfertAccount(CreateAccountDto transferAccount, Long id) {
 
-        Customer customer = customerRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+        Customer customer = customerRepository.findById(id).orElseThrow(()
+                -> new ResourceNotFoundException("Customer not found"));
         Account account= new Account();
         List<Account> comptes = customer.getTransferAccounts();
         int i = 0;
@@ -162,6 +179,10 @@ public class AccountServiceImpl implements AccountService {
         }
     }
 
+    /**
+     * Cette methode permet de visualiser l'ensemble des comptes de transferts existante
+     * @return
+     */
     @Override
     public List <CreateOrEditAccountDto> getAllTransfertAccount() {
 
@@ -175,6 +196,11 @@ public class AccountServiceImpl implements AccountService {
         }).toList();
     }
 
+    /**
+     * Cette methode permet de visualiser les informations d'un compte de transfert
+     * @param id
+     * @return
+     */
     @Override
     public Optional<CreateOrEditAccountDto> getTransfertAccountById(Long id) {
         return transferAccountRepository.findById(id).stream().map(account -> {
@@ -188,11 +214,11 @@ public class AccountServiceImpl implements AccountService {
 
     }
 
-    @Override
-    public Optional<CreateOrEditAccountDto> geTransferAccountByMsisdn(String msisdn) {
-        return Optional.empty();
-    }
-
+    /**
+     * Cette methode permet à l'administrateur d'activer un compte de transfert
+     * @param id
+     * @return
+     */
     @Override
     public CreateOrEditAccountDto enableTransfertAccount(Long id) {
         Optional<Account> existingAccount = transferAccountRepository.findById(id);
@@ -209,6 +235,11 @@ public class AccountServiceImpl implements AccountService {
         else throw new EntityNotFoundException("Account with id"+": "+id+ " don't exist");
     }
 
+    /**
+     * Cette methode permet à l'administrateur de désactiver un compte de transfert
+     * @param id
+     * @return
+     */
     @Override
     public CreateOrEditAccountDto diseableTranfertAccount(Long id) {
         Optional<Account> existingAccount = transferAccountRepository.findById(id);
@@ -226,6 +257,11 @@ public class AccountServiceImpl implements AccountService {
         else throw new EntityNotFoundException("Account with id"+": "+id+ " don't exist");
     }
 
+    /**
+     * Cette methode permet  d'afficher le Msisdn  d'un compte de transfert
+     * @param id
+     * @return
+     */
     @Override
     public String getAccountPhoneNumber(Long id) {
         Optional<Account> existingAccount = transferAccountRepository.findById(id);
@@ -233,17 +269,22 @@ public class AccountServiceImpl implements AccountService {
             return existingAccount.get().getPhoneNumber();
         else throw new EntityNotFoundException("Account with id"+": "+id+ " don't exist");
     }
+
+    /**
+     * Cette methode permet de modifer les informations d'un compte de transfert
+     * @param transferAccount
+     * @param id
+     * @return
+     */
     @Override
-    public CreateOrEditAccountDto updateTranfertAccount(CreateOrEditAccountDto transferAccount, Long id) {
+    public CreateOrEditAccountDto updateTranfertAccount(EditAccountDto transferAccount, Long id) {
         Optional<Account> existingAccount = transferAccountRepository.findById(id);
         if (existingAccount.isPresent()) {
             if(transferAccount.getBalance()!=0)
             {
            existingAccount.get().setBalance(transferAccount.getBalance());
             }
-            if (transferAccount.getWalletType()!=null){
-                existingAccount.get().setWalletType(transferAccount.getWalletType());
-            }
+
            if(transferAccount.getPhoneNumber()!=null && transferAccount.getPhoneNumber().length() >0
                    && !Objects.equals(transferAccount.getPhoneNumber(),existingAccount.get().getPhoneNumber()))
            {
@@ -252,7 +293,7 @@ public class AccountServiceImpl implements AccountService {
            Account compte = transferAccountRepository.save(existingAccount.get());
                CreateOrEditAccountDto account =  CreateOrEditAccountDto.builder().build();
                account.setBalance(compte.getBalance());
-               account.setWalletType(compte.getWalletType());
+               account.setWalletType(existingAccount.get().getWalletType());
                account.setEncryptedPinCode(compte.getEncryptedPinCode());
                account.setPhoneNumber(compte.getPhoneNumber());
                return account;
@@ -261,6 +302,10 @@ public class AccountServiceImpl implements AccountService {
         //return null;
     }
 
+    /**
+     * Cette methode permet de supprimer un compte de tranfert
+     * @param id
+     */
     @Override
     public void deleteTransfertAccountById(Long id) {
         Optional<Account> existingAccount = transferAccountRepository.findById(id);
@@ -270,6 +315,17 @@ public class AccountServiceImpl implements AccountService {
         else throw new EntityNotFoundException("Account with id"+": "+id+ " don't exist");
     }
 
+    /**
+     * Cette methode permet de visualiser le solde d'un compte de transfert
+     * @param getRetailerBalanceDto
+     * @return
+     * @throws NoSuchPaddingException
+     * @throws IllegalBlockSizeException
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
+     * @throws BadPaddingException
+     * @throws InvalidKeyException
+     */
     @Override
     public AmountDto getBalance(GetRetailerBalanceDto getRetailerBalanceDto) throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         Account account = transferAccountRepository.findByPhoneNumberAndWalletType( getRetailerBalanceDto.getPhoneNumber(),
@@ -287,29 +343,40 @@ public class AccountServiceImpl implements AccountService {
     }
 
     /**
-     * Cette methode permet a un administrateur de mettre à jour le compte de tranfert d'un retailer
+     * Cette methode permet à l'administrateur de mettre à jour le compte de tranfert d'un retailer
      * @param id
      * @param account
-     * @param role
      * @return
      */
     @Override
-    public CreateOrEditAccountDto modifyTransferAccountRetailer(Long id,
-                                                                CreateOrEditAccountDto account,
-                                                                Role role) {
+    public CreateOrEditAccountDto modifyTransferAccountRetailer(Long id, EditAccountDto account
+                                                                ) {
+
         Account account1 = transferAccountRepository.findById(id).orElseThrow(()->
                 new ResourceNotFoundException("Account not found"));
+
+
         if(account1.getRetailer().getRoles().contains(Role.RETAILER)){
+
             account1.setBalance(account.getBalance());
             account1.setPhoneNumber(account.getPhoneNumber());
-            account1.setWalletType(account1.getWalletType());
             account1.setEncryptedPinCode(account.getEncryptedPinCode());
-             transferAccountRepository.saveAndFlush(account1);
-             return account;
+            Account account2= transferAccountRepository.saveAndFlush(account1);
+            CreateOrEditAccountDto dto = CreateOrEditAccountDto.builder()
+                    .walletType(account1.getWalletType())
+                    .balance(account2.getBalance())
+                    .encryptedPinCode(account2.getEncryptedPinCode())
+                    .phoneNumber(account2.getPhoneNumber())
+                    .build();
+             return dto;
         }
        throw new EntityNotFoundException("This user isn't a retailer");
     }
 
+    /**
+     * Cette permet à l'administrateur de supprimer un compte de transfert via son Msisdn
+     * @param phoneNumber
+     */
     @Override
     public void deleteByPhoneNumber(String phoneNumber) {
         Optional<Account> account = transferAccountRepository.getAccountByPhoneNumber(phoneNumber);
@@ -334,11 +401,27 @@ public class AccountServiceImpl implements AccountService {
             transferAccountRepository.saveAndFlush(account.get());
             return balance;
         }
-        throw new EntityNotFoundException("This account does'nt exist !!");
+        throw new EntityNotFoundException("This account doesn't exist !!");
     }
 
+    /**
+     * Cette methode permet de modifier le code pin d'un compte de transfert
+     * @param requestBodyChangePinCodeDto
+     * @param msisdn
+     * @param customerType
+     * @param walletType
+     * @param content_type
+     * @return
+     * @throws NoSuchPaddingException
+     * @throws IllegalBlockSizeException
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
+     * @throws BadPaddingException
+     * @throws InvalidKeyException
+     * @throws InvalidKeySpecException
+     */
     @Override
-    public ResponseChangePinCodeDto changePinCode(RequestBodyChangePinCodeDto requestBodyChangePinCodeDto, String msisdn,CustomerType customerType,WalletType walletType)
+    public ResponseChangePinCodeDto changePinCode(RequestBodyChangePinCodeDto requestBodyChangePinCodeDto, String msisdn, CustomerType customerType, WalletType walletType,String content_type)
             throws NoSuchPaddingException,
                  IllegalBlockSizeException,
                  IOException,
@@ -364,6 +447,11 @@ public class AccountServiceImpl implements AccountService {
 
         } else if (requestBodyChangePinCodeDto == null) {
             responseChangePinCodeDto.setErrorCode("21");
+            responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
+            return responseChangePinCodeDto;
+
+        } else if (content_type==null) {
+            responseChangePinCodeDto.setErrorCode("25");
             responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
             return responseChangePinCodeDto;
 
@@ -401,5 +489,39 @@ public class AccountServiceImpl implements AccountService {
             }
         }
 
+    }
+
+    /**
+     * Cette methode permet à un retailer de visualiser son profil à partir de son Msisdn
+     * @param phoneNumber
+     * @param walletType
+     * @return
+     */
+    @Override
+    public RequestBodyUserProfileDto getUserProfileByMsisdn(String phoneNumber, WalletTypeDto walletType) {
+
+        RequestBodyUserProfileDto userProfileDto = new RequestBodyUserProfileDto();
+        AmountDto amountDto= new AmountDto();
+        WalletType walletType1= walletType.getWalletType();
+        Account account = transferAccountRepository.findByPhoneNumberAndWalletType(
+                phoneNumber,walletType1).orElseThrow(() ->
+                new ResourceNotFoundException("msisdn invalid"));
+        amountDto.setCurrency(TransactionCurrency.XOF);
+        amountDto.setValue(account.getBalance());
+        userProfileDto.setMsisdn(account.getPhoneNumber());
+        userProfileDto.setBalance(amountDto);
+        userProfileDto.setSuspended(account.is_active());
+        if(account.getCustomer()!=null){
+            userProfileDto.setType(String.valueOf(CustomerType.CUSTOMER));
+            userProfileDto.setLastName(account.getCustomer().getLastName());
+            userProfileDto.setFirstName(account.getCustomer().getFirstName());
+        }
+        else if(account.getRetailer()!=null){
+            userProfileDto.setType(String.valueOf(CustomerType.RETAILER));
+            userProfileDto.setLastName(account.getRetailer().getLastName());
+            userProfileDto.setFirstName(account.getRetailer().getFirstName());
+            userProfileDto.setUserId(account.getRetailer().getUserId());
+        }
+        return userProfileDto;
     }
 }

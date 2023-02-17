@@ -1,19 +1,19 @@
 package com.blobus.apiExterneBlobus.services.implementations;
-import com.blobus.apiExterneBlobus.dto.AmountDto;
-import com.blobus.apiExterneBlobus.dto.RequestBodyUserProfileDto;
-import com.blobus.apiExterneBlobus.dto.UserDto;
-import com.blobus.apiExterneBlobus.dto.UserWithNineaDto;
+import com.blobus.apiExterneBlobus.dto.*;
 import com.blobus.apiExterneBlobus.exception.ResourceNotFoundException;
 import com.blobus.apiExterneBlobus.models.Account;
 import com.blobus.apiExterneBlobus.models.User;
 import com.blobus.apiExterneBlobus.models.enums.CustomerType;
 import com.blobus.apiExterneBlobus.models.enums.Role;
 import com.blobus.apiExterneBlobus.models.enums.TransactionCurrency;
+import com.blobus.apiExterneBlobus.models.enums.WalletType;
 import com.blobus.apiExterneBlobus.repositories.AccountRepository;
 import com.blobus.apiExterneBlobus.repositories.UserRepository;
 import com.blobus.apiExterneBlobus.services.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,11 +24,21 @@ import java.util.*;
 public class UserServiceImpl implements UserService {
     @Autowired
     private final UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     private final AccountRepository transferAccountRepository;
 
+    /**
+     * Cette methode permet à l'administateur d'ajouter un utilisateur de l'api
+     * @param user
+     * @return
+     */
     @Override
     public UserDto addSingleUser(UserWithNineaDto user) {
         UserDto userDto=new UserDto();
+        String userId = RandomStringUtils.random(5,"azertyuiopqsdfghjklmwxcvbn1223456789");
+        String userSecret = RandomStringUtils.random(4,"123456789");
 
         if(
                 user.getFirstName()!=null &&
@@ -39,7 +49,8 @@ public class UserServiceImpl implements UserService {
             Optional<User> userOptional = userRepository.findUserByEmail(user.getEmail());
             Optional<User> userOptional1 = userRepository.findUserByPhoneNumber(user.getPhoneNumber());
             if(userOptional.isPresent() || userOptional1.isPresent()){
-                throw new IllegalStateException("Oups! cette email "+ user.getEmail()+" existe deja");
+                throw new IllegalStateException("Oups! cette email "+ user.getEmail() +
+                        " et ou phoneNumber "+user.getPhoneNumber()+"existe deja");
             }
             if( user.getNinea()!= null)
                 user.setRoles(Collections.singletonList(Role.RETAILER));
@@ -50,10 +61,13 @@ public class UserServiceImpl implements UserService {
                           .phoneNumber(user.getPhoneNumber())
                           .roles(user.getRoles())
                           .ninea(user.getNinea())
+                          .userSecret(passwordEncoder.encode(userSecret))
                                   .build();
 
-            userRepository.save(user1);
-            userDto.setEmail(user.getEmail());
+                  User user2 =  userRepository.save(user1);
+                  user2.setUserId(user2.getId()+userId);
+                  userRepository.save(user2);
+                    userDto.setEmail(user.getEmail());
             userDto.setPhoneNumber(user.getPhoneNumber());
             userDto.setFirstName(user.getFirstName());
             userDto.setLastName(user.getLastName());
@@ -62,11 +76,18 @@ public class UserServiceImpl implements UserService {
            throw new IllegalStateException("Veuillez renseignez tous les champs correctement");
     }
 
+    /**
+     * Cette methode permet à l'administrateur de modifier les information d'un utilisateur de l'api
+     * @param user
+     * @param id
+     * @return
+     */
     @Override
     @Transactional
     public UserDto updateSingleUser(UserWithNineaDto user, Long id) {
         UserDto userDto= new UserDto();
-      User user1 = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("updated failled ,user_id not found"));
+      User user1 = userRepository.findById(id).orElseThrow(()
+              -> new ResourceNotFoundException("updated failled ,user_id not found"));
       if (user.getFirstName()!=null && user.getFirstName().length()>0
             && !Objects.equals(user1.getFirstName(),user.getFirstName()))
       {
@@ -94,8 +115,16 @@ public class UserServiceImpl implements UserService {
             }
             user1.setPhoneNumber(user.getPhoneNumber());
         }
-        user1.setRoles(user.getRoles());
-        user1.setNinea(user.getNinea());
+        if(user.getRoles() !=null && user.getRoles().size()>0
+                && !Objects.equals(user.getRoles(),user1.getRoles()))
+        {
+            user1.setRoles(user.getRoles());
+        }
+        if(user.getNinea()!=null && user.getNinea().length()>0
+        && !Objects.equals(user.getNinea(), user1.getNinea()))
+        {
+            user1.setNinea(user.getNinea());
+        }
         userRepository.saveAndFlush(user1);
         userDto.setEmail(user1.getEmail());
         userDto.setLastName(user1.getLastName());
@@ -104,6 +133,10 @@ public class UserServiceImpl implements UserService {
         return  userDto;
     }
 
+    /**
+     * Cette methode permet à l'administrateur de visualiser l'ensemble des utilisateurs de l'api
+     * @return
+     */
     @Override
     public List<UserDto> getAllUsers() {
         return userRepository.findAll().stream().map(
@@ -117,6 +150,11 @@ public class UserServiceImpl implements UserService {
                 }).toList();
     }
 
+    /**
+     * Cette methode permet de visualiser un utilisateur de l'api
+     * @param id
+     * @return
+     */
     @Override
     public Optional<UserDto> getOneUser(Long id) {
         return userRepository.findById(id).stream().map(
@@ -130,38 +168,21 @@ public class UserServiceImpl implements UserService {
         }).findAny();
     }
 
+    /**
+     * cette methode permet à l'administrateur de supprimer un utilisateur de l'api
+     * @param id
+     */
     @Override
     public void deleteUser(Long id) {
-       userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("deleted failled ,user_id "+id+" not found"));
+       userRepository.findById(id).orElseThrow(()
+               -> new ResourceNotFoundException("deleted failled ,user_id "+id+" not found"));
        userRepository.deleteById(id);
     }
 
-    @Override
-    public RequestBodyUserProfileDto getUserProfileByMsisdn(String phoneNumber) {
-
-        RequestBodyUserProfileDto userProfileDto = new RequestBodyUserProfileDto();
-        AmountDto amountDto= new AmountDto();
-        Account account = transferAccountRepository.getAccountByPhoneNumber(phoneNumber).orElseThrow(() ->
-                new ResourceNotFoundException("msisdn invalid"));
-        amountDto.setCurrency(TransactionCurrency.XOF);
-        amountDto.setValue(account.getBalance());
-        userProfileDto.setMsisdn(account.getPhoneNumber());
-        userProfileDto.setBalance(amountDto);
-        userProfileDto.setSuspended(account.is_active());
-        if(account.getCustomer()!=null){
-            userProfileDto.setType(String.valueOf(CustomerType.CUSTOMER));
-            userProfileDto.setLastName(account.getCustomer().getLastName());
-            userProfileDto.setFirstName(account.getCustomer().getFirstName());
-        }
-        else if(account.getRetailer()!=null){
-            userProfileDto.setType(String.valueOf(CustomerType.RETAILER));
-            userProfileDto.setLastName(account.getRetailer().getLastName());
-            userProfileDto.setFirstName(account.getRetailer().getFirstName());
-            userProfileDto.setUserId(account.getRetailer().getUserId());
-        }
-        return userProfileDto;
-    }
-
+    /**
+     * Cette methode permet d'afficher l'ensemble des retailers
+     * @return
+     */
     @Override
     public List<UserDto> getAllRetailer() {
         List<User> users = new ArrayList<>();

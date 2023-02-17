@@ -3,17 +3,16 @@ package com.blobus.apiExterneBlobus.controllers;
 import com.blobus.apiExterneBlobus.config.JwtAuthenticationFilter;
 import com.blobus.apiExterneBlobus.config.JwtService;
 import com.blobus.apiExterneBlobus.config.SecurityConfiguration;
-import com.blobus.apiExterneBlobus.dto.AmountDto;
-import com.blobus.apiExterneBlobus.dto.RequestBodyUserProfileDto;
-import com.blobus.apiExterneBlobus.dto.UserDto;
-import com.blobus.apiExterneBlobus.dto.UserWithNineaDto;
+import com.blobus.apiExterneBlobus.dto.*;
 import com.blobus.apiExterneBlobus.models.User;
 import com.blobus.apiExterneBlobus.models.enums.Role;
 import com.blobus.apiExterneBlobus.models.enums.TransactionCurrency;
+import com.blobus.apiExterneBlobus.models.enums.WalletType;
 import com.blobus.apiExterneBlobus.repositories.AccountRepository;
 import com.blobus.apiExterneBlobus.repositories.UserRepository;
 import com.blobus.apiExterneBlobus.services.implementations.UserServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.assertj.core.api.Assertions;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.jupiter.api.Test;
@@ -157,35 +156,6 @@ class UserControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath(
                         "$[1].firstName",
                         Matchers.is("Cheikh Yangkhouba")));
-
-    }
-
-    @Test
-    void getUserProfileByMsisdn() throws Exception {
-
-        String phoneNumber = "782654489";
-        AmountDto amountDto= new AmountDto();
-        amountDto.setCurrency(TransactionCurrency.XOF);
-        amountDto.setValue(10000000.06);
-        RequestBodyUserProfileDto dto = new RequestBodyUserProfileDto();
-        dto.setUserId("65+65203");
-        dto.setMsisdn("782654489");
-        dto.setFirstName("Ba");
-        dto.setLastName("El-seydi");
-        dto.setSuspended(true);
-        dto.setType(Collections.singletonList(Role.RETAILER).toString());
-        dto.setBalance(amountDto);
-
-        Mockito.when(userService.getUserProfileByMsisdn(phoneNumber)).thenReturn(dto);
-        mockMvc.perform(MockMvcRequestBuilders
-                    .get("/api/ewallet/v1/users/find/782654489")
-                    .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andExpect(jsonPath("$",notNullValue()))
-               .andExpect(MockMvcResultMatchers.jsonPath(
-                       "$.msisdn",
-                       Matchers.is("782654489")));
 
     }
 

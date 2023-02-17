@@ -1,17 +1,23 @@
 package com.blobus.apiExterneBlobus.controllers;
 
-import com.blobus.apiExterneBlobus.dto.RequestBodyUserProfileDto;
 import com.blobus.apiExterneBlobus.dto.UserDto;
 import com.blobus.apiExterneBlobus.dto.UserWithNineaDto;
-import com.blobus.apiExterneBlobus.models.User;
 import com.blobus.apiExterneBlobus.repositories.UserRepository;
 import com.blobus.apiExterneBlobus.services.implementations.UserServiceImpl;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +29,7 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
+@ResponseStatus(HttpStatus.BAD_REQUEST)
 @RequestMapping("/api/ewallet/v1/users/")
 public class UserController {
 
@@ -33,28 +40,17 @@ public class UserController {
 
     /**
      *
-     * cette methode l'ensemble des utilisateur de l'api.
-     * @return
+     * Ce endPoint permet de visualiser l'ensemble des utilisateurs de l'api.
+     * @return ResponseEntity<List<UserDto>>
      */
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUsers(){
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    /**
-     * @param phoneNumber
-     * @return
-     * cette methode affiche le profile d'un utilisateur via son msisdn autrement dit via le numero de telephone de son compte tranfert
-     */
-    @GetMapping("find/{phoneNumber}")
-    public  ResponseEntity<RequestBodyUserProfileDto> getUserProfileByMsisdn(
-            @PathVariable("phoneNumber") String phoneNumber){
-
-        return ResponseEntity.ok(userService.getUserProfileByMsisdn(phoneNumber));
-    }
 
     /**
-     * Cette methode permet d'afficher un seul utilisateur via son idntifiant
+     * Ce endPoint permet de visualiser un utilisateur de l'api via son identifiant
      * @param id
      * @return
      */
@@ -64,9 +60,9 @@ public class UserController {
     }
 
     /**
+     * Ce endPoint permet de visualiser l'ensemble des retailers de l'api
      *
-     * @return
-     * cette methode retourne la listes de tous les retailers de l'api
+     * @return ResponseEntity<List<UserDto>>
      */
     @GetMapping("retailers")
     public ResponseEntity<List<UserDto>> getAllRetailer(){
@@ -75,7 +71,7 @@ public class UserController {
 
 
     /**
-     * Cette methode permet d'ajouter un utilisateur
+     * ce endPoint permet à l'administrateur d'ajouter  un utilisateur de l'api
      * @param user
      * @return
      */
@@ -85,10 +81,10 @@ public class UserController {
     }
 
     /**
-     * Cette methode permet de modifer un utilisateur
+     * Ce endPoint permet à l'asministrateur de modifer un utilisateur de l'api
      * @param user
      * @param id
-     * @return
+     * @return ResponseEntity<UserDto>
      */
     @PutMapping("{id}")
     public ResponseEntity<UserDto> updateUser(
@@ -99,7 +95,7 @@ public class UserController {
     }
 
     /**
-     * cette methode permet de supprimer un utilisateur
+     * Ce endPoint permet à l'administrateur de supprimer un utilisateur de l'api
      * @param id
      * @return
      */
