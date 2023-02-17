@@ -37,10 +37,13 @@ public class AuthenticationService {
 
     String userId = RandomStringUtils.random(5,"azertyuiopqsdfghjklmwxcvbn1223456789");
     String userSecret = RandomStringUtils.random(4,"123456789");
+
+    // verify if the phone number and the email exists
     Optional<User> userOptional = repository.findUserByEmail(request.getEmail());
     Optional<User> userOptional1 = repository.findUserByPhoneNumber(user.getPhoneNumber());
     if(userOptional.isPresent() || userOptional1.isPresent()){
-      throw new IllegalStateException("Email and/or phone number empty.");
+      // if phone number or email exists, throws an exception.
+      throw new IllegalStateException("Email and/or phone number exists.");
     }
 
     user.setFirstName(request.getFirstname());
