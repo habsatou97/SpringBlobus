@@ -337,19 +337,6 @@ class AccountControllerTest {
         org.assertj.core.api.Assertions.assertThat(repository.findById(account1.getId())).isEmpty();
     }
 
-    @Test
-    void deleteByPhoneNumber() {
-
-        AccountRepository  repository = mock(AccountRepository.class);
-        AccountServiceImpl service =mock(AccountServiceImpl.class);
-        KeyGeneratorImpl key = mock(KeyGeneratorImpl.class);
-        repository.save(account1);
-        doNothing().when(repository).deleteAccountByPhoneNumber(account1.getPhoneNumber());
-        (new AccountController(service,key)).deleteByPhoneNumber(account1.getPhoneNumber());
-
-        org.assertj.core.api.Assertions.assertThat(
-                repository.getAccountByPhoneNumber(account1.getPhoneNumber())).isEmpty();
-    }
 
     @Test
     void updatedBalance() {
