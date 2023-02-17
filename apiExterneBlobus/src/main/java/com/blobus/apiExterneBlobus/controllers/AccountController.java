@@ -190,10 +190,7 @@ public class AccountController {
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("account/deleteByPhoneNumber/{phoneNumber}")
-    public void deleteByPhoneNumber(@PathVariable String phoneNumber){
-        transferAccountService.deleteByPhoneNumber(phoneNumber);
-    }
+
 
     /**
      * ce endpoint permet de modifier le solde d'un compte d'un transfert

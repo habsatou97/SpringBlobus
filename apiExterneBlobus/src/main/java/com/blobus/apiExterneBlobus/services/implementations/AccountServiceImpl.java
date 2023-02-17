@@ -387,19 +387,7 @@ public class AccountServiceImpl implements AccountService {
        throw new EntityNotFoundException("This user isn't a retailer");
     }
 
-    /**
-     * Cette permet à l'administrateur de supprimer un compte de transfert via son Msisdn
-     * @param phoneNumber
-     */
-    @Override
-    public void deleteByPhoneNumber(String phoneNumber) {
-        Optional<Account> account = transferAccountRepository.getAccountByPhoneNumber(phoneNumber);
-        if (account.isPresent()){
-            Long id = transferAccountRepository.getAccountByPhoneNumber(phoneNumber).get().getId();
-            transferAccountRepository.deleteById(id);
-        }
 
-    }
 
     /**
      * Cette methode permet de mettre à jour le solde d'un compte de transfert
