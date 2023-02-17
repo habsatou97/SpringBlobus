@@ -3,7 +3,11 @@ package com.blobus.apiExterneBlobus.models;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,17 +26,13 @@ public class KeyGenerator {
 
 
         if (isDirEmpty(Path.of("RSA"))){
-            System.out.println("*********************************");
-            System.out.println("Le dossier est vide !");
+
             FileWriter pubkey = new FileWriter("RSA/pubkey");
             FileWriter privkey = new FileWriter("RSA/privkey");
             pubkey.write(pub);
             pubkey.close();
             privkey.write(priv);
             privkey.close();
-        }else{
-            System.out.println("**************");
-            System.out.println("The directory is not empty!");
         }
 
     }
