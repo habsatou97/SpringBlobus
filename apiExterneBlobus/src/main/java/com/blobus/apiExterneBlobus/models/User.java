@@ -36,6 +36,7 @@ public class User implements UserDetails {
     @Column(
             name = "phone_number",
             nullable = false,
+            unique = true,
             length = 9
     )
     private String phoneNumber;

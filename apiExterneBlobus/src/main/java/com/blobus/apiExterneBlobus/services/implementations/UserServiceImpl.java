@@ -11,7 +11,9 @@ import com.blobus.apiExterneBlobus.repositories.AccountRepository;
 import com.blobus.apiExterneBlobus.repositories.UserRepository;
 import com.blobus.apiExterneBlobus.services.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,11 +24,16 @@ import java.util.*;
 public class UserServiceImpl implements UserService {
     @Autowired
     private final UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     private final AccountRepository transferAccountRepository;
 
     @Override
     public UserDto addSingleUser(UserWithNineaDto user) {
         UserDto userDto=new UserDto();
+        String userId = RandomStringUtils.random(5,"azertyuiopqsdfghjklmwxcvbn1223456789");
+        String userSecret = RandomStringUtils.random(4,"123456789");
 
         if(
                 user.getFirstName()!=null &&
@@ -37,7 +44,8 @@ public class UserServiceImpl implements UserService {
             Optional<User> userOptional = userRepository.findUserByEmail(user.getEmail());
             Optional<User> userOptional1 = userRepository.findUserByPhoneNumber(user.getPhoneNumber());
             if(userOptional.isPresent() || userOptional1.isPresent()){
-                throw new IllegalStateException("Oups! cette email "+ user.getEmail() + " existe deja");
+                throw new IllegalStateException("Oups! cette email "+ user.getEmail() +
+                        " et ou phoneNumber "+user.getPhoneNumber()+"existe deja");
             }
             if( user.getNinea()!= null)
                 user.setRoles(Collections.singletonList(Role.RETAILER));
@@ -48,10 +56,13 @@ public class UserServiceImpl implements UserService {
                           .phoneNumber(user.getPhoneNumber())
                           .roles(user.getRoles())
                           .ninea(user.getNinea())
+                          .userSecret(passwordEncoder.encode(userSecret))
                                   .build();
 
-            userRepository.save(user1);
-            userDto.setEmail(user.getEmail());
+                  User user2 =  userRepository.save(user1);
+                  user2.setUserId(user2.getId()+userId);
+                  userRepository.save(user2);
+                    userDto.setEmail(user.getEmail());
             userDto.setPhoneNumber(user.getPhoneNumber());
             userDto.setFirstName(user.getFirstName());
             userDto.setLastName(user.getLastName());
@@ -93,8 +104,16 @@ public class UserServiceImpl implements UserService {
             }
             user1.setPhoneNumber(user.getPhoneNumber());
         }
-        user1.setRoles(user.getRoles());
-        user1.setNinea(user.getNinea());
+        if(user.getRoles() !=null && user.getRoles().size()>0
+                && !Objects.equals(user.getRoles(),user1.getRoles()))
+        {
+            user1.setRoles(user.getRoles());
+        }
+        if(user.getNinea()!=null && user.getNinea().length()>0
+        && !Objects.equals(user.getNinea(), user1.getNinea()))
+        {
+            user1.setNinea(user.getNinea());
+        }
         userRepository.saveAndFlush(user1);
         userDto.setEmail(user1.getEmail());
         userDto.setLastName(user1.getLastName());

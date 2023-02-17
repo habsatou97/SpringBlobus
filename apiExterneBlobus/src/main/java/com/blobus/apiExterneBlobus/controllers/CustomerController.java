@@ -10,7 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,8 +31,11 @@ public class CustomerController {
     }
 
     @DeleteMapping("{id}")
-    public void delete(@PathVariable Long id){
+    public ResponseEntity<Map<String,Boolean>> delete(@PathVariable Long id){
+        Map<String,Boolean> response = new HashMap<>();
         customerService.delete(id);
+        response.put("deleted",true);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping
