@@ -24,6 +24,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -56,6 +57,9 @@ class AccountControllerTest {
     ObjectMapper mapper;
     @MockBean
     AccountServiceImpl accountService;
+
+    @MockBean
+    PasswordEncoder passwordEncoder;
     @MockBean
     JwtAuthenticationFilter jwtAuthenticationFilter;
     @MockBean
