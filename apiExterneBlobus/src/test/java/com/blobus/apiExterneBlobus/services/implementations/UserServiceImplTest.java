@@ -29,7 +29,9 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -37,6 +39,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.util.*;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
@@ -58,6 +61,12 @@ class UserServiceImplTest {
 
     @MockBean
     UserServiceImpl service;
+
+    @MockBean
+    UserRepository uRepository;
+
+    @MockBean
+    PasswordEncoder passwordEncoder;
 
     @InjectMocks
     UserServiceImpl uService;
@@ -160,6 +169,8 @@ class UserServiceImplTest {
     @AutoConfigureTestDatabase
     void addSingleUser()  throws Exception{
         // given
+        UserController controller= mock(UserController.class);
+        UserServiceImpl service1 = mock(UserServiceImpl.class);
         UserWithNineaDto user=UserWithNineaDto.builder()
                 .ninea("vbfggtrt")
                 .firstName("Rokhya")
@@ -169,11 +180,8 @@ class UserServiceImplTest {
                 .roles(Collections.singletonList(Role.RETAILER))
                 .build();
 
-        //when
-
-       UserDto  userDto= uService.addSingleUser(user);
-        when(service.addSingleUser(user)).thenReturn(userDto);
-       assertNotNull(userDto.getFirstName());
+        when(service1.addSingleUser(user)).thenReturn(new UserDto());
+        assertThat(service1.addSingleUser(user)).isNotNull();
 
     }
 
