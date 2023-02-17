@@ -180,7 +180,7 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     *
+     * Cette methode permet d'afficher l'ensemble des retailers
      * @return
      */
     @Override
