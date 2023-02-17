@@ -285,10 +285,14 @@ public class AccountServiceImpl implements AccountService {
            existingAccount.get().setBalance(transferAccount.getBalance());
             }
 
-           if(transferAccount.getPhoneNumber()!=null && transferAccount.getPhoneNumber().length() >0
+           if(transferAccount.getPhoneNumber()!=null && transferAccount.getPhoneNumber().length() ==9
                    && !Objects.equals(transferAccount.getPhoneNumber(),existingAccount.get().getPhoneNumber()))
            {
-            existingAccount.get().setEncryptedPinCode(transferAccount.getEncryptedPinCode());
+            existingAccount.get().setPhoneNumber(transferAccount.getPhoneNumber());
+           }
+           if(transferAccount.getEncryptedPinCode()!=null && transferAccount.getEncryptedPinCode().length()>0)
+           {
+               existingAccount.get().setEncryptedPinCode(transferAccount.getEncryptedPinCode());
            }
            Account compte = transferAccountRepository.save(existingAccount.get());
                CreateOrEditAccountDto account =  CreateOrEditAccountDto.builder().build();
@@ -357,10 +361,20 @@ public class AccountServiceImpl implements AccountService {
 
 
         if(account1.getRetailer().getRoles().contains(Role.RETAILER)){
+            if(account.getPhoneNumber()!=null && account.getPhoneNumber().length() ==9)
+            {
+                account1.setPhoneNumber(account.getPhoneNumber());
+            }
+            if (!Objects.equals(account.getBalance(), account1.getBalance()) && account.getBalance()!=0)
+            {
+                account1.setBalance(account.getBalance());
+            }
+            if(account.getEncryptedPinCode()!=null && account.getEncryptedPinCode().length()>0
+             && !Objects.equals(account.getEncryptedPinCode(),account1.getEncryptedPinCode()))
+            {
+                account1.setEncryptedPinCode(account.getEncryptedPinCode());
+            }
 
-            account1.setBalance(account.getBalance());
-            account1.setPhoneNumber(account.getPhoneNumber());
-            account1.setEncryptedPinCode(account.getEncryptedPinCode());
             Account account2= transferAccountRepository.saveAndFlush(account1);
             CreateOrEditAccountDto dto = CreateOrEditAccountDto.builder()
                     .walletType(account1.getWalletType())
