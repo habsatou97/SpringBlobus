@@ -1,26 +1,17 @@
-package com.blobus.apiExterneBlobus.services.implementations;
+package com.blobus.apiexterneblobus.services.implementations;
 
-import com.blobus.apiExterneBlobus.auth.AuthenticationService;
-import com.blobus.apiExterneBlobus.config.ApplicationConfig;
-import com.blobus.apiExterneBlobus.config.JwtAuthenticationFilter;
-import com.blobus.apiExterneBlobus.config.JwtService;
-import com.blobus.apiExterneBlobus.config.SecurityConfiguration;
-import com.blobus.apiExterneBlobus.controllers.AccountController;
-import com.blobus.apiExterneBlobus.controllers.TransactionController;
-import com.blobus.apiExterneBlobus.controllers.UserController;
-import com.blobus.apiExterneBlobus.dto.UserDto;
-import com.blobus.apiExterneBlobus.dto.UserWithNineaDto;
-import com.blobus.apiExterneBlobus.models.User;
-import com.blobus.apiExterneBlobus.models.enums.Role;
-import com.blobus.apiExterneBlobus.repositories.AccountRepository;
-import com.blobus.apiExterneBlobus.repositories.UserRepository;
+import com.blobus.apiexterneblobus.controllers.UserController;
+import com.blobus.apiexterneblobus.dto.UserDto;
+import com.blobus.apiexterneblobus.dto.UserWithNineaDto;
+import com.blobus.apiexterneblobus.models.User;
+import com.blobus.apiexterneblobus.models.enums.Role;
+import com.blobus.apiexterneblobus.repositories.AccountRepository;
+import com.blobus.apiexterneblobus.repositories.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -29,8 +20,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -42,7 +31,6 @@ import java.util.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.Mockito.*;
 
 
