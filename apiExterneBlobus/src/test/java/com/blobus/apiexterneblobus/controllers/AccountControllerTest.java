@@ -274,8 +274,6 @@ class AccountControllerTest {
 
         ResponseEntity<CreateOrEditAccountDto> response = accountController.update(dto,ct.getId());
 
-        /*assertEquals(200,response.getStatusCodeValue());
-        assertTrue(response.getHeaders().isEmpty());*/
         assertThat(response).isNull();
     }
 
@@ -298,10 +296,8 @@ class AccountControllerTest {
         when(repository.save((Account) any())).thenReturn(ct);
 
         ResponseEntity<CreateOrEditAccountDto> response = accountController.enable(ct.getId());
-       // assertEquals(200,response.getStatusCodeValue());
-        //assertTrue(response.getHeaders().isEmpty());
-        assertThat(response).isNull();
 
+        assertThat(response).isNull();
     }
 
     @Test
@@ -324,8 +320,6 @@ class AccountControllerTest {
 
         ResponseEntity<CreateOrEditAccountDto> response = accountController.disable(ct.getId());
 
-        /*assertEquals(200,response.getStatusCodeValue());
-        assertTrue(response.getHeaders().isEmpty());*/
         assertThat(response).isNull();
     }
 
@@ -340,7 +334,6 @@ class AccountControllerTest {
 
         org.assertj.core.api.Assertions.assertThat(repository.findById(account1.getId())).isEmpty();
     }
-
 
     @Test
     void updatedBalance() {
@@ -357,9 +350,7 @@ class AccountControllerTest {
 
         assertEquals(200,response.getStatusCodeValue());
         assertTrue(response.getHeaders().isEmpty());
-
     }
-
 
     @Test
     void getUserProfileByMsisdn() throws Exception {
