@@ -33,7 +33,7 @@ public interface AccountService {
     public BalanceDto updatedBalance(BalanceDto balance,Long id);
   public ResponseChangePinCodeDto changePinCode(RequestBodyChangePinCodeDto requestBodyChangePinCodeDto, String msisdn, CustomerType customerType, WalletType walletType,  String content_type) throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, InvalidKeySpecException;
 
-  public RequestBodyUserProfileDto getUserProfileByMsisdn(String phoneNumber, WalletTypeDto walletType);
+  public RequestBodyUserProfileDto getUserProfileByMsisdn(String phoneNumber, WalletType walletType);
 
 
 

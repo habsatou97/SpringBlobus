@@ -380,8 +380,8 @@ class AccountControllerTest {
         WalletTypeDto walletTypeDto= new WalletTypeDto();
         walletTypeDto.setWalletType(WalletType.BONUS);
 
-        Mockito.when(accountService.getUserProfileByMsisdn(phoneNumber,walletTypeDto)).thenReturn(dto);
-        org.assertj.core.api.Assertions.assertThat(accountService.getUserProfileByMsisdn(phoneNumber,walletTypeDto)).isNotNull();
+        Mockito.when(accountService.getUserProfileByMsisdn(phoneNumber,WalletType.BONUS)).thenReturn(dto);
+        org.assertj.core.api.Assertions.assertThat(accountService.getUserProfileByMsisdn(phoneNumber,WalletType.BONUS)).isNotNull();
 
     }
 }

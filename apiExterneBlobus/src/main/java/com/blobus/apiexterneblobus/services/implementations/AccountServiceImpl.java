@@ -520,13 +520,13 @@ public class AccountServiceImpl implements AccountService {
      * @return
      */
     @Override
-    public RequestBodyUserProfileDto getUserProfileByMsisdn(String phoneNumber, WalletTypeDto walletType) {
+    public RequestBodyUserProfileDto getUserProfileByMsisdn(String phoneNumber, WalletType walletType) {
 
         RequestBodyUserProfileDto userProfileDto = new RequestBodyUserProfileDto();
         AmountDto amountDto= new AmountDto();
-        WalletType walletType1= walletType.getWalletType();
+
         Account account = transferAccountRepository.findByPhoneNumberAndWalletType(
-                phoneNumber,walletType1).orElseThrow(() ->
+                phoneNumber,walletType).orElseThrow(() ->
                 new ResourceNotFoundException("msisdn invalid"));
         amountDto.setCurrency(TransactionCurrency.XOF);
         amountDto.setValue(account.getBalance());
