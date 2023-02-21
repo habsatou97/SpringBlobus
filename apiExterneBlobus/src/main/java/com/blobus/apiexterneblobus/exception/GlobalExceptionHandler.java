@@ -12,4 +12,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse> handlerResourceNotFoundException(ResourceNotFoundException ex){
         return new ResponseEntity<>(ApiResponse.builder().message(ex.getMessage()).status(HttpStatus.NOT_FOUND).success(true).build(), HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(EmailAlreadyExistException.class)
+    public ResponseEntity<ApiResponse> handlerResourceNotFoundException(EmailAlreadyExistException ex){
+        return new ResponseEntity<>(ApiResponse.builder().message(ex.getMessage()).status(HttpStatus.NOT_FOUND).success(true).build(), HttpStatus.NOT_FOUND);
+    }
 }

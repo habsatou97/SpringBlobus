@@ -56,7 +56,6 @@ public class AuthenticationService {
     user.setEmail(request.getEmail());
     user.setUserSecret(passwordEncoder.encode(userSecret));
     user.setPhoneNumber(request.getPhoneNumber());
-    user.setRoles(request.getRoles());
 
     // verify if the ninea is given
     if (request.getNinea() != null && !request.getNinea().isBlank() && request.getNinea().length() != 0){

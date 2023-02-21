@@ -18,6 +18,5 @@ public class RegisterRequest {
   private String lastname;
   private String email;
   private String phoneNumber;
-  private List<Role> roles;
   private String ninea;
 }

@@ -67,7 +67,7 @@ public class CustomerController {
      * @return
      */
     @PostMapping
-    public ResponseEntity<CustomerEditCreateDto> save(@RequestBody Customer customer){
+    public ResponseEntity<CustomerEditCreateDto> save(@RequestBody CustomerEditCreateDto customer){
         return ResponseEntity.ok().body(customerService.saveDto(customer));
     }
 

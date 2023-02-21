@@ -12,7 +12,7 @@ public interface CustomerService {
     public List<Customer> findAll();
     public List<CustomerEditCreateDto> findAllDto();
     public Customer save(Customer customer);
-    public CustomerEditCreateDto saveDto(Customer customer);
+    public CustomerEditCreateDto saveDto(CustomerEditCreateDto customer);
     public CustomerEditCreateDto editDto(Long id,Customer customer);
     public Customer edit(Customer customer);
     public void delete(Long id);

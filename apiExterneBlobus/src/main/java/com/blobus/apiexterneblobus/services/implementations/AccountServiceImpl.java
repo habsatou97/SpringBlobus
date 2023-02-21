@@ -143,40 +143,60 @@ public class AccountServiceImpl implements AccountService {
         Customer customer = customerRepository.findById(id).orElseThrow(()
                 -> new ResourceNotFoundException("Customer not found"));
         Account account= new Account();
-        List<Account> comptes = customer.getTransferAccounts();
-        int i = 0;
-        for (Account cpt : comptes
-        ) {
-            WalletType type=cpt.getWalletType();
-            if(type==transferAccount.getWalletType())
-                i++;
-        }
-        if (i != 0) {
-            throw new IllegalStateException("Ce customer : "  +id + " Possede deja un compte de ce type");
-        } else {
 
-            if(transferAccount.getPhoneNumber()!=null && transferAccount.getPhoneNumber().length() ==9
-              && transferAccount.getWalletType()!=null && transferAccount.getEncryptedPinCode()!=null
-                    && transferAccount.getEncryptedPinCode().length() >0){
-                account.setCustomer(customer);
-                account.set_active(true);
-                account.setEncryptedPinCode(transferAccount.getEncryptedPinCode());
-                account.setWalletType(transferAccount.getWalletType());
-                account.setPhoneNumber(transferAccount.getPhoneNumber());
-                account.setBalance(0.0);
-                Account compte = transferAccountRepository.save(account);
-                customer.addTransferAccounts(compte);
-                CreateOrEditAccountDto dto = CreateOrEditAccountDto.builder()
-                        .balance(account.getBalance())
-                        .encryptedPinCode(transferAccount.getEncryptedPinCode())
-                        .phoneNumber(transferAccount.getPhoneNumber())
-                        .walletType(transferAccount.getWalletType())
-                        .build();
-                return dto;
+
+        if (customer.getTransferAccounts() != null){
+            List<Account> comptes =   customer.getTransferAccounts();
+            int i = 0;
+            for (Account cpt : comptes
+            ) {
+                WalletType type=cpt.getWalletType();
+                if(type==transferAccount.getWalletType())
+                    i++;
             }
-            throw new IllegalStateException("Veuillez renseignez les donnez correctement");
+            if (i != 0) {
+                throw new IllegalStateException("Ce customer : "  +id + " Possede deja un compte de ce type");
+            } else {
 
+                if(transferAccount.getPhoneNumber()!=null && transferAccount.getPhoneNumber().length() ==9
+                        && transferAccount.getWalletType()!=null && transferAccount.getEncryptedPinCode()!=null
+                        && transferAccount.getEncryptedPinCode().length() >0){
+                    account.setCustomer(customer);
+                    account.set_active(true);
+                    account.setEncryptedPinCode(transferAccount.getEncryptedPinCode());
+                    account.setWalletType(transferAccount.getWalletType());
+                    account.setPhoneNumber(transferAccount.getPhoneNumber());
+                    account.setBalance(0.0);
+                    Account compte = transferAccountRepository.save(account);
+                    customer.addTransferAccounts(compte);
+                    CreateOrEditAccountDto dto = CreateOrEditAccountDto.builder()
+                            .balance(account.getBalance())
+                            .encryptedPinCode(transferAccount.getEncryptedPinCode())
+                            .phoneNumber(transferAccount.getPhoneNumber())
+                            .walletType(transferAccount.getWalletType())
+                            .build();
+                    return dto;
+                }
+                throw new IllegalStateException("Veuillez renseignez les donnez correctement");
+
+            }
+        }else{
+            account.setCustomer(customer);
+            account.set_active(true);
+            account.setEncryptedPinCode(transferAccount.getEncryptedPinCode());
+            account.setWalletType(transferAccount.getWalletType());
+            account.setPhoneNumber(transferAccount.getPhoneNumber());
+            account.setBalance(0.0);
+            Account compte = transferAccountRepository.save(account);
+            CreateOrEditAccountDto dto = CreateOrEditAccountDto.builder()
+                    .balance(account.getBalance())
+                    .encryptedPinCode(transferAccount.getEncryptedPinCode())
+                    .phoneNumber(transferAccount.getPhoneNumber())
+                    .walletType(transferAccount.getWalletType())
+                    .build();
+            return dto;
         }
+
     }
 
     /**

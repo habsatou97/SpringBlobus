@@ -1,17 +1,26 @@
 package com.blobus.apiexterneblobus.services.implementations;
 
+import com.blobus.apiexterneblobus.dto.CreateAccountDto;
+import com.blobus.apiexterneblobus.dto.CreateOrEditAccountDto;
+import com.blobus.apiexterneblobus.dto.CustomerDto;
 import com.blobus.apiexterneblobus.dto.CustomerEditCreateDto;
+import com.blobus.apiexterneblobus.exception.EmailAlreadyExistException;
 import com.blobus.apiexterneblobus.exception.ResourceNotFoundException;
+import com.blobus.apiexterneblobus.models.Account;
 import com.blobus.apiexterneblobus.models.Customer;
 import com.blobus.apiexterneblobus.repositories.CustomerRepository;
+import com.blobus.apiexterneblobus.services.interfaces.AccountService;
 import com.blobus.apiexterneblobus.services.interfaces.CustomerService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author Ablaye Faye
@@ -21,8 +30,7 @@ import java.util.Optional;
 @Service
 public class CustomerImpl implements CustomerService {
     private final CustomerRepository customerRepository;
-    @PersistenceContext
-    private EntityManager entityManager;
+    private final AccountService accountService;
 
     /**
      * find single customer DTO
@@ -89,9 +97,12 @@ public class CustomerImpl implements CustomerService {
         return customerRepository.save(customer);
     }
 
-    public CustomerEditCreateDto saveDto(Customer customer) {
-        if (!findByEmail(customer.getEmail()))
+    public CustomerEditCreateDto saveDto(CustomerEditCreateDto customer) {
+        System.out.println("=================================================================================");
+        System.out.println(customer.getTransferAccounts().get(0).getPhoneNumber());
+        if (!findByEmail(customer.getEmail())) {
             throw new IllegalArgumentException("This email is taken.");
+        }
         if (!findByPhoneNumber(customer.getPhoneNumber()))
             throw new IllegalArgumentException("This phone number is taken.");
         if (customer.getPhoneNumber().length() != 9 ) throw new IllegalStateException("The phone number cannot be more than 9 characters.");
@@ -105,7 +116,31 @@ public class CustomerImpl implements CustomerService {
         customerEditCreateDto.setFirstName(customer.getFirstName());
         customerEditCreateDto.setPhoneNumber(customer.getPhoneNumber());
         customerEditCreateDto.setLastName(customer.getLastName());
-        customerRepository.save(customer);
+        Customer customer1 = Customer.builder()
+                .email(customerEditCreateDto.getEmail())
+                .firstName(customerEditCreateDto.getFirstName())
+                        .phoneNumber(customerEditCreateDto.getPhoneNumber())
+                                .lastName(customerEditCreateDto.getLastName()).build();
+        Customer customer2 = customerRepository.save(customer1);
+
+        if (!customer.getTransferAccounts().isEmpty()){
+            for (CreateOrEditAccountDto account : customer.getTransferAccounts()
+            ) {
+                CreateAccountDto accountDto = CreateAccountDto.builder().walletType(account.getWalletType())
+                        .encryptedPinCode(account.getEncryptedPinCode())
+                        .phoneNumber(account.getPhoneNumber()).build();
+                System.out.println(accountDto);
+                accountService.createCustomerTransfertAccount(accountDto, customer2.getId());
+            }
+        }
+        List<CreateOrEditAccountDto> accounts =  customer.getTransferAccounts().stream().map(account -> {
+            CreateOrEditAccountDto createOrEditAccountDto = CreateOrEditAccountDto.builder().walletType(account.getWalletType()).balance(account.getBalance()).encryptedPinCode(account.getEncryptedPinCode()).phoneNumber(account.getPhoneNumber()).build();
+            return  CreateOrEditAccountDto.builder().walletType(account.getWalletType()).balance(account.getBalance()).encryptedPinCode(account.getEncryptedPinCode()).phoneNumber(account.getPhoneNumber()).build();
+        }).toList();
+        customer.setTransferAccounts(accounts);
+
+        customerEditCreateDto.setTransferAccounts(customer.getTransferAccounts());
+
         return customerEditCreateDto;
     }
 
@@ -133,7 +168,7 @@ public class CustomerImpl implements CustomerService {
         }
         if (!customer.getEmail().equals(customer1.getEmail())){
             if (!findByEmail(customer.getEmail()))
-                throw new IllegalArgumentException("This email is taken.");
+                throw new EmailAlreadyExistException("Email"+ customer.getEmail() +" is taken.");
         }
         System.out.println(customer.getFirstName());
         System.out.println(customer.getPhoneNumber());
