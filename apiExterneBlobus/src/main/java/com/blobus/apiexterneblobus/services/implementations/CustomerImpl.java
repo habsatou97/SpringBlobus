@@ -1,6 +1,7 @@
 package com.blobus.apiexterneblobus.services.implementations;
 
 import com.blobus.apiexterneblobus.dto.CustomerEditCreateDto;
+import com.blobus.apiexterneblobus.exception.ResourceNotFoundException;
 import com.blobus.apiexterneblobus.models.Customer;
 import com.blobus.apiexterneblobus.repositories.CustomerRepository;
 import com.blobus.apiexterneblobus.services.interfaces.CustomerService;
@@ -30,7 +31,7 @@ public class CustomerImpl implements CustomerService {
      */
     @Override
     public CustomerEditCreateDto findOneDto(Long id) {
-        Customer customer = customerRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Customer with id"+": "+id+ " don't exist"));
+        Customer customer = customerRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Customer with id"+": "+id+ " don't exist"));
         CustomerEditCreateDto customerEditCreateDto = new CustomerEditCreateDto();
         customerEditCreateDto.setEmail(customer.getEmail());
         customerEditCreateDto.setFirstName(customer.getFirstName());

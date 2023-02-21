@@ -29,6 +29,7 @@ public class SecurityConfiguration {
             //.requestMatchers("/api/ewallet/v1/cashins","/api/ewallet/v1/bulkcashins","/api/ewallet/v1/transactions/**","/api/ewallet/v1/accounts/retailer/balance")
             //.hasAuthority("RETAILER")
             .requestMatchers("/api/ewallet/v1/auth/**","/swagger-ui/**","/v3/api-docs/**")
+            //.requestMatchers("/**")
             .permitAll()
             .anyRequest()
             .authenticated()

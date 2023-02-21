@@ -1,5 +1,6 @@
 package com.blobus.apiexterneblobus.controllers;
 
+import com.blobus.apiexterneblobus.dto.CustomerDto;
 import com.blobus.apiexterneblobus.dto.CustomerEditCreateDto;
 import com.blobus.apiexterneblobus.models.Customer;
 import com.blobus.apiexterneblobus.services.interfaces.CustomerService;
