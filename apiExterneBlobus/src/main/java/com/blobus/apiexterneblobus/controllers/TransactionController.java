@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/ewallet/v1")
+@RequestMapping("api/ewallet/v1/retailer/")
 public class TransactionController {
     private final TransactionService transactionService;
     @PostMapping ("/cashins")

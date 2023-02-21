@@ -1,6 +1,7 @@
 package com.blobus.apiexterneblobus.auth;
 import com.blobus.apiexterneblobus.config.JwtService;
 import com.blobus.apiexterneblobus.models.User;
+import com.blobus.apiexterneblobus.models.enums.Role;
 import com.blobus.apiexterneblobus.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -9,6 +10,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Service
@@ -69,6 +71,7 @@ public class AuthenticationService {
 
     // update userId by concatenate the generated userId and the id of the user
     user1.setUserId(user1.getId()+userId);
+//    user1.getRoles().add(Role.ADMIN);
     repository.save(user1);
 
     // now return the userId and userSecret

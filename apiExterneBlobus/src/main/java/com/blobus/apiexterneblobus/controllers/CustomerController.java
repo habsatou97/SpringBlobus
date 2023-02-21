@@ -23,7 +23,7 @@ import java.util.Map;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/ewallet/v1/customers/")
+@RequestMapping("api/ewallet/v1/admin/customers/")
 public class CustomerController {
     private final CustomerService customerService;
 

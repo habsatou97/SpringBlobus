@@ -30,7 +30,7 @@ import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/ewallet/v1/accounts/")
+@RequestMapping("/api/ewallet/v1/admin/accounts/")
 public class AccountController {
     @Autowired
     private final AccountServiceImpl transferAccountService;

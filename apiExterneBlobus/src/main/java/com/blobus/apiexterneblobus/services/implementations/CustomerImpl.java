@@ -1,9 +1,6 @@
 package com.blobus.apiexterneblobus.services.implementations;
 
-import com.blobus.apiexterneblobus.dto.CreateAccountDto;
-import com.blobus.apiexterneblobus.dto.CreateOrEditAccountDto;
-import com.blobus.apiexterneblobus.dto.CustomerDto;
-import com.blobus.apiexterneblobus.dto.CustomerEditCreateDto;
+import com.blobus.apiexterneblobus.dto.*;
 import com.blobus.apiexterneblobus.exception.EmailAlreadyExistException;
 import com.blobus.apiexterneblobus.exception.ResourceNotFoundException;
 import com.blobus.apiexterneblobus.models.Account;
@@ -17,6 +14,13 @@ import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +35,8 @@ import java.util.stream.Collectors;
 public class CustomerImpl implements CustomerService {
     private final CustomerRepository customerRepository;
     private final AccountService accountService;
+
+    private final KeyGeneratorImpl keyGenerator;
 
     /**
      * find single customer DTO
@@ -97,7 +103,7 @@ public class CustomerImpl implements CustomerService {
         return customerRepository.save(customer);
     }
 
-    public CustomerEditCreateDto saveDto(CustomerEditCreateDto customer) {
+    public CustomerEditCreateDto saveDto(CustomerEditCreateDto customer) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
         System.out.println("=================================================================================");
         System.out.println(customer.getTransferAccounts().get(0).getPhoneNumber());
         if (!findByEmail(customer.getEmail())) {
@@ -110,7 +116,7 @@ public class CustomerImpl implements CustomerService {
                 customer.getFirstName().isEmpty() ||
                 customer.getLastName().isEmpty() ||
                 customer.getEmail().isEmpty()
-        ) throw new IllegalStateException("Firstname, lastname, email or phone Number connot be empty.");
+        ) throw new IllegalStateException("Firstname, lastname, email or phone Number cannot be empty.");
         CustomerEditCreateDto customerEditCreateDto = new CustomerEditCreateDto();
         customerEditCreateDto.setEmail(customer.getEmail());
         customerEditCreateDto.setFirstName(customer.getFirstName());
@@ -127,7 +133,7 @@ public class CustomerImpl implements CustomerService {
             for (CreateOrEditAccountDto account : customer.getTransferAccounts()
             ) {
                 CreateAccountDto accountDto = CreateAccountDto.builder().walletType(account.getWalletType())
-                        .encryptedPinCode(account.getEncryptedPinCode())
+                        .encryptedPinCode(keyGenerator.encrypt(new DecryptDto(account.getEncryptedPinCode())))
                         .phoneNumber(account.getPhoneNumber()).build();
                 System.out.println(accountDto);
                 accountService.createCustomerTransfertAccount(accountDto, customer2.getId());
