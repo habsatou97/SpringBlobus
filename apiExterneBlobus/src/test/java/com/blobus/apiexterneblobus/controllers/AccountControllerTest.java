@@ -352,27 +352,4 @@ class AccountControllerTest {
         assertTrue(response.getHeaders().isEmpty());
     }
 
-    @Test
-    void getUserProfileByMsisdn() throws Exception {
-
-        String phoneNumber = "782654489";
-        AmountDto amountDto= new AmountDto();
-        amountDto.setCurrency(TransactionCurrency.XOF);
-        amountDto.setValue(10000000.06);
-        RequestBodyUserProfileDto dto = new RequestBodyUserProfileDto();
-        dto.setUserId("65+65203");
-        dto.setMsisdn("782654489");
-        dto.setFirstName("Ba");
-        dto.setLastName("El-seydi");
-        dto.setSuspended(true);
-        dto.setType(Collections.singletonList(Role.RETAILER).toString());
-        dto.setBalance(amountDto);
-
-        WalletTypeDto walletTypeDto= new WalletTypeDto();
-        walletTypeDto.setWalletType(WalletType.BONUS);
-
-        Mockito.when(accountService.getUserProfileByMsisdn(phoneNumber,WalletType.BONUS)).thenReturn(dto);
-        org.assertj.core.api.Assertions.assertThat(accountService.getUserProfileByMsisdn(phoneNumber,WalletType.BONUS)).isNotNull();
-
-    }
 }

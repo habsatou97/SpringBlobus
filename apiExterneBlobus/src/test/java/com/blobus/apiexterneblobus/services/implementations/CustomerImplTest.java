@@ -10,6 +10,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -109,18 +116,14 @@ class CustomerImplTest {
     }
 
     @Test
-    void edit() {
-        Customer customer1 = new Customer();
+    void edit() throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
+        CustomerEditCreateDto customer1 = new CustomerEditCreateDto();
         customer1.setPhoneNumber("123456789");
         customer1.setLastName("Faye");
         customer1.setEmail("laye@gmail.com");
         customer1.setFirstName("Ablaye");
         when(service.saveDto(customer1 )).thenReturn(
-                new CustomerEditCreateDto(
-                        "dzedez",
-                        "dezfef",
-                        "csdcsdc",
-                        "fsdffds"));
+                new CustomerEditCreateDto());
         Customer customer = new Customer();
         customer.setEmail("ablaye@gmail.com");
 

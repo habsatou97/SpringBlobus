@@ -245,18 +245,5 @@ public class AccountController {
     }
 
 
-    /**
-     * @param phoneNumber
-     * @param walletType
-     * @return
-     * cette methode affiche le profile d'un utilisateur via son msisdn
-     * autrement dit via le numero de telephone de son compte tranfert
-     */
-    @GetMapping("getuserprofileymsisdn")
-    public  ResponseEntity<RequestBodyUserProfileDto> getUserProfileByMsisdn(
-            @RequestParam String phoneNumber, @RequestParam WalletType walletType){
-
-        return ResponseEntity.ok(transferAccountService.getUserProfileByMsisdn(phoneNumber,walletType));
-    }
 
 }

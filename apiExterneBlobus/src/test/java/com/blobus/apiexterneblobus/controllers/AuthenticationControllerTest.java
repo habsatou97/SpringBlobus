@@ -38,7 +38,13 @@ class AuthenticationControllerTest {
                         new JwtService(),
                         authenticationManager));
         ResponseEntity<RegisterResponse> actualRegisterResult = authenticationController
-                .register(RegisterRequest.builder().phoneNumber("123456789").email("laye@gmail.com").firstname("Ablaye").lastname("Faye").ninea("asasdasd").roles(null).build());
+                .register(RegisterRequest.builder()
+                        .phoneNumber("123456789")
+                        .email("laye@gmail.com")
+                        .firstname("Ablaye")
+                        .lastname("Faye")
+                        .ninea("asasdasd")
+                        .build());
         assertTrue(actualRegisterResult.hasBody());
         assertTrue(actualRegisterResult.getHeaders().isEmpty());
         assertEquals(200, actualRegisterResult.getStatusCodeValue());
