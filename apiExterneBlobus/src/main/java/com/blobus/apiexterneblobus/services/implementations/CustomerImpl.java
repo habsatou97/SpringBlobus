@@ -104,8 +104,6 @@ public class CustomerImpl implements CustomerService {
     }
 
     public CustomerEditCreateDto saveDto(CustomerEditCreateDto customer) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
-        System.out.println("=================================================================================");
-        System.out.println(customer.getTransferAccounts().get(0).getPhoneNumber());
         if (!findByEmail(customer.getEmail())) {
             throw new IllegalArgumentException("This email is taken.");
         }
