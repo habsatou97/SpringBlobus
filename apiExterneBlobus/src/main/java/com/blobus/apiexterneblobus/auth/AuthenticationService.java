@@ -63,6 +63,7 @@ public class AuthenticationService {
     if (request.getNinea() != null && !request.getNinea().isBlank() && request.getNinea().length() != 0){
         // save ninea if yes
         user.setNinea(request.getNinea());
+        user.getRoles().add(Role.RETAILER);
     }
 
 
