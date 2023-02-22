@@ -122,6 +122,7 @@ public class CustomerImpl implements CustomerService {
         customerEditCreateDto.setFirstName(customer.getFirstName());
         customerEditCreateDto.setPhoneNumber(customer.getPhoneNumber());
         customerEditCreateDto.setLastName(customer.getLastName());
+
         Customer customer1 = Customer.builder()
                 .email(customerEditCreateDto.getEmail())
                 .firstName(customerEditCreateDto.getFirstName())

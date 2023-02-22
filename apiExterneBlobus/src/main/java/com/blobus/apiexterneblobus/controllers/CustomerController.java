@@ -1,11 +1,14 @@
 package com.blobus.apiexterneblobus.controllers;
 
-import com.blobus.apiexterneblobus.dto.CustomerDto;
 import com.blobus.apiexterneblobus.dto.CustomerEditCreateDto;
 import com.blobus.apiexterneblobus.models.Customer;
+import com.blobus.apiexterneblobus.models.User;
+import com.blobus.apiexterneblobus.repositories.UserRepository;
 import com.blobus.apiexterneblobus.services.interfaces.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,12 +37,14 @@ import java.util.Map;
 @RequestMapping("api/ewallet/v1/admin/customers/")
 public class CustomerController {
     private final CustomerService customerService;
-
+    private final UserRepository userRepository;
     /**
      * return list of customers
      * @return ResponseEntity<List<Customer>>
      */
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    @Secured("hasRole('ADMIN')")
     public ResponseEntity<List<CustomerEditCreateDto>> findAll(){
         return ResponseEntity.ok().body(customerService.findAllDto());
     }
