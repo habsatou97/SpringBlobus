@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 public class ResponseChangePinCodeDto {
     private String errorCode;
     private String msisdn;
+    private String errorMessage;
     private String encryptedNewPinCode;
     private  String encryptedPinCode;
     private CustomerType customerType;
