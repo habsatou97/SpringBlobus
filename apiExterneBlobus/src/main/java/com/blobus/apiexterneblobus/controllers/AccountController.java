@@ -252,7 +252,7 @@ public class AccountController {
      * cette methode affiche le profile d'un utilisateur via son msisdn
      * autrement dit via le numero de telephone de son compte tranfert
      */
-    @GetMapping("GetUserProfileByMsisdn")
+    @GetMapping("getuserprofileymsisdn")
     public  ResponseEntity<RequestBodyUserProfileDto> getUserProfileByMsisdn(
             @RequestParam String phoneNumber, @RequestParam WalletType walletType){
 

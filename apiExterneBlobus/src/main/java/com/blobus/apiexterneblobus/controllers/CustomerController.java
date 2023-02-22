@@ -14,6 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,7 +75,7 @@ public class CustomerController {
      * @return
      */
     @PostMapping
-    public ResponseEntity<CustomerEditCreateDto> save(@RequestBody CustomerEditCreateDto customer){
+    public ResponseEntity<CustomerEditCreateDto> save(@RequestBody CustomerEditCreateDto customer) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
         return ResponseEntity.ok().body(customerService.saveDto(customer));
     }
 
