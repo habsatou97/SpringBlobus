@@ -30,7 +30,7 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-@RequestMapping("/api/ewallet/admin/v1/users/")
+@RequestMapping("/api/ewallet/v1/admin/users/")
 public class UserController {
 
     @Autowired
