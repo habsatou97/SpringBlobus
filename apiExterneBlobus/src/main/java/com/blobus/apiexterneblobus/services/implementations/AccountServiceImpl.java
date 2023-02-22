@@ -465,7 +465,8 @@ public class AccountServiceImpl implements AccountService {
         } else if (msisdn.length() != 9) {
             responseChangePinCodeDto.setErrorCode(ErrorCode.CUSTOMER_MSISDN_IS_INVALID.getErrorCode());
             responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
-            return responseChangePinCodeDto;
+            //return responseChangePinCodeDto;
+            throw new EntityNotFoundException("A valid msisdn must have 9 caracters !!");
 
         } else if (requestBodyChangePinCodeDto == null) {
             responseChangePinCodeDto.setErrorCode("21");
@@ -475,15 +476,18 @@ public class AccountServiceImpl implements AccountService {
         } else if (content_type==null) {
             responseChangePinCodeDto.setErrorCode("25");
             responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseChangePinCodeDto.setErrorMessage("This request needs headers");
             return responseChangePinCodeDto;
 
         } else if (requestBodyChangePinCodeDto.getEncryptedNewPinCode() == null ||
                 requestBodyChangePinCodeDto.getEncryptedPinCode() == null) {
             responseChangePinCodeDto.setErrorCode("22");
+            responseChangePinCodeDto.setErrorMessage("You must enter the new encryptedPinCode");
             responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
             return responseChangePinCodeDto;
         } else if (msisdn==null|| customerType==null || walletType==null) {
             responseChangePinCodeDto.setErrorCode("27");
+            responseChangePinCodeDto.setErrorMessage("CustomerType,WalletType or msisdn cannot be null");
             responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
             return responseChangePinCodeDto;
 
@@ -491,18 +495,19 @@ public class AccountServiceImpl implements AccountService {
 
             decryptDto.setEncryptedPinCode(account.get().getEncryptedPinCode());
             String enc = keyGeneratorService.decrypt(decryptDto);
+            DecryptDto dec=new DecryptDto();
+            dec.setEncryptedPinCode(requestBodyChangePinCodeDto.getEncryptedPinCode());
 
-            if(enc.equals(requestBodyChangePinCodeDto.getEncryptedPinCode())){
+            if(enc.equals(keyGeneratorService.decrypt(dec))){
                 DecryptDto dto=new DecryptDto();
                 dto.setEncryptedPinCode(requestBodyChangePinCodeDto.getEncryptedNewPinCode());
-               String ch= keyGeneratorService.encrypt(dto);
-               account.get().setEncryptedPinCode(ch);
+               account.get().setEncryptedPinCode(requestBodyChangePinCodeDto.getEncryptedNewPinCode());
                transferAccountRepository.saveAndFlush(account.get());
                responseChangePinCodeDto.setStatus(HttpStatus.ACCEPTED);
                responseChangePinCodeDto.setCustomerType(customerType);
                responseChangePinCodeDto.setMsisdn(msisdn);
                responseChangePinCodeDto.setEncryptedNewPinCode(requestBodyChangePinCodeDto.getEncryptedNewPinCode());
-               responseChangePinCodeDto.setEncryptedPinCode(keyGeneratorService.decrypt(new DecryptDto(account.get().getEncryptedPinCode())));
+               responseChangePinCodeDto.setEncryptedPinCode(account.get().getEncryptedPinCode());
                return responseChangePinCodeDto;
             }
             else
