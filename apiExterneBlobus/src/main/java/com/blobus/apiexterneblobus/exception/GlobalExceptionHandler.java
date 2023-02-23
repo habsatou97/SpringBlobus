@@ -15,6 +15,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ApiResponse.builder().message(ex.getMessage()).status(HttpStatus.NOT_FOUND).success(true).build(), HttpStatus.NOT_FOUND);
     }
 
+
+    @ExceptionHandler(ChangePinCodeException.class)
+    public ResponseEntity<ApiResponse> handlerResourceNotFoundException(ChangePinCodeException ex){
+        return new ResponseEntity<>(ApiResponse.builder().message(ex.getMessage()).status(HttpStatus.BAD_REQUEST).success(true).build(), HttpStatus.BAD_REQUEST);
+    }
+
+
+
+
     @ExceptionHandler({EmailAlreadyExistException.class, IllegalArgumentException.class, HttpRequestMethodNotSupportedException.class})
     public ResponseEntity<ApiResponse> handlerResourceEmailNotExist(Exception ex){
         return new ResponseEntity<>(ApiResponse.builder().message(ex.getMessage()).status(HttpStatus.INTERNAL_SERVER_ERROR).success(true).build(), HttpStatus.INTERNAL_SERVER_ERROR);

@@ -2,6 +2,7 @@ package com.blobus.apiexterneblobus.controllers;
 
 import com.blobus.apiexterneblobus.dto.*;
 import com.blobus.apiexterneblobus.exception.ChangePinCodeException;
+import com.blobus.apiexterneblobus.exception.ResourceNotFoundException;
 import com.blobus.apiexterneblobus.models.enums.CustomerType;
 import com.blobus.apiexterneblobus.models.enums.WalletType;
 import com.blobus.apiexterneblobus.services.implementations.AccountServiceImpl;
@@ -69,7 +70,7 @@ public class AccountController {
             IOException, NoSuchAlgorithmException,
             BadPaddingException, InvalidKeyException {
 
-        CreateOrEditAccountDto accountDto=transferAccountService.getTransfertAccountById(id);
+        CreateOrEditAccountDto accountDto=transferAccountService.getTransfertAccountById(id).orElseThrow(()-> new ResourceNotFoundException("Account with id "+id+" don't exits."));
         DecryptDto decryptDto=new DecryptDto();
         decryptDto.setEncryptedPinCode(accountDto.getEncryptedPinCode());
         accountDto.setEncryptedPinCode(keyGenerator.decrypt(decryptDto));
