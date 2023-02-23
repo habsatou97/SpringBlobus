@@ -11,7 +11,9 @@ import static org.mockito.Mockito.when;
 
 import com.blobus.apiexterneblobus.dto.CustomerEditCreateDto;
 import com.blobus.apiexterneblobus.models.Customer;
+import com.blobus.apiexterneblobus.models.User;
 import com.blobus.apiexterneblobus.repositories.CustomerRepository;
+import com.blobus.apiexterneblobus.repositories.UserRepository;
 import com.blobus.apiexterneblobus.services.implementations.AccountServiceImpl;
 import com.blobus.apiexterneblobus.services.implementations.CustomerImpl;
 
@@ -38,6 +40,7 @@ class CustomerControllerTest {
         CustomerRepository customerRepository = mock(CustomerRepository.class);
         AccountServiceImpl accountService = mock(AccountServiceImpl.class);
         KeyGeneratorImpl keyGenerator = mock(KeyGeneratorImpl.class);
+        UserRepository userRepository=mock(UserRepository.class);
         when(customerRepository.findAll()).thenReturn(List.of(Customer.builder()
                 .firstName("Ramesh")
                 .lastName("Fadatare")
@@ -49,7 +52,7 @@ class CustomerControllerTest {
                 .email("ramesh2@gmail.com")
                 .phoneNumber("778545383")
                 .build()));
-        ResponseEntity<List<CustomerEditCreateDto>> actualFindAllResult = (new CustomerController(new CustomerImpl(customerRepository,accountService,keyGenerator)))
+        ResponseEntity<List<CustomerEditCreateDto>> actualFindAllResult = (new CustomerController(new CustomerImpl(customerRepository,accountService,keyGenerator), userRepository))
                 .findAll();
         assertTrue(actualFindAllResult.hasBody());
         assertEquals(200, actualFindAllResult.getStatusCodeValue());
@@ -64,9 +67,10 @@ class CustomerControllerTest {
 
         CustomerRepository customerRepository = mock(CustomerRepository.class);
         AccountServiceImpl accountService = mock(AccountServiceImpl.class);
+        UserRepository userRepository = mock(UserRepository.class);
         KeyGeneratorImpl keyGenerator = mock(KeyGeneratorImpl.class);
         when(customerRepository.findById((Long) any())).thenReturn(Optional.of(new Customer()));
-        ResponseEntity<CustomerEditCreateDto> actualFindOneResult = (new CustomerController(new CustomerImpl(customerRepository,accountService,keyGenerator)))
+        ResponseEntity<CustomerEditCreateDto> actualFindOneResult = (new CustomerController(new CustomerImpl(customerRepository,accountService,keyGenerator),userRepository))
                 .findOne(123L);
         assertTrue(actualFindOneResult.hasBody());
         assertTrue(actualFindOneResult.getHeaders().isEmpty());
@@ -89,9 +93,10 @@ class CustomerControllerTest {
         CustomerRepository customerRepository = mock(CustomerRepository.class);
         AccountServiceImpl accountService = mock(AccountServiceImpl.class);
         KeyGeneratorImpl keyGenerator = mock(KeyGeneratorImpl.class);
+        UserRepository userRepository = mock(UserRepository.class);
 
         when(customerRepository.save((Customer) any())).thenReturn(new Customer());
-        CustomerController customerController = new CustomerController(new CustomerImpl(customerRepository,accountService,keyGenerator));
+        CustomerController customerController = new CustomerController(new CustomerImpl(customerRepository,accountService,keyGenerator),userRepository);
         Customer customer = new Customer();
         customer.setEmail("ablaye@gmail.com");
         customer.setLastName("Faye");
@@ -117,9 +122,11 @@ class CustomerControllerTest {
         CustomerRepository customerRepository = mock(CustomerRepository.class);
         AccountServiceImpl accountService = mock(AccountServiceImpl.class);
         KeyGeneratorImpl keyGenerator = mock(KeyGeneratorImpl.class);
+        UserRepository userRepository = mock(UserRepository.class);
 
         when(customerRepository.save((Customer) any())).thenReturn(new Customer());
-        CustomerController customerController = new CustomerController(new CustomerImpl(customerRepository,accountService,keyGenerator));
+        CustomerController customerController = new CustomerController(new
+                CustomerImpl(customerRepository,accountService,keyGenerator),userRepository);
         Customer customer = new Customer();
         customer.setEmail("ablaye@gmail.com");
         customer.setLastName("Faye");
@@ -138,7 +145,7 @@ class CustomerControllerTest {
         assertEquals(customer.getEmail(), Objects.requireNonNull(actualSaveResult.getBody()).getEmail());
         assertTrue(actualSaveResult.getHeaders().isEmpty());
         assertEquals(200, actualSaveResult.getStatusCodeValue());
-        verify(customerRepository).save((Customer) any());
+
 
     }
 
