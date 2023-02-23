@@ -1,6 +1,7 @@
 package com.blobus.apiexterneblobus.services.implementations;
 
 import com.blobus.apiexterneblobus.dto.*;
+import com.blobus.apiexterneblobus.exception.ChangePinCodeException;
 import com.blobus.apiexterneblobus.exception.ResourceNotFoundException;
 import com.blobus.apiexterneblobus.models.Account;
 import com.blobus.apiexterneblobus.models.Customer;
@@ -49,7 +50,7 @@ public class AccountServiceImpl implements AccountService {
      * @return
      */
     @Override
-    public CreateOrEditAccountDto createRetailerTransfertAccount(CreateAccountDto transferAccount,Long id) {
+    public CreateOrEditAccountDto createRetailerTransfertAccount(CreateAccountDto transferAccount,Long id) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
         Account account = new Account();
         User retailer = userRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("User not found"));
@@ -69,7 +70,9 @@ public class AccountServiceImpl implements AccountService {
                         && transferAccount.getEncryptedPinCode().length() >0){
                     account.setRetailer(retailer);
                     account.set_active(true);
-                    account.setEncryptedPinCode(transferAccount.getEncryptedPinCode());
+                    DecryptDto decryptDto=new DecryptDto();
+                    decryptDto.setEncryptedPinCode(transferAccount.getEncryptedPinCode());
+                    account.setEncryptedPinCode(keyGeneratorService.encrypt(decryptDto));
                     account.setWalletType(transferAccount.getWalletType());
                     account.setPhoneNumber(transferAccount.getPhoneNumber());
                     account.setBalance(0.0);
@@ -445,9 +448,9 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public ResponseChangePinCodeDto changePinCode(RequestBodyChangePinCodeDto requestBodyChangePinCodeDto, String msisdn, CustomerType customerType, WalletType walletType,String content_type)
             throws NoSuchPaddingException,
-                 IllegalBlockSizeException,
-                 IOException,
-                 NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, InvalidKeySpecException {
+            IllegalBlockSizeException,
+            IOException,
+            NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, InvalidKeySpecException, ChangePinCodeException {
 
         KeyDto keyDto = new KeyDto();
         KeyDto keyDto1=new KeyDto();
@@ -456,7 +459,7 @@ public class AccountServiceImpl implements AccountService {
 
         Optional<Account> account = transferAccountRepository.findByPhoneNumberAndWalletType(msisdn,walletType);
         if(customerType!= CustomerType.RETAILER){
-            throw new EntityNotFoundException("Only a retailer is allow to do this operation !!");
+            throw new ChangePinCodeException("Only a retailer is allow to do this operation !!");
         }
         else if(!account.isPresent()) {
             responseChangePinCodeDto.setErrorCode("2000");
@@ -466,7 +469,7 @@ public class AccountServiceImpl implements AccountService {
             responseChangePinCodeDto.setErrorCode(ErrorCode.CUSTOMER_MSISDN_IS_INVALID.getErrorCode());
             responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
             //return responseChangePinCodeDto;
-            throw new EntityNotFoundException("A valid msisdn must have 9 caracters !!");
+            throw new ChangePinCodeException("A valid msisdn must have 9 caracters !!");
 
         } else if (requestBodyChangePinCodeDto == null) {
             responseChangePinCodeDto.setErrorCode("21");
@@ -477,19 +480,25 @@ public class AccountServiceImpl implements AccountService {
             responseChangePinCodeDto.setErrorCode("25");
             responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
             responseChangePinCodeDto.setErrorMessage("This request needs headers");
-            return responseChangePinCodeDto;
+           // return responseChangePinCodeDto;
+            throw new ChangePinCodeException("This request needs headers");
+
 
         } else if (requestBodyChangePinCodeDto.getEncryptedNewPinCode() == null ||
                 requestBodyChangePinCodeDto.getEncryptedPinCode() == null) {
             responseChangePinCodeDto.setErrorCode("22");
             responseChangePinCodeDto.setErrorMessage("You must enter the new encryptedPinCode");
             responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
-            return responseChangePinCodeDto;
+            throw new ChangePinCodeException("You must enter the new encryptedPinCode");
+
+            // return responseChangePinCodeDto;
         } else if (msisdn==null|| customerType==null || walletType==null) {
             responseChangePinCodeDto.setErrorCode("27");
             responseChangePinCodeDto.setErrorMessage("CustomerType,WalletType or msisdn cannot be null");
             responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
-            return responseChangePinCodeDto;
+            throw new ChangePinCodeException("CustomerType,WalletType or msisdn cannot be null");
+
+            // return responseChangePinCodeDto;
 
         } else {
 
@@ -512,7 +521,7 @@ public class AccountServiceImpl implements AccountService {
             }
             else
             {
-                throw new RuntimeException("Les deux pincodes ne correspondent pas");
+                throw new ChangePinCodeException("Les deux pincodes ne correspondent pas");
             }
         }
 

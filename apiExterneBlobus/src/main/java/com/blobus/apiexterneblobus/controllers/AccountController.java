@@ -1,6 +1,7 @@
 package com.blobus.apiexterneblobus.controllers;
 
 import com.blobus.apiexterneblobus.dto.*;
+import com.blobus.apiexterneblobus.exception.ChangePinCodeException;
 import com.blobus.apiexterneblobus.models.enums.CustomerType;
 import com.blobus.apiexterneblobus.models.enums.WalletType;
 import com.blobus.apiexterneblobus.services.implementations.AccountServiceImpl;
@@ -105,8 +106,8 @@ public class AccountController {
             IOException, NoSuchAlgorithmException, BadPaddingException,
             InvalidKeySpecException, InvalidKeyException {
 
-        transferAccount.setEncryptedPinCode(
-                keyGenerator.encrypt(new DecryptDto(transferAccount.getEncryptedPinCode())));
+        transferAccount.setEncryptedPinCode(transferAccount.getEncryptedPinCode());
+                //keyGenerator.encrypt(new DecryptDto(transferAccount.getEncryptedPinCode())));
         DecryptDto decryptDto=new DecryptDto();
         CreateOrEditAccountDto accountDto=
                 transferAccountService.createRetailerTransfertAccount(transferAccount,id);
@@ -130,11 +131,14 @@ public class AccountController {
      * @throws InvalidKeyException
      */
     @RequestMapping(value = "{id}",method = RequestMethod.PUT)
-    public ResponseEntity<CreateOrEditAccountDto> update(@RequestBody EditAccountDto transferAccount,
-                                                         @PathVariable Long id)
-            throws NoSuchPaddingException, IllegalBlockSizeException,
-            NoSuchAlgorithmException, IOException, BadPaddingException,
-            InvalidKeySpecException, InvalidKeyException {
+    public ResponseEntity<CreateOrEditAccountDto> update(@RequestBody EditAccountDto transferAccount, @PathVariable Long id) throws
+            NoSuchPaddingException,
+            IllegalBlockSizeException,
+            NoSuchAlgorithmException,
+            IOException,
+            BadPaddingException,
+            InvalidKeySpecException,
+            InvalidKeyException {
          if(transferAccount.getEncryptedPinCode()!=null
                  && transferAccount.getEncryptedPinCode().length()>0)
          {
@@ -238,7 +242,7 @@ public class AccountController {
             @RequestHeader String content_type)
             throws NoSuchPaddingException, IllegalBlockSizeException,
             IOException, NoSuchAlgorithmException, BadPaddingException,
-            InvalidKeySpecException, InvalidKeyException {
+            InvalidKeySpecException, InvalidKeyException, ChangePinCodeException {
 
         return ResponseEntity.ok(transferAccountService
                 .changePinCode(requestBodyChangePinCodeDto,msisdn,customerType,walletType, content_type));

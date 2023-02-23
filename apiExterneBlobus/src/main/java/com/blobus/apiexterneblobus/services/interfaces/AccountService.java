@@ -2,6 +2,7 @@ package com.blobus.apiexterneblobus.services.interfaces;
 
 
 import com.blobus.apiexterneblobus.dto.*;
+import com.blobus.apiexterneblobus.exception.ChangePinCodeException;
 import com.blobus.apiexterneblobus.models.enums.CustomerType;
 import com.blobus.apiexterneblobus.models.enums.WalletType;
 
@@ -17,7 +18,7 @@ import java.util.Optional;
 
 public interface AccountService {
   public CreateOrEditAccountDto createCustomerTransfertAccount(CreateAccountDto transferAccount, Long id);
-  public CreateOrEditAccountDto createRetailerTransfertAccount(CreateAccountDto transferAccount,Long id);
+  public CreateOrEditAccountDto createRetailerTransfertAccount(CreateAccountDto transferAccount,Long id) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, InvalidKeySpecException, InvalidKeyException;
   public List<CreateOrEditAccountDto> getAllTransfertAccount();
   public Optional<CreateOrEditAccountDto> getTransfertAccountById(Long id);
   public CreateOrEditAccountDto enableTransfertAccount(Long id);
@@ -31,7 +32,7 @@ public interface AccountService {
   public CreateOrEditAccountDto modifyTransferAccountRetailer(Long id, EditAccountDto account);
 
     public BalanceDto updatedBalance(BalanceDto balance,Long id);
-  public ResponseChangePinCodeDto changePinCode(RequestBodyChangePinCodeDto requestBodyChangePinCodeDto, String msisdn, CustomerType customerType, WalletType walletType,  String content_type) throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, InvalidKeySpecException;
+  public ResponseChangePinCodeDto changePinCode(RequestBodyChangePinCodeDto requestBodyChangePinCodeDto, String msisdn, CustomerType customerType, WalletType walletType,  String content_type) throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, InvalidKeySpecException, ChangePinCodeException;
 
   public RequestBodyUserProfileDto getUserProfileByMsisdn(String phoneNumber, WalletType walletType);
 
