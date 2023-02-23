@@ -20,21 +20,13 @@ public class SecurityConfiguration {
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//    http.authorizeHttpRequests().requestMatchers("/api/ewallet/v1/admin/**").hasAnyAuthority("ADMIN");
-//    http.authorizeHttpRequests().requestMatchers("/api/ewallet/v1/retailer/**").hasAnyAuthority("RETAILER");
     http
-//            .httpBasic().and()
             .csrf()
             .disable()
             .authorizeHttpRequests()
             .requestMatchers("/api/ewallet/v1/admin/**").hasAnyAuthority("ADMIN")
             .requestMatchers("/api/ewallet/v1/retailer/**").hasAnyAuthority("RETAILER")
-            //.requestMatchers("/api/ewallet/v1/customers/**","/api/ewallet/v1/retailers/**","/api/ewallet/v1/accounts/**")
-            //.hasAuthority("ADMIN")
-            //.requestMatchers("/api/ewallet/v1/cashins","/api/ewallet/v1/bulkcashins","/api/ewallet/v1/transactions/**","/api/ewallet/v1/accounts/retailer/balance")
-            //.hasAuthority("RETAILER")
             .requestMatchers("/api/ewallet/v1/auth/**","/swagger-ui/**","/v3/api-docs/**")
-            //.requestMatchers("/**")
             .permitAll()
             .anyRequest()
             .authenticated()

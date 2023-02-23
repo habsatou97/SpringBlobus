@@ -13,6 +13,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class CustomerImpl implements CustomerService {
     private final CustomerRepository customerRepository;
     private final AccountService accountService;
@@ -103,7 +105,7 @@ public class CustomerImpl implements CustomerService {
         return customerRepository.save(customer);
     }
 
-    public CustomerEditCreateDto saveDto(CustomerEditCreateDto customer) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
+    public CustomerEditCreateDto saveDto(CustomerEditCreateDto customer) throws IllegalArgumentException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
         if (!findByEmail(customer.getEmail())) {
             throw new IllegalArgumentException("This email is taken.");
         }
@@ -199,7 +201,7 @@ public class CustomerImpl implements CustomerService {
         if (customer.isPresent()){
             customerRepository.deleteById(id);
         }else {
-            throw new EntityNotFoundException("Customer with id "+id+" doesn't exists");
+            throw new ResourceNotFoundException("Customer with id "+id+" doesn't exists");
         }
 
     }

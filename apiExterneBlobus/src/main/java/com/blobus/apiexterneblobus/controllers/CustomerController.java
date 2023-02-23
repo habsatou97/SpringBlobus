@@ -2,7 +2,6 @@ package com.blobus.apiexterneblobus.controllers;
 
 import com.blobus.apiexterneblobus.dto.CustomerEditCreateDto;
 import com.blobus.apiexterneblobus.models.Customer;
-import com.blobus.apiexterneblobus.models.User;
 import com.blobus.apiexterneblobus.repositories.UserRepository;
 import com.blobus.apiexterneblobus.services.interfaces.CustomerService;
 import lombok.RequiredArgsConstructor;
@@ -80,7 +79,8 @@ public class CustomerController {
      * @return
      */
     @PostMapping
-    public ResponseEntity<CustomerEditCreateDto> save(@RequestBody CustomerEditCreateDto customer) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
+//    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<CustomerEditCreateDto> save(@RequestBody CustomerEditCreateDto customer) throws IllegalArgumentException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
         return ResponseEntity.ok().body(customerService.saveDto(customer));
     }
 

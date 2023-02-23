@@ -252,7 +252,7 @@ public class AccountServiceImpl implements AccountService {
             transferAccountRepository.save(existingAccount.get());
             return dto;
         }
-        else throw new EntityNotFoundException("Account with id"+": "+id+ " don't exist");
+        else throw new ResourceNotFoundException("Account with id"+": "+id+ " don't exist");
     }
 
     /**
