@@ -2,6 +2,7 @@ package com.blobus.apiexterneblobus.services.implementations;
 
 import com.blobus.apiexterneblobus.dto.*;
 import com.blobus.apiexterneblobus.exception.GetTransactionException;
+import com.blobus.apiexterneblobus.exception.ResourceNotFoundException;
 import com.blobus.apiexterneblobus.models.Account;
 import com.blobus.apiexterneblobus.models.Bulk;
 import com.blobus.apiexterneblobus.models.Transaction;
@@ -116,13 +117,11 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     @Transactional
     public TransactionDto getTransactionStatus(Long transactionId) {
-        Optional<Transaction> transaction = transactionRepository.findById(transactionId);
+        Transaction transaction = transactionRepository.findById(
+                transactionId).orElseThrow(() -> new ResourceNotFoundException("transaction "+transactionId+" not found"));
         TransactionDto dto= new TransactionDto();
-        if(transaction.isPresent()){
-            dto.setStatus(transaction.get().getStatus());
+            dto.setStatus(transaction.getStatus());
             return dto;
-        }
-        return null;
     }
 
     /**
@@ -133,40 +132,39 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     @Transactional
     public GetTransactionDto getTransaction(Long transactionId) {
-        Optional<Transaction> transaction = transactionRepository.findById(transactionId);
+        Transaction transaction = transactionRepository.findById(
+                transactionId).orElseThrow(() -> new ResourceNotFoundException("transaction "+transactionId+" not found"));
         GetTransactionDto transactionDto= new GetTransactionDto();
         AmountDto amountDto= new AmountDto();
         UserDto userDto= new UserDto();
         CustomerEditCreateDto customerDto = new CustomerEditCreateDto();
-        if (transaction.isPresent()){
-            transactionDto.setTransactionId(transaction.get().getId());
-            transactionDto.setCreatedAt(transaction.get().getCreatedDate());
-            transactionDto.setReceiveNotification(transaction.get().getReceiveNotificatiion());
-            transactionDto.setRequestDate(transaction.get().getRequestDate());
-            transactionDto.setReference(transaction.get().getReference());
-            transactionDto.setType(String.valueOf(transaction.get().getType()));
-            transactionDto.setStatus(String.valueOf(transaction.get().getStatus()));
+            transactionDto.setTransactionId(transaction.getId());
+            transactionDto.setCreatedAt(transaction.getCreatedDate());
+            transactionDto.setReceiveNotification(transaction.getReceiveNotificatiion());
+            transactionDto.setRequestDate(transaction.getRequestDate());
+            transactionDto.setReference(transaction.getReference());
+            transactionDto.setType(String.valueOf(transaction.getType()));
+            transactionDto.setStatus(String.valueOf(transaction.getStatus()));
 
-            userDto.setPhoneNumber(transaction.get().getRetailerTransferAccount().getRetailer().getPhoneNumber());
-            userDto.setFirstName(transaction.get().getRetailerTransferAccount().getRetailer().getFirstName());
-            userDto.setLastName(transaction.get().getRetailerTransferAccount().getRetailer().getLastName());
-            userDto.setEmail(transaction.get().getRetailerTransferAccount().getRetailer().getEmail());
+            userDto.setPhoneNumber(transaction.getRetailerTransferAccount().getRetailer().getPhoneNumber());
+            userDto.setFirstName(transaction.getRetailerTransferAccount().getRetailer().getFirstName());
+            userDto.setLastName(transaction.getRetailerTransferAccount().getRetailer().getLastName());
+            userDto.setEmail(transaction.getRetailerTransferAccount().getRetailer().getEmail());
             transactionDto.setPartner(userDto);
 
-            customerDto.setEmail(transaction.get().getCustomerTransferAccount().getCustomer().getEmail());
-            customerDto.setFirstName(transaction.get().getCustomerTransferAccount().getCustomer().getFirstName());
-            customerDto.setLastName(transaction.get().getCustomerTransferAccount().getCustomer().getLastName());
-            customerDto.setPhoneNumber(transaction.get().getCustomerTransferAccount().getCustomer().getPhoneNumber());
+            customerDto.setEmail(transaction.getCustomerTransferAccount().getCustomer().getEmail());
+            customerDto.setFirstName(transaction.getCustomerTransferAccount().getCustomer().getFirstName());
+            customerDto.setLastName(transaction.getCustomerTransferAccount().getCustomer().getLastName());
+            customerDto.setPhoneNumber(transaction.getCustomerTransferAccount().getCustomer().getPhoneNumber());
             transactionDto.setCustomer(customerDto);
 
-            amountDto.setValue(transaction.get().getAmount());
-            amountDto.setCurrency(transaction.get().getCurrency());
+            amountDto.setValue(transaction.getAmount());
+            amountDto.setCurrency(transaction.getCurrency());
             transactionDto.setAmount(amountDto);
 
             return transactionDto;
-        }
-       else
-           throw new GetTransactionException("Transaction not allowed");
+
+
     }
 
     @Transactional

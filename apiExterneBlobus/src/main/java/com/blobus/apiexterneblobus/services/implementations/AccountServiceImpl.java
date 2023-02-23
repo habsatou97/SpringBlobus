@@ -427,7 +427,7 @@ public class AccountServiceImpl implements AccountService {
             transferAccountRepository.saveAndFlush(account.get());
             return balance;
         }
-        throw new EntityNotFoundException("This account doesn't exist !!");
+        throw new ResourceNotFoundException("This account doesn't exist !!");
     }
 
     /**
