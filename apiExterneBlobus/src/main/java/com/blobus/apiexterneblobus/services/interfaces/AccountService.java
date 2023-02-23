@@ -14,12 +14,13 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.List;
+import java.util.Optional;
 
 public interface AccountService {
   public CreateOrEditAccountDto createCustomerTransfertAccount(CreateAccountDto transferAccount, Long id);
   public CreateOrEditAccountDto createRetailerTransfertAccount(CreateAccountDto transferAccount,Long id) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, InvalidKeySpecException, InvalidKeyException;
   public List<CreateOrEditAccountDto> getAllTransfertAccount();
-  public CreateOrEditAccountDto getTransfertAccountById(Long id);
+  public Optional<CreateOrEditAccountDto> getTransfertAccountById(Long id);
   public CreateOrEditAccountDto enableTransfertAccount(Long id);
   public CreateOrEditAccountDto diseableTranfertAccount(Long id);
   public String getAccountPhoneNumber(Long id);
