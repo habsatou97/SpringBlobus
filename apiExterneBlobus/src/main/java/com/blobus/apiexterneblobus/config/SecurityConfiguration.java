@@ -26,6 +26,7 @@ public class SecurityConfiguration {
             .authorizeHttpRequests()
             .requestMatchers("/api/ewallet/v1/admin/**").hasAnyAuthority("ADMIN")
             .requestMatchers("/api/ewallet/v1/retailer/**").hasAnyAuthority("RETAILER")
+            .requestMatchers("/api/ewallet/v1/all/**").hasAnyAuthority("ADMIN", "RETAILER")
             .requestMatchers("/api/ewallet/v1/auth/**","/swagger-ui/**","/v3/api-docs/**")
             .permitAll()
             .anyRequest()

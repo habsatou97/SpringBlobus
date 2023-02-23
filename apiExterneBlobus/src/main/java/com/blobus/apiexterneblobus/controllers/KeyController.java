@@ -23,7 +23,7 @@ import java.security.spec.InvalidKeySpecException;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/ewallet/v1/retailer/accounts/publicKeys/")
+@RequestMapping("/api/ewallet/v1/all/accounts/publicKeys/")
 public class KeyController {
     @Autowired
     private final KeyGeneratorService keyGenerator;
