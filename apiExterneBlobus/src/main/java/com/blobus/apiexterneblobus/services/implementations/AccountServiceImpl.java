@@ -94,7 +94,7 @@ public class AccountServiceImpl implements AccountService {
 
             for (Account cpt : comptes ) {
                 WalletType type = cpt.getWalletType();
-                if (type == transferAccount.getWalletType())
+                if (type.equals(transferAccount.getWalletType()))
                     i++;
             }
             if (i != 0) {
@@ -150,8 +150,8 @@ public class AccountServiceImpl implements AccountService {
             int i = 0;
             for (Account cpt : comptes
             ) {
-                WalletType type=cpt.getWalletType();
-                if(type==transferAccount.getWalletType())
+                WalletType type = cpt.getWalletType();
+                if(type.equals(transferAccount.getWalletType()))
                     i++;
             }
             if (i != 0) {
@@ -223,7 +223,11 @@ public class AccountServiceImpl implements AccountService {
      */
     @Override
     public Optional<CreateOrEditAccountDto> getTransfertAccountById(Long id) {
-        return transferAccountRepository.findById(id).stream().map(account -> {
+        Optional<Account> accountDto = transferAccountRepository.findById(id);
+        if (!accountDto.isPresent()){
+            throw new ResourceNotFoundException("Account with id "+id+" don't exists.");
+        }
+        return accountDto.stream().map(account -> {
             CreateOrEditAccountDto dto =  CreateOrEditAccountDto.builder().build();
             dto.setPhoneNumber(account.getPhoneNumber());
             dto.setWalletType(account.getWalletType());
