@@ -89,7 +89,7 @@ public class AccountServiceImpl implements AccountService {
                 throw new IllegalStateException("Veuillez renseignez les données correctement");
 
 
-            } else throw new EntityNotFoundException("Retailer with id" + ": " + id + " don't exist");
+            } else throw new ResourceNotFoundException("Retailer with id" + ": " + id + " don't exist");
 
         }
         // Si le retailer a deja au moins un compte :
@@ -129,7 +129,7 @@ public class AccountServiceImpl implements AccountService {
 
                     } throw new IllegalStateException("Veuillez renseignez les donnez correctement");
 
-                } else throw new EntityNotFoundException("Retailer with id" + ": " + id + " don't exist");
+                } else throw new ResourceNotFoundException("Retailer with id" + ": " + id + " don't exist");
             }
         }
     }
@@ -281,7 +281,7 @@ public class AccountServiceImpl implements AccountService {
             transferAccountRepository.save(existingAccount.get());
             return dto;
         }
-        else throw new EntityNotFoundException("Account with id"+": "+id+ " don't exist");
+        else throw new ResourceNotFoundException("Account with id"+": "+id+ " don't exist");
     }
 
     /**
@@ -294,7 +294,7 @@ public class AccountServiceImpl implements AccountService {
         Optional<Account> existingAccount = transferAccountRepository.findById(id);
         if (existingAccount.isPresent())
             return existingAccount.get().getPhoneNumber();
-        else throw new EntityNotFoundException("Account with id"+": "+id+ " don't exist");
+        else throw new ResourceNotFoundException("Account with id"+": "+id+ " don't exist");
     }
 
     /**
@@ -329,7 +329,7 @@ public class AccountServiceImpl implements AccountService {
                account.setPhoneNumber(compte.getPhoneNumber());
                return account;
         }
-        else throw new EntityNotFoundException("Account with id"+": "+id+ " don't exist");
+        else throw new ResourceNotFoundException("Account with id "+id+ " don't exist");
         //return null;
     }
 
@@ -343,7 +343,7 @@ public class AccountServiceImpl implements AccountService {
         if (existingAccount.isPresent()) {
             transferAccountRepository.deleteById(id);
         }
-        else throw new EntityNotFoundException("Account with id"+": "+id+ " don't exist");
+        else throw new ResourceNotFoundException("Account with id"+": "+id+ " don't exist");
     }
 
     /**
@@ -411,7 +411,7 @@ public class AccountServiceImpl implements AccountService {
                     .build();
              return dto;
         }
-       throw new EntityNotFoundException("This user isn't a retailer");
+       throw new ResourceNotFoundException("This user isn't a retailer");
     }
 
 
@@ -496,7 +496,7 @@ public class AccountServiceImpl implements AccountService {
             throw new ChangePinCodeException("You must enter the new encryptedPinCode");
 
             // return responseChangePinCodeDto;
-        } else if (msisdn==null|| customerType==null || walletType==null) {
+        } else if (msisdn == null || customerType == null || walletType == null) {
             responseChangePinCodeDto.setErrorCode("27");
             responseChangePinCodeDto.setErrorMessage("CustomerType,WalletType or msisdn cannot be null");
             responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
