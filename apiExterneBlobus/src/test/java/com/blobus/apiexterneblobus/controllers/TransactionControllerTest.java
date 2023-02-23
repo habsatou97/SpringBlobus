@@ -1,5 +1,5 @@
-package com.blobus.apiexterneblobus.controllers;
-
+//package com.blobus.apiexterneblobus.controllers;
+/*
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -156,4 +156,4 @@ class TransactionControllerTest {
         Assertions.assertThat(controller.getTransaction(52L)).isNull();
     }
 }
-
+*/

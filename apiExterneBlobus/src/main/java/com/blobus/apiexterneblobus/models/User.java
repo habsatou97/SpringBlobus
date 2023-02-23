@@ -72,7 +72,7 @@ public class User implements UserDetails {
         this.userSecret=userSecret;
     }
   //  public User(){}
-    @OneToMany(mappedBy = "retailer")
+    @OneToMany(mappedBy = "retailer",fetch = FetchType.EAGER)
     private List<Bulk> bulks = new ArrayList<>();
 
     public void addTransferAccounts(Account transferAccount) {

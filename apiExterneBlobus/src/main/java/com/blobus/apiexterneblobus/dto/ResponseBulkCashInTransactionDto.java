@@ -11,6 +11,8 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @SuperBuilder
 @JsonInclude(NON_NULL)
 public class ResponseBulkCashInTransactionDto {
-    private Long bulkId;
+    private Long transactionId;
     private TransactionStatus status;
+    private String errorCode;
+    private String errorMessage;
 }
