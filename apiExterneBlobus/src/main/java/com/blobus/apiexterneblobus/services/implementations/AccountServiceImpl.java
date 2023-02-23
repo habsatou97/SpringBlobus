@@ -97,7 +97,7 @@ public class AccountServiceImpl implements AccountService {
 
             for (Account cpt : comptes ) {
                 WalletType type = cpt.getWalletType();
-                if (type == transferAccount.getWalletType())
+                if (type.equals(transferAccount.getWalletType()))
                     i++;
             }
             if (i != 0) {
@@ -221,24 +221,19 @@ public class AccountServiceImpl implements AccountService {
 
     /**
      * Cette methode permet de visualiser les informations d'un compte de transfert
-     *
      * @param id
      * @return
      */
     @Override
-    public CreateOrEditAccountDto getTransfertAccountById(Long id) {
-
-        Optional<Account> existingAccount = transferAccountRepository.findById(id);
-        CreateOrEditAccountDto dto =  CreateOrEditAccountDto.builder().build();
-        if (existingAccount.isPresent()) {
-            dto.setPhoneNumber(existingAccount.get().getPhoneNumber());
-            dto.setWalletType(existingAccount.get().getWalletType());
-            dto.setEncryptedPinCode(existingAccount.get().getEncryptedPinCode());
-            dto.setBalance(existingAccount.get().getBalance());
+    public Optional<CreateOrEditAccountDto> getTransfertAccountById(Long id) {
+        return transferAccountRepository.findById(id).stream().map(account -> {
+            CreateOrEditAccountDto dto =  CreateOrEditAccountDto.builder().build();
+            dto.setPhoneNumber(account.getPhoneNumber());
+            dto.setWalletType(account.getWalletType());
+            dto.setEncryptedPinCode(account.getEncryptedPinCode());
+            dto.setBalance(account.getBalance());
             return dto;
-        }
-        else throw new EntityNotFoundException("Account with id"+": "+id+ " don't exist");
-
+        }).findAny();
 
     }
 
