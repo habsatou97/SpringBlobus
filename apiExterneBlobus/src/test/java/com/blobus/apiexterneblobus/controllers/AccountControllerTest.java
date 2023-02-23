@@ -149,7 +149,7 @@ class AccountControllerTest {
         KeyGeneratorImpl key = mock(KeyGeneratorImpl.class);
         when(repository.findById((Long) any())).thenReturn(Optional.of(account1));
 
-        ResponseEntity<Optional<CreateOrEditAccountDto>> result = (new AccountController(
+        ResponseEntity<CreateOrEditAccountDto> result = (new AccountController(
                 new AccountServiceImpl(repository),key)).getOne(2L);
 
         assertTrue(result.hasBody());
@@ -217,7 +217,7 @@ class AccountControllerTest {
     }
 
     @Test
-    void saveRetailer() {
+    void saveRetailer() throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
 
         AccountRepository repository= mock(AccountRepository.class);
         UserRepository userRepository= mock(UserRepository.class);

@@ -221,19 +221,24 @@ public class AccountServiceImpl implements AccountService {
 
     /**
      * Cette methode permet de visualiser les informations d'un compte de transfert
+     *
      * @param id
      * @return
      */
     @Override
-    public Optional<CreateOrEditAccountDto> getTransfertAccountById(Long id) {
-        return transferAccountRepository.findById(id).stream().map(account -> {
-            CreateOrEditAccountDto dto =  CreateOrEditAccountDto.builder().build();
-            dto.setPhoneNumber(account.getPhoneNumber());
-            dto.setWalletType(account.getWalletType());
-            dto.setEncryptedPinCode(account.getEncryptedPinCode());
-            dto.setBalance(account.getBalance());
+    public CreateOrEditAccountDto getTransfertAccountById(Long id) {
+
+        Optional<Account> existingAccount = transferAccountRepository.findById(id);
+        CreateOrEditAccountDto dto =  CreateOrEditAccountDto.builder().build();
+        if (existingAccount.isPresent()) {
+            dto.setPhoneNumber(existingAccount.get().getPhoneNumber());
+            dto.setWalletType(existingAccount.get().getWalletType());
+            dto.setEncryptedPinCode(existingAccount.get().getEncryptedPinCode());
+            dto.setBalance(existingAccount.get().getBalance());
             return dto;
-        }).findAny();
+        }
+        else throw new EntityNotFoundException("Account with id"+": "+id+ " don't exist");
+
 
     }
 

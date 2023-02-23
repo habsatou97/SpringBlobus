@@ -64,15 +64,15 @@ public class AccountController {
 
     }
     @GetMapping("{id}")
-    public ResponseEntity<Optional<CreateOrEditAccountDto>> getOne(@PathVariable Long id)
+    public ResponseEntity<CreateOrEditAccountDto> getOne(@PathVariable Long id)
             throws NoSuchPaddingException, IllegalBlockSizeException,
             IOException, NoSuchAlgorithmException,
             BadPaddingException, InvalidKeyException {
 
-        Optional<CreateOrEditAccountDto> accountDto=transferAccountService.getTransfertAccountById(id);
+        CreateOrEditAccountDto accountDto=transferAccountService.getTransfertAccountById(id);
         DecryptDto decryptDto=new DecryptDto();
-        decryptDto.setEncryptedPinCode(accountDto.get().getEncryptedPinCode());
-        accountDto.get().setEncryptedPinCode(keyGenerator.decrypt(decryptDto));
+        decryptDto.setEncryptedPinCode(accountDto.getEncryptedPinCode());
+        accountDto.setEncryptedPinCode(keyGenerator.decrypt(decryptDto));
 
         return ResponseEntity.ok().body(accountDto);
     }
