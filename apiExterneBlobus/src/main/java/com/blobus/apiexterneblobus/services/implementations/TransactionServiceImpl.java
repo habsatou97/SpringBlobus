@@ -12,9 +12,17 @@ import com.blobus.apiexterneblobus.repositories.AccountRepository;
 import com.blobus.apiexterneblobus.repositories.UserRepository;
 import com.blobus.apiexterneblobus.services.interfaces.KeyGeneratorService;
 import com.blobus.apiexterneblobus.services.interfaces.TransactionService;
+import com.google.gson.Gson;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -23,11 +31,30 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 import static com.blobus.apiexterneblobus.models.enums.ErrorCode.*;
 import static com.blobus.apiexterneblobus.models.enums.TransactionStatus.*;
+
+/*@Configuration
+@EnableAsync
+class AsynchConfiguration
+{
+    @Bean(name = "asyncExecutor")
+    public Executor asyncExecutor()
+    {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(3);
+        executor.setMaxPoolSize(3);
+        executor.setQueueCapacity(100);
+        executor.setThreadNamePrefix("AsynchThread-");
+        executor.initialize();
+        return executor;
+    }
+}*/
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +64,7 @@ public class TransactionServiceImpl implements TransactionService {
     private final BulkRepository bulkRepository;
     private final UserRepository userRepository;
     private final KeyGeneratorService keyGeneratorService;
+    Logger LOGGER = LoggerFactory.getLogger(TransactionServiceImpl.class);
     @Override
     public Transaction convertDtoToEntityTransaction(RequestBodyTransactionDto requestBodyTransactionDto) {
        Optional<Account> retailerAccount = transferAccountRepository
@@ -69,44 +97,11 @@ public class TransactionServiceImpl implements TransactionService {
         return TransactionIsSuccess(requestBodyTransactionDto);
     }
     @Override
-    public ResponseCashInTransactionDto BulkCashInTransaction(RequestBodyTransactionDto[] requestBodyTransactionDtos){
-        // pour calculer le montant total a envoyer aux customer
-        double montantTotalAEnvoyerAuxCustomer = Arrays.stream(requestBodyTransactionDtos)
-                .map(requestBodyTransactionDto1 -> requestBodyTransactionDto1.getAmount().getValue())
-                .reduce(0.0,Double::sum);
-
-        // pour recuperer le compte du retailer
-        Optional<Account> retailerAccount = transferAccountRepository
-                .findByPhoneNumberAndWalletType(
-                        requestBodyTransactionDtos[0].getRetailer().getPhoneNumber(),
-                        requestBodyTransactionDtos[0].getRetailer().getWalletType()
-                );
-
-        if (retailerAccount.isPresent()){
-            if (balanceIsSufficient(retailerAccount.get(),montantTotalAEnvoyerAuxCustomer)){
-                Bulk bulk = new Bulk(); // creation du Bulk du retailer
-                bulk = bulkRepository.save(bulk);
-                retailerAccount.get().getRetailer().addBulks(bulk);
-                userRepository.save(retailerAccount.get().getRetailer());
-                bulk.setRetailer(retailerAccount.get().getRetailer());
-                bulk = bulkRepository.save(bulk);
-                return BulkTransactionIsSuccess(requestBodyTransactionDtos,bulk);
-            }else {
-                return ResponseCashInTransactionDto
-                        .builder()
-                        .status(FAILED)
-                        .errorCode(BALANCE_INSUFFICIENT.getErrorCode())
-                        .errorMessage(BALANCE_INSUFFICIENT.getErrorMessage())
-                        .build();
-            }
-        }else {
-            return ResponseCashInTransactionDto
-                    .builder()
-                    .status(REJECTED)
-                    .errorCode(RETAILER_ACCOUNT_DOES_NOT_EXIST.getErrorCode())
-                    .errorMessage(RETAILER_ACCOUNT_DOES_NOT_EXIST.getErrorMessage())
-                    .build();
-        }
+    //@Async("asyncExecutor")
+    public void BulkCashInTransaction(HttpServletRequest request, RequestBodyTransactionDto[] requestBodyTransactionDtos) throws InterruptedException, JSONException {
+        LOGGER.info("Debut de la transaction");
+        BulkTransactionIsSuccess(request, requestBodyTransactionDtos);
+        //return null;
     }
 
     /**
@@ -239,21 +234,38 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Transactional
     // pour effectuer une transaction BulkCashIn (operation intermediaire)
-    private ResponseCashInTransactionDto BulkTransactionIsSuccess(RequestBodyTransactionDto[] requestBodyTransactionDtos, Bulk bulk){
-        for (RequestBodyTransactionDto requestBodyTransactionDto : requestBodyTransactionDtos) {
-            Optional<Account> retailerAccount = transferAccountRepository
-                    .findByPhoneNumberAndWalletType(
-                            requestBodyTransactionDto.getRetailer().getPhoneNumber(),
-                            requestBodyTransactionDto.getRetailer().getWalletType()
-                    );
-            Optional<Account> customerAccount = transferAccountRepository
-                    .findByPhoneNumberAndWalletType(
-                            requestBodyTransactionDto.getCustomer().getPhoneNumber(),
-                            requestBodyTransactionDto.getCustomer().getWalletType()
-                    );
+    private void BulkTransactionIsSuccess(HttpServletRequest request, RequestBodyTransactionDto[] requestBodyTransactionDtos) throws InterruptedException, JSONException {
+        // pour recuperer le compte du retailer
+        Optional<Account> retailerAccountBulk = transferAccountRepository
+                .findByPhoneNumberAndWalletType(
+                        requestBodyTransactionDtos[0].getRetailer().getPhoneNumber(),
+                        requestBodyTransactionDtos[0].getRetailer().getWalletType()
+                );
+        List<ResponseCashInTransactionDto> responseCashInTransactionDtos = new ArrayList<>();
 
-            if (retailerAccount.isPresent()) {
-                if (codePinIsvalid(retailerAccount.get(),requestBodyTransactionDto.getRetailer().getEncryptedPinCode())) {
+        if (retailerAccountBulk.isPresent()) {
+
+            Bulk bulk = new Bulk(); // creation du Bulk du retailer
+            bulk = bulkRepository.save(bulk);
+            retailerAccountBulk.get().getRetailer().addBulks(bulk);
+            userRepository.save(retailerAccountBulk.get().getRetailer());
+            bulk.setRetailer(retailerAccountBulk.get().getRetailer());
+            bulk = bulkRepository.save(bulk);
+
+            for (RequestBodyTransactionDto requestBodyTransactionDto : requestBodyTransactionDtos) {
+                Optional<Account> retailerAccount = transferAccountRepository
+                        .findByPhoneNumberAndWalletType(
+                                requestBodyTransactionDto.getRetailer().getPhoneNumber(),
+                                requestBodyTransactionDto.getRetailer().getWalletType()
+                        );
+                Optional<Account> customerAccount = transferAccountRepository
+                        .findByPhoneNumberAndWalletType(
+                                requestBodyTransactionDto.getCustomer().getPhoneNumber(),
+                                requestBodyTransactionDto.getCustomer().getWalletType()
+                        );
+
+
+                if (codePinIsvalid(retailerAccount.get(), requestBodyTransactionDto.getRetailer().getEncryptedPinCode())) {
                     if (customerAccount.isPresent()) {
                         Transaction transaction = convertDtoToEntityTransaction(requestBodyTransactionDto);
                         if (balanceIsSufficient(transaction.getRetailerTransferAccount(), transaction.getAmount())) {
@@ -266,7 +278,7 @@ public class TransactionServiceImpl implements TransactionService {
                             transaction.getCustomerTransferAccount().getCustomerTransactions().add(transactionSave);
                             transferAccountRepository.save(transaction.getRetailerTransferAccount());
                             transferAccountRepository.save(transaction.getCustomerTransferAccount());
-                            transaction.setStatus(TERMINATED);
+                            transaction.setStatus(SUCCESS);
                             transactionSave = transactionRepository.save(transactionSave);
                             transactionRepository.save(transaction);
 
@@ -275,45 +287,76 @@ public class TransactionServiceImpl implements TransactionService {
                             bulkRepository.save(bulk);
                             transactionRepository.save(transaction);
 
+                            ResponseCashInTransactionDto responseCashInTransactionDto =
+                                    ResponseCashInTransactionDto
+                                            .builder()
+                                            .transactionId(transaction.getId())
+                                            .status(SUCCESS)
+                                            .reference(transaction.getReference())
+                                            .customerPhoneNumber(customerAccount.get().getPhoneNumber())
+                                            .build();
+                            responseCashInTransactionDtos.add(responseCashInTransactionDto);
+
                         } else {
-                            return ResponseCashInTransactionDto
-                                    .builder()
-                                    .status(FAILED)
-                                    .errorCode(BALANCE_INSUFFICIENT.getErrorCode())
-                                    .errorMessage(BALANCE_INSUFFICIENT.getErrorMessage())
-                                    .build();
+                            responseCashInTransactionDtos.add(
+                                    ResponseCashInTransactionDto
+                                            .builder()
+                                            .reference(requestBodyTransactionDto.getReference())
+                                            .status(FAILED)
+                                            .errorCode(BALANCE_INSUFFICIENT.getErrorCode())
+                                            .errorMessage(BALANCE_INSUFFICIENT.getErrorMessage())
+                                            .customerPhoneNumber(requestBodyTransactionDto.getCustomer().getPhoneNumber())
+                                            .build()
+                            );
                         }
                     } else {
-                        return ResponseCashInTransactionDto
-                                .builder()
-                                .status(REJECTED)
-                                .errorCode(CUSTOMER_ACCOUNT_DOES_NOT_EXIST.getErrorCode())
-                                .errorMessage(CUSTOMER_ACCOUNT_DOES_NOT_EXIST.getErrorMessage())
-                                .build();
+                        ResponseCashInTransactionDto responseCashInTransactionDto =
+                                ResponseCashInTransactionDto
+                                        .builder()
+                                        .reference(requestBodyTransactionDto.getReference())
+                                        .status(REJECTED)
+                                        .errorCode(CUSTOMER_ACCOUNT_DOES_NOT_EXIST.getErrorCode())
+                                        .errorMessage(CUSTOMER_ACCOUNT_DOES_NOT_EXIST.getErrorMessage())
+                                        .customerPhoneNumber(requestBodyTransactionDto.getCustomer().getPhoneNumber())
+                                        .build();
+                        responseCashInTransactionDtos.add(responseCashInTransactionDto);
                     }
                 } else {
-                    return ResponseCashInTransactionDto
-                            .builder()
-                            .status(FAILED)
-                            .errorCode(INVALID_PIN_CODE.getErrorCode())
-                            .errorMessage(INVALID_PIN_CODE.getErrorMessage())
-                            .build();
+                    responseCashInTransactionDtos.add(
+                            ResponseCashInTransactionDto
+                                    .builder()
+                                    .reference(requestBodyTransactionDto.getReference())
+                                    .status(FAILED)
+                                    .errorCode(INVALID_PIN_CODE.getErrorCode())
+                                    .errorMessage(INVALID_PIN_CODE.getErrorMessage())
+                                    .build()
+                    );
+                    break;
                 }
-            } else {
-                return ResponseCashInTransactionDto
-                        .builder()
-                        .status(REJECTED)
-                        .errorCode(RETAILER_ACCOUNT_DOES_NOT_EXIST.getErrorCode())
-                        .errorMessage(RETAILER_ACCOUNT_DOES_NOT_EXIST.getErrorMessage())
-                        .build();
             }
+        }else {
+            responseCashInTransactionDtos.add(
+                    ResponseCashInTransactionDto
+                            .builder()
+                            .status(REJECTED)
+                            .errorCode(RETAILER_ACCOUNT_DOES_NOT_EXIST.getErrorCode())
+                            .errorMessage(RETAILER_ACCOUNT_DOES_NOT_EXIST.getErrorMessage())
+                            .build()
+            );
         }
-        // le retour si tout se passe bien
-        return ResponseCashInTransactionDto
-                .builder()
-                .status(TERMINATED)
-                .bulkId(bulk.getBulkId())
-                .build();
+
+        String xCallbackUrl = request.getHeader("x-callback-url");
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        JSONObject JsonObject = new JSONObject();
+        String jsonList = new Gson().toJson(responseCashInTransactionDtos);
+
+        HttpEntity<String> requestHttp = new HttpEntity<String>(jsonList.toString(), headers);
+
+        String responseEntity = restTemplate.postForObject(xCallbackUrl, requestHttp, String.class);
+        //LOGGER.info("x-callback-url: "+ xCallbackUrl);
+        //LOGGER.info("Fin de la transaction");
     }
 
     //pour verifier si le solde du compte est suffisant

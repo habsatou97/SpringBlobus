@@ -5,6 +5,8 @@ import com.blobus.apiexterneblobus.dto.RequestBodyTransactionDto;
 import com.blobus.apiexterneblobus.dto.ResponseCashInTransactionDto;
 import com.blobus.apiexterneblobus.dto.TransactionDto;
 import com.blobus.apiexterneblobus.models.Transaction;
+import jakarta.servlet.http.HttpServletRequest;
+import org.json.JSONException;
 
 public interface TransactionService {
     // pour convertir le requestBody en Transaction
@@ -12,7 +14,7 @@ public interface TransactionService {
     // pour effectuer une transaction CashIn
     ResponseCashInTransactionDto CashInTransaction(RequestBodyTransactionDto requestBodyTransactionDto);
     // pour effectuer une transaction BulkCashIn
-    ResponseCashInTransactionDto BulkCashInTransaction(RequestBodyTransactionDto[] requestBodyTransactionDto);
+    void BulkCashInTransaction(HttpServletRequest request, RequestBodyTransactionDto[] requestBodyTransactionDto) throws InterruptedException, JSONException;
 
     public TransactionDto getTransactionStatus(Long transactionId);
 

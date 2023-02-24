@@ -2,14 +2,7 @@ package com.blobus.apiexterneblobus.models;
 
 import com.blobus.apiexterneblobus.models.enums.WalletType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Table;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Column;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.RequiredArgsConstructor;
@@ -47,10 +40,10 @@ public class Account {
     @JoinColumn(name = "retailer_id" ,referencedColumnName = "id",nullable = true)
     private User retailer;
 
-    @OneToMany(mappedBy = "customerTransferAccount")
+    @OneToMany(mappedBy = "customerTransferAccount",fetch = FetchType.EAGER)
     List<Transaction> customerTransactions = new ArrayList<>();
 
-    @OneToMany(mappedBy = "retailerTransferAccount")
+    @OneToMany(mappedBy = "retailerTransferAccount",fetch = FetchType.EAGER)
     List<Transaction> retailerTransactions = new ArrayList<>();
 
 }

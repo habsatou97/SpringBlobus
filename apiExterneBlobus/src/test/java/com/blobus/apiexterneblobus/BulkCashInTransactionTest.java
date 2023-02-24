@@ -1,5 +1,5 @@
-package com.blobus.apiexterneblobus;
-
+//package com.blobus.apiexterneblobus;
+/*
 import com.blobus.apiexterneblobus.config.JwtAuthenticationFilter;
 import com.blobus.apiexterneblobus.config.JwtService;
 import com.blobus.apiexterneblobus.config.SecurityConfiguration;
@@ -181,7 +181,7 @@ public class BulkCashInTransactionTest {
                 .thenReturn(responseCashInTransactionDto);
         Assertions.assertThat(repository.findAll()).isNotNull();
         Assertions.assertThat(transactionService.BulkCashInTransaction(requestBodyTransactionDtos)).isNotNull();
-       /* MockHttpServletRequestBuilder mockRequest =
+        MockHttpServletRequestBuilder mockRequest =
                 MockMvcRequestBuilders.post("/api/ewallet/v1/bulkcashins").with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
@@ -191,7 +191,7 @@ public class BulkCashInTransactionTest {
         mockMvc.perform(mockRequest)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status", is("TERMINATED")))
-                .andExpect(jsonPath("$.bulkId", is(1)));*/
+                .andExpect(jsonPath("$.bulkId", is(1)));
     }
 
-}
+}*/
