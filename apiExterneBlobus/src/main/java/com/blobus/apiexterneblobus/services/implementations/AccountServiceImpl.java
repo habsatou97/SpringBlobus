@@ -462,30 +462,46 @@ public class AccountServiceImpl implements AccountService {
         ResponseChangePinCodeDto responseChangePinCodeDto = new ResponseChangePinCodeDto();
 
         Optional<Account> account = transferAccountRepository.findByPhoneNumberAndWalletType(msisdn,walletType);
-        if(customerType!= CustomerType.RETAILER){
-            throw new ChangePinCodeException("Only a retailer is allow to do this operation !!");
+        if (msisdn == null || customerType == null || walletType == null) {
+            responseChangePinCodeDto.setErrorCode("27");
+            responseChangePinCodeDto.setErrorMessage("CustomerType,WalletType or msisdn cannot be null");
+            responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
+            //throw new ChangePinCodeException("CustomerType,WalletType or msisdn cannot be null");
+            return responseChangePinCodeDto;
+
         }
+        else if (msisdn.length() != 9) {
+            responseChangePinCodeDto.setErrorCode(ErrorCode.CUSTOMER_MSISDN_IS_INVALID.getErrorCode());
+            responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseChangePinCodeDto.setErrorMessage("A valid msisdn must have 9 caracters !!");
+            return responseChangePinCodeDto;
+            //throw new ChangePinCodeException("A valid msisdn must have 9 caracters !!");
+
+        }
+
         else if(!account.isPresent()) {
             responseChangePinCodeDto.setErrorCode("2000");
             responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseChangePinCodeDto.setErrorMessage("An account with this msisdn and walletType does not exist !!");
             return responseChangePinCodeDto;
-        } else if (msisdn.length() != 9) {
-            responseChangePinCodeDto.setErrorCode(ErrorCode.CUSTOMER_MSISDN_IS_INVALID.getErrorCode());
-            responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
-            //return responseChangePinCodeDto;
-            throw new ChangePinCodeException("A valid msisdn must have 9 caracters !!");
 
-        } else if (requestBodyChangePinCodeDto == null) {
+
+        }
+
+        else if (requestBodyChangePinCodeDto == null) {
             responseChangePinCodeDto.setErrorCode("21");
             responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseChangePinCodeDto.setErrorMessage("Request Body cannot be null !!");
             return responseChangePinCodeDto;
 
-        } else if (content_type==null) {
+        }
+
+        else if (content_type==null) {
             responseChangePinCodeDto.setErrorCode("25");
             responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
             responseChangePinCodeDto.setErrorMessage("This request needs headers");
-           // return responseChangePinCodeDto;
-            throw new ChangePinCodeException("This request needs headers");
+            return responseChangePinCodeDto;
+            //throw new ChangePinCodeException("This request needs headers");
 
 
         } else if (requestBodyChangePinCodeDto.getEncryptedNewPinCode() == null ||
@@ -493,18 +509,10 @@ public class AccountServiceImpl implements AccountService {
             responseChangePinCodeDto.setErrorCode("22");
             responseChangePinCodeDto.setErrorMessage("You must enter the new encryptedPinCode");
             responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
-            throw new ChangePinCodeException("You must enter the new encryptedPinCode");
+            return responseChangePinCodeDto;
+            //throw new ChangePinCodeException("You must enter the new encryptedPinCode");
 
-            // return responseChangePinCodeDto;
-        } else if (msisdn == null || customerType == null || walletType == null) {
-            responseChangePinCodeDto.setErrorCode("27");
-            responseChangePinCodeDto.setErrorMessage("CustomerType,WalletType or msisdn cannot be null");
-            responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
-            throw new ChangePinCodeException("CustomerType,WalletType or msisdn cannot be null");
-
-            // return responseChangePinCodeDto;
-
-        } else {
+        }  else {
 
             decryptDto.setEncryptedPinCode(account.get().getEncryptedPinCode());
             String enc = keyGeneratorService.decrypt(decryptDto);
@@ -525,7 +533,9 @@ public class AccountServiceImpl implements AccountService {
             }
             else
             {
-                throw new ChangePinCodeException("Les deux pincodes ne correspondent pas");
+                responseChangePinCodeDto.setErrorMessage("Two Encrypted pin codes did'nt match!");
+                responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
+                return responseChangePinCodeDto;
             }
         }
 
