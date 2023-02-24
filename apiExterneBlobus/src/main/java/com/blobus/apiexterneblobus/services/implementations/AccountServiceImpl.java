@@ -478,13 +478,11 @@ public class AccountServiceImpl implements AccountService {
             //throw new ChangePinCodeException("A valid msisdn must have 9 caracters !!");
 
         }
-
         else if(!account.isPresent()) {
             responseChangePinCodeDto.setErrorCode("2000");
             responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
             responseChangePinCodeDto.setErrorMessage("An account with this msisdn and walletType does not exist !!");
             return responseChangePinCodeDto;
-
 
         } else if(account.get().getCustomer()==null && customerType==CustomerType.CUSTOMER) {
 
@@ -499,9 +497,7 @@ public class AccountServiceImpl implements AccountService {
             responseChangePinCodeDto.setErrorMessage("This account doesn't belong to a retailer!!");
             return responseChangePinCodeDto;
 
-
         }
-
         else if (requestBodyChangePinCodeDto == null) {
             responseChangePinCodeDto.setErrorCode("21");
             responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
@@ -509,14 +505,12 @@ public class AccountServiceImpl implements AccountService {
             return responseChangePinCodeDto;
 
         }
-
         else if (content_type==null) {
             responseChangePinCodeDto.setErrorCode("25");
             responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
             responseChangePinCodeDto.setErrorMessage("This request needs headers");
             return responseChangePinCodeDto;
             //throw new ChangePinCodeException("This request needs headers");
-
 
         } else if (requestBodyChangePinCodeDto.getEncryptedNewPinCode() == null ||
                 requestBodyChangePinCodeDto.getEncryptedPinCode() == null) {
