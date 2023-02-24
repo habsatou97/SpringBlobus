@@ -107,8 +107,9 @@ public class AccountController {
             IOException, NoSuchAlgorithmException, BadPaddingException,
             InvalidKeySpecException, InvalidKeyException {
 
-        transferAccount.setEncryptedPinCode(transferAccount.getEncryptedPinCode());
-                //keyGenerator.encrypt(new DecryptDto(transferAccount.getEncryptedPinCode())));
+        transferAccount.setEncryptedPinCode(
+                keyGenerator.encrypt(new DecryptDto(transferAccount.getEncryptedPinCode())));
+
         DecryptDto decryptDto=new DecryptDto();
         CreateOrEditAccountDto accountDto=
                 transferAccountService.createRetailerTransfertAccount(transferAccount,id);
