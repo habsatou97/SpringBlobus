@@ -462,14 +462,27 @@ public class AccountServiceImpl implements AccountService {
         ResponseChangePinCodeDto responseChangePinCodeDto = new ResponseChangePinCodeDto();
 
         Optional<Account> account = transferAccountRepository.findByPhoneNumberAndWalletType(msisdn,walletType);
-        if (msisdn == null || customerType == null || walletType == null) {
+         if (requestBodyChangePinCodeDto == null) {
+            responseChangePinCodeDto.setErrorCode("21");
+            responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseChangePinCodeDto.setErrorMessage("Request Body cannot be null !!");
+            //return responseChangePinCodeDto;
+             throw new ChangePinCodeException("Request Body cannot be null !!");
+
+        }
+        else if (msisdn == null || customerType == null || walletType == null) {
             responseChangePinCodeDto.setErrorCode("27");
             responseChangePinCodeDto.setErrorMessage("CustomerType,WalletType or msisdn cannot be null");
             responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
             //throw new ChangePinCodeException("CustomerType,WalletType or msisdn cannot be null");
             return responseChangePinCodeDto;
 
-        }
+        }else if(customerType!=CustomerType.RETAILER) {
+             responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
+             responseChangePinCodeDto.setErrorMessage("Only a retailer is allow to do this operation!!");
+             return responseChangePinCodeDto;
+         }
+
         else if (msisdn.length() != 9) {
             responseChangePinCodeDto.setErrorCode(ErrorCode.CUSTOMER_MSISDN_IS_INVALID.getErrorCode());
             responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
@@ -484,24 +497,9 @@ public class AccountServiceImpl implements AccountService {
             responseChangePinCodeDto.setErrorMessage("An account with this msisdn and walletType does not exist !!");
             return responseChangePinCodeDto;
 
-        } else if(account.get().getCustomer()==null && customerType==CustomerType.CUSTOMER) {
-
+        } else if(account.get().getRetailer()==null) {
             responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
-            responseChangePinCodeDto.setErrorMessage("This account doesn't belong to a customer !!");
-            return responseChangePinCodeDto;
-
-
-        }else if(account.get().getRetailer()==null && customerType==CustomerType.RETAILER) {
-
-            responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
-            responseChangePinCodeDto.setErrorMessage("This account doesn't belong to a retailer!!");
-            return responseChangePinCodeDto;
-
-        }
-        else if (requestBodyChangePinCodeDto == null) {
-            responseChangePinCodeDto.setErrorCode("21");
-            responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
-            responseChangePinCodeDto.setErrorMessage("Request Body cannot be null !!");
+            responseChangePinCodeDto.setErrorMessage("The account  to change pin code must belong to a retailer !!");
             return responseChangePinCodeDto;
 
         }
@@ -509,8 +507,8 @@ public class AccountServiceImpl implements AccountService {
             responseChangePinCodeDto.setErrorCode("25");
             responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
             responseChangePinCodeDto.setErrorMessage("This request needs headers");
-            return responseChangePinCodeDto;
-            //throw new ChangePinCodeException("This request needs headers");
+            //return responseChangePinCodeDto;
+            throw new ChangePinCodeException("This request needs headers");
 
         } else if (requestBodyChangePinCodeDto.getEncryptedNewPinCode() == null ||
                 requestBodyChangePinCodeDto.getEncryptedPinCode() == null) {
@@ -541,7 +539,7 @@ public class AccountServiceImpl implements AccountService {
             }
             else
             {
-                responseChangePinCodeDto.setErrorMessage("Two Encrypted pin codes did'nt match!");
+                responseChangePinCodeDto.setErrorMessage("The two Encrypted pin codes doesn't match!");
                 responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
                 return responseChangePinCodeDto;
             }
