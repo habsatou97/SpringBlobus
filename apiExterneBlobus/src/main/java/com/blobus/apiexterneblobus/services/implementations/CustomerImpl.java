@@ -35,10 +35,12 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class CustomerImpl implements CustomerService {
+
     private final CustomerRepository customerRepository;
     private final AccountService accountService;
 
     private final KeyGeneratorImpl keyGenerator;
+
 
     /**
      * find single customer DTO
@@ -46,13 +48,14 @@ public class CustomerImpl implements CustomerService {
      * @return
      */
     @Override
-    public CustomerEditCreateDto findOneDto(Long id) {
+    public CustomerReturnDto findOneDto(Long id) {
         Customer customer = customerRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Customer with id"+": "+id+ " don't exist"));
-        CustomerEditCreateDto customerEditCreateDto = new CustomerEditCreateDto();
+        CustomerReturnDto customerEditCreateDto = new CustomerReturnDto();
         customerEditCreateDto.setEmail(customer.getEmail());
         customerEditCreateDto.setFirstName(customer.getFirstName());
         customerEditCreateDto.setPhoneNumber(customer.getPhoneNumber());
         customerEditCreateDto.setLastName(customer.getLastName());
+
         return customerEditCreateDto;
     }
 
@@ -105,7 +108,7 @@ public class CustomerImpl implements CustomerService {
         return customerRepository.save(customer);
     }
 
-    public CustomerEditCreateDto saveDto(CustomerEditCreateDto customer) throws IllegalArgumentException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
+    public CustomerReturnDto saveDto(CustomerEditCreateDto customer) throws IllegalArgumentException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
         if (!findByEmail(customer.getEmail())) {
             throw new IllegalArgumentException("This email is taken.");
         }
@@ -117,7 +120,7 @@ public class CustomerImpl implements CustomerService {
                 customer.getLastName().isEmpty() ||
                 customer.getEmail().isEmpty()
         ) throw new IllegalStateException("Firstname, lastname, email or phone Number cannot be empty.");
-        CustomerEditCreateDto customerEditCreateDto = new CustomerEditCreateDto();
+        CustomerReturnDto customerEditCreateDto = new CustomerReturnDto();
         customerEditCreateDto.setEmail(customer.getEmail());
         customerEditCreateDto.setFirstName(customer.getFirstName());
         customerEditCreateDto.setPhoneNumber(customer.getPhoneNumber());
@@ -146,7 +149,7 @@ public class CustomerImpl implements CustomerService {
         }).toList();
         customer.setTransferAccounts(accounts);
 
-        customerEditCreateDto.setTransferAccounts(customer.getTransferAccounts());
+//        customerEditCreateDto.setTransferAccounts(customer.getTransferAccounts());
 
         return customerEditCreateDto;
     }

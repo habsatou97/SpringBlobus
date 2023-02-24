@@ -236,19 +236,7 @@ public class AccountController {
        return   ResponseEntity.ok(accountDto);
     }
 
-    @PostMapping("changePinCode")
-    ResponseEntity<ResponseChangePinCodeDto> changePinCode(
-            @RequestBody RequestBodyChangePinCodeDto requestBodyChangePinCodeDto,
-            @RequestParam String msisdn, @RequestParam CustomerType customerType,
-            @RequestParam WalletType walletType,
-            @RequestHeader String content_type)
-            throws NoSuchPaddingException, IllegalBlockSizeException,
-            IOException, NoSuchAlgorithmException, BadPaddingException,
-            InvalidKeySpecException, InvalidKeyException, ChangePinCodeException {
 
-        return ResponseEntity.ok(transferAccountService
-                .changePinCode(requestBodyChangePinCodeDto,msisdn,customerType,walletType, content_type));
-    }
 
 
 
