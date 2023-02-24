@@ -486,6 +486,20 @@ public class AccountServiceImpl implements AccountService {
             return responseChangePinCodeDto;
 
 
+        } else if(account.get().getCustomer()==null && customerType==CustomerType.CUSTOMER) {
+
+            responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseChangePinCodeDto.setErrorMessage("This account doesn't belong to a customer !!");
+            return responseChangePinCodeDto;
+
+
+        }else if(account.get().getRetailer()==null && customerType==CustomerType.RETAILER) {
+
+            responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseChangePinCodeDto.setErrorMessage("This account doesn't belong to a retailer!!");
+            return responseChangePinCodeDto;
+
+
         }
 
         else if (requestBodyChangePinCodeDto == null) {
