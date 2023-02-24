@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
 
 
 
-    @ExceptionHandler({EmailAlreadyExistException.class, IllegalArgumentException.class, HttpRequestMethodNotSupportedException.class})
+    @ExceptionHandler({EmailAlreadyExistException.class, IllegalArgumentException.class, HttpRequestMethodNotSupportedException.class, IllegalStateException.class})
     public ResponseEntity<ApiResponse> handlerResourceEmailNotExist(Exception ex){
         return new ResponseEntity<>(ApiResponse.builder().message(ex.getMessage()).status(HttpStatus.INTERNAL_SERVER_ERROR).success(true).build(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
