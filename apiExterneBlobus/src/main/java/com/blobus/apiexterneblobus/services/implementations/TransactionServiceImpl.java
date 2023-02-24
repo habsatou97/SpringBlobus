@@ -11,18 +11,14 @@ import com.blobus.apiexterneblobus.repositories.AccountRepository;
 import com.blobus.apiexterneblobus.repositories.UserRepository;
 import com.blobus.apiexterneblobus.services.interfaces.KeyGeneratorService;
 import com.blobus.apiexterneblobus.services.interfaces.TransactionService;
+import com.google.gson.Gson;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.*;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -37,12 +33,12 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.Executor;
+import java.util.concurrent.CompletableFuture;
 
 import static com.blobus.apiexterneblobus.models.enums.ErrorCode.*;
 import static com.blobus.apiexterneblobus.models.enums.TransactionStatus.*;
 
-@Configuration
+/*@Configuration
 @EnableAsync
 class AsynchConfiguration
 {
@@ -57,7 +53,7 @@ class AsynchConfiguration
         executor.initialize();
         return executor;
     }
-}
+}*/
 
 @Service
 @RequiredArgsConstructor
@@ -100,10 +96,11 @@ public class TransactionServiceImpl implements TransactionService {
         return TransactionIsSuccess(requestBodyTransactionDto);
     }
     @Override
-    @Async("asyncExecutor")
+    //@Async("asyncExecutor")
     public void BulkCashInTransaction(HttpServletRequest request, RequestBodyTransactionDto[] requestBodyTransactionDtos) throws InterruptedException, JSONException {
         LOGGER.info("Debut de la transaction");
         BulkTransactionIsSuccess(request, requestBodyTransactionDtos);
+        //return null;
     }
 
     /**
@@ -246,30 +243,31 @@ public class TransactionServiceImpl implements TransactionService {
                         requestBodyTransactionDtos[0].getRetailer().getPhoneNumber(),
                         requestBodyTransactionDtos[0].getRetailer().getWalletType()
                 );
-
-        Bulk bulk = new Bulk(); // creation du Bulk du retailer
-        bulk = bulkRepository.save(bulk);
-        retailerAccountBulk.get().getRetailer().addBulks(bulk);
-        userRepository.save(retailerAccountBulk.get().getRetailer());
-        bulk.setRetailer(retailerAccountBulk.get().getRetailer());
-        bulk = bulkRepository.save(bulk);
-
         List<ResponseCashInTransactionDto> responseCashInTransactionDtos = new ArrayList<>();
 
-        for (RequestBodyTransactionDto requestBodyTransactionDto : requestBodyTransactionDtos) {
-            Optional<Account> retailerAccount = transferAccountRepository
-                    .findByPhoneNumberAndWalletType(
-                            requestBodyTransactionDto.getRetailer().getPhoneNumber(),
-                            requestBodyTransactionDto.getRetailer().getWalletType()
-                    );
-            Optional<Account> customerAccount = transferAccountRepository
-                    .findByPhoneNumberAndWalletType(
-                            requestBodyTransactionDto.getCustomer().getPhoneNumber(),
-                            requestBodyTransactionDto.getCustomer().getWalletType()
-                    );
+        if (retailerAccountBulk.isPresent()) {
 
-            if (retailerAccount.isPresent()) {
-                if (codePinIsvalid(retailerAccount.get(),requestBodyTransactionDto.getRetailer().getEncryptedPinCode())) {
+            Bulk bulk = new Bulk(); // creation du Bulk du retailer
+            bulk = bulkRepository.save(bulk);
+            retailerAccountBulk.get().getRetailer().addBulks(bulk);
+            userRepository.save(retailerAccountBulk.get().getRetailer());
+            bulk.setRetailer(retailerAccountBulk.get().getRetailer());
+            bulk = bulkRepository.save(bulk);
+
+            for (RequestBodyTransactionDto requestBodyTransactionDto : requestBodyTransactionDtos) {
+                Optional<Account> retailerAccount = transferAccountRepository
+                        .findByPhoneNumberAndWalletType(
+                                requestBodyTransactionDto.getRetailer().getPhoneNumber(),
+                                requestBodyTransactionDto.getRetailer().getWalletType()
+                        );
+                Optional<Account> customerAccount = transferAccountRepository
+                        .findByPhoneNumberAndWalletType(
+                                requestBodyTransactionDto.getCustomer().getPhoneNumber(),
+                                requestBodyTransactionDto.getCustomer().getWalletType()
+                        );
+
+
+                if (codePinIsvalid(retailerAccount.get(), requestBodyTransactionDto.getRetailer().getEncryptedPinCode())) {
                     if (customerAccount.isPresent()) {
                         Transaction transaction = convertDtoToEntityTransaction(requestBodyTransactionDto);
                         if (balanceIsSufficient(transaction.getRetailerTransferAccount(), transaction.getAmount())) {
@@ -304,26 +302,26 @@ public class TransactionServiceImpl implements TransactionService {
                         } else {
                             responseCashInTransactionDtos.add(
                                     ResponseCashInTransactionDto
-                                    .builder()
-                                    .reference(requestBodyTransactionDto.getReference())
-                                    .status(FAILED)
-                                    .errorCode(BALANCE_INSUFFICIENT.getErrorCode())
-                                    .errorMessage(BALANCE_INSUFFICIENT.getErrorMessage())
-                                    .customerPhoneNumber(customerAccount.get().getPhoneNumber())
-                                    .build()
+                                            .builder()
+                                            .reference(requestBodyTransactionDto.getReference())
+                                            .status(FAILED)
+                                            .errorCode(BALANCE_INSUFFICIENT.getErrorCode())
+                                            .errorMessage(BALANCE_INSUFFICIENT.getErrorMessage())
+                                            .customerPhoneNumber(requestBodyTransactionDto.getCustomer().getPhoneNumber())
+                                            .build()
                             );
                         }
                     } else {
-                        responseCashInTransactionDtos.add(
+                        ResponseCashInTransactionDto responseCashInTransactionDto =
                                 ResponseCashInTransactionDto
                                         .builder()
                                         .reference(requestBodyTransactionDto.getReference())
                                         .status(REJECTED)
                                         .errorCode(CUSTOMER_ACCOUNT_DOES_NOT_EXIST.getErrorCode())
                                         .errorMessage(CUSTOMER_ACCOUNT_DOES_NOT_EXIST.getErrorMessage())
-                                        .customerPhoneNumber(customerAccount.get().getPhoneNumber())
-                                        .build()
-                        );
+                                        .customerPhoneNumber(requestBodyTransactionDto.getCustomer().getPhoneNumber())
+                                        .build();
+                        responseCashInTransactionDtos.add(responseCashInTransactionDto);
                     }
                 } else {
                     responseCashInTransactionDtos.add(
@@ -333,22 +331,20 @@ public class TransactionServiceImpl implements TransactionService {
                                     .status(FAILED)
                                     .errorCode(INVALID_PIN_CODE.getErrorCode())
                                     .errorMessage(INVALID_PIN_CODE.getErrorMessage())
-                                    .customerPhoneNumber(customerAccount.get().getPhoneNumber())
                                     .build()
                     );
+                    break;
                 }
-            } else {
-                responseCashInTransactionDtos.add(
-                        ResponseCashInTransactionDto
-                                .builder()
-                                .reference(requestBodyTransactionDto.getReference())
-                                .status(REJECTED)
-                                .errorCode(RETAILER_ACCOUNT_DOES_NOT_EXIST.getErrorCode())
-                                .errorMessage(RETAILER_ACCOUNT_DOES_NOT_EXIST.getErrorMessage())
-                                .customerPhoneNumber(customerAccount.get().getPhoneNumber())
-                                .build()
-                );
             }
+        }else {
+            responseCashInTransactionDtos.add(
+                    ResponseCashInTransactionDto
+                            .builder()
+                            .status(REJECTED)
+                            .errorCode(RETAILER_ACCOUNT_DOES_NOT_EXIST.getErrorCode())
+                            .errorMessage(RETAILER_ACCOUNT_DOES_NOT_EXIST.getErrorMessage())
+                            .build()
+            );
         }
 
         String xCallbackUrl = request.getHeader("x-callback-url");
@@ -356,14 +352,13 @@ public class TransactionServiceImpl implements TransactionService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         JSONObject JsonObject = new JSONObject();
+        String jsonList = new Gson().toJson(responseCashInTransactionDtos);
 
-        HttpEntity<String> requestHttp =
-                new HttpEntity<String>(responseCashInTransactionDtos.toString(), headers);
+        HttpEntity<String> requestHttp = new HttpEntity<String>(jsonList.toString(), headers);
 
         String responseEntity = restTemplate.postForObject(xCallbackUrl, requestHttp, String.class);
-
-        LOGGER.info("x-calback-url: "+ xCallbackUrl);
-        LOGGER.info("Fin de la transaction");
+        //LOGGER.info("x-callback-url: "+ xCallbackUrl);
+        //LOGGER.info("Fin de la transaction");
     }
 
     //pour verifier si le solde du compte est suffisant

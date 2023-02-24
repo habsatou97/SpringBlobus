@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
+import org.w3c.dom.stylesheets.LinkStyle;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -46,15 +48,15 @@ public class TransactionController {
         return  transactionService.getTransactionStatus(transactionId);
     }
     @PostMapping("/bulkcashins")
-    public ResponseCashInTransactionDto BulkCashInTransaction(HttpServletRequest request, @RequestBody RequestBodyTransactionDto[] requestBodyTransactionDtos) throws ExecutionException, InterruptedException, JSONException {
+    public void BulkCashInTransaction(HttpServletRequest request, @RequestBody RequestBodyTransactionDto[] requestBodyTransactionDtos) throws ExecutionException, InterruptedException, JSONException {
         transactionService.BulkCashInTransaction(request,requestBodyTransactionDtos);
 
-        System.out.println("i am the first");
+        //System.out.println("i am the first");
 
-        return ResponseCashInTransactionDto
+        /* return ResponseCashInTransactionDto
                 .builder()
                 .status(PENDING)
-                .build();
+                .build();*/
     }
 
     /**
