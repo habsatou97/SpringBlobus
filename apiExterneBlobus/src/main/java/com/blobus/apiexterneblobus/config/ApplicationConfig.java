@@ -1,5 +1,6 @@
 package com.blobus.apiexterneblobus.config;
 
+import com.blobus.apiexterneblobus.exception.ResourceNotFoundException;
 import com.blobus.apiexterneblobus.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +22,7 @@ public class ApplicationConfig {
 
   @Bean
   public UserDetailsService userDetailsService() {
+
     return username -> repository.findByUserId(username)
         .orElseThrow(() -> new UsernameNotFoundException("User not found"));
   }

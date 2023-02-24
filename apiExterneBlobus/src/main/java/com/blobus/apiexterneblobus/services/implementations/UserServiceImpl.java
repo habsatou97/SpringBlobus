@@ -153,6 +153,10 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public Optional<UserDto> getOneUser(Long id) {
+        Optional<User> user_old = userRepository.findById(id);
+        if (user_old.isEmpty()){
+            throw new ResourceNotFoundException("User with id "+id+" don't exists");
+        }
         return userRepository.findById(id).stream().map(
                 user -> {
             UserDto dto = new UserDto();

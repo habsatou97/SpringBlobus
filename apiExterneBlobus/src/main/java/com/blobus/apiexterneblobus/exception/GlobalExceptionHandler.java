@@ -6,11 +6,10 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(ResourceNotFoundException.class)
+    @ExceptionHandler({ResourceNotFoundException.class})
     public ResponseEntity<ApiResponse> handlerResourceNotFoundException(ResourceNotFoundException ex){
         return new ResponseEntity<>(ApiResponse.builder().message(ex.getMessage()).status(HttpStatus.NOT_FOUND).success(true).build(), HttpStatus.NOT_FOUND);
     }
