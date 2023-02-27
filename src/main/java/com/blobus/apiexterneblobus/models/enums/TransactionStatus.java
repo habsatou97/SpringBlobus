@@ -1,0 +1,19 @@
+package com.blobus.apiexterneblobus.models.enums;
+
+public enum TransactionStatus {
+    ACCEPTED("ACCEPTED"),
+    REJECTED("REJECTED"),
+    CANCELLED("CANCELLED"),
+    FAILED("FAILED"),
+    INITIATED("INITIATED"),
+    PENDING("PENDING"),
+    PRE_INITIATED("PRE_INITIATED"),
+    SUCCESS("SUCCESS"),
+    TERMINATED("TERMINATED");
+    private String status;
+
+
+    TransactionStatus(String status) {
+        this.status = status;
+    }
+}
