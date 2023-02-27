@@ -82,6 +82,8 @@ public class KeyGeneratorImpl implements KeyGeneratorService {
             Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
             cipher.init(Cipher.ENCRYPT_MODE,key);
             byte[] crypt= cipher.doFinal(decryptDto.getEncryptedPinCode().getBytes());
+        System.out.println("============================================");
+        System.out.println(crypt.length);
             return new String(Base64.getEncoder().encodeToString(crypt));
 
     }

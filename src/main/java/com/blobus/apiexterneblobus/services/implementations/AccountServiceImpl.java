@@ -71,6 +71,8 @@ public class AccountServiceImpl implements AccountService {
                     account.setRetailer(retailer);
                     account.set_active(true);
                     DecryptDto decryptDto=new DecryptDto();
+                    System.out.println("==============================================");
+                    System.out.println(transferAccount.getEncryptedPinCode());
                     decryptDto.setEncryptedPinCode(transferAccount.getEncryptedPinCode());
                     account.setEncryptedPinCode(keyGeneratorService.encrypt(decryptDto));
                     account.setWalletType(transferAccount.getWalletType());
@@ -111,9 +113,13 @@ public class AccountServiceImpl implements AccountService {
                             && transferAccount.getWalletType()!=null
                             && transferAccount.getEncryptedPinCode()!=null
                             && transferAccount.getEncryptedPinCode().length() >0){
+                        DecryptDto decryptDto=new DecryptDto();
+                        System.out.println("==============================================");
+                        System.out.println(transferAccount.getEncryptedPinCode());
+                        decryptDto.setEncryptedPinCode(transferAccount.getEncryptedPinCode());
+                        account.setEncryptedPinCode(keyGeneratorService.encrypt(decryptDto));
                         account.setRetailer(retailer);
                         account.set_active(true);
-                        account.setEncryptedPinCode(transferAccount.getEncryptedPinCode());
                         account.setWalletType(transferAccount.getWalletType());
                         account.setPhoneNumber(transferAccount.getPhoneNumber());
                         account.setBalance(0.0);
