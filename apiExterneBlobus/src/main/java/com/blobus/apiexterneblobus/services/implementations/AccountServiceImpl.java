@@ -141,7 +141,7 @@ public class AccountServiceImpl implements AccountService {
      * @return
      */
     @Override
-    public CreateOrEditAccountDto createCustomerTransfertAccount(CreateAccountDto transferAccount, Long id) {
+    public CreateOrEditAccountDto createCustomerTransfertAccount(CreateAccountDto transferAccount, Long id) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
 
         Customer customer = customerRepository.findById(id).orElseThrow(()
                 -> new ResourceNotFoundException("Customer not found"));
@@ -166,7 +166,9 @@ public class AccountServiceImpl implements AccountService {
                         && transferAccount.getEncryptedPinCode().length() >0){
                     account.setCustomer(customer);
                     account.set_active(true);
-                    account.setEncryptedPinCode(transferAccount.getEncryptedPinCode());
+                    account.setEncryptedPinCode(
+                            keyGeneratorService.encrypt(new DecryptDto(transferAccount.getEncryptedPinCode())));
+                    //account.setEncryptedPinCode(transferAccount.getEncryptedPinCode());
                     account.setWalletType(transferAccount.getWalletType());
                     account.setPhoneNumber(transferAccount.getPhoneNumber());
                     account.setBalance(0.0);

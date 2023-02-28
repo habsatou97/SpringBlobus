@@ -223,11 +223,11 @@ public class AccountController {
             IllegalBlockSizeException, NoSuchAlgorithmException,
             IOException, BadPaddingException,
             InvalidKeySpecException, InvalidKeyException {
-        if(account.getEncryptedPinCode()!=null && account.getEncryptedPinCode().length()>0)
-        {
-            account.setEncryptedPinCode(
-                    keyGenerator.encrypt(new DecryptDto(account.getEncryptedPinCode())));
-        }
+//        if(account.getEncryptedPinCode()!=null && account.getEncryptedPinCode().length()>0)
+//        {
+//            account.setEncryptedPinCode(
+//                    keyGenerator.encrypt(new DecryptDto(account.getEncryptedPinCode())));
+//        }
         DecryptDto decryptDto=new DecryptDto();
         CreateOrEditAccountDto accountDto =
                 transferAccountService.modifyTransferAccountRetailer(id,account);
