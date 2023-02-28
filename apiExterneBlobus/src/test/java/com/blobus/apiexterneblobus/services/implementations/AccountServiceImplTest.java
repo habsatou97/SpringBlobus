@@ -101,7 +101,7 @@ class AccountServiceImplTest {
         Assertions.assertThat(service.createRetailerTransfertAccount(createDto,id)).isNotNull();
     }
     @Test
-    void createCustomerTransfertAccount() {
+    void createCustomerTransfertAccount() throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
 
         // initialise un retailer
         String email ="laye.faye@avimtoo.com";
