@@ -460,9 +460,9 @@ public class AccountServiceImpl implements AccountService {
         KeyDto keyDto1=new KeyDto();
         DecryptDto decryptDto=new DecryptDto();
         ResponseChangePinCodeDto responseChangePinCodeDto = new ResponseChangePinCodeDto();
-
         Optional<Account> account = transferAccountRepository.findByPhoneNumberAndWalletType(msisdn,walletType);
-         if (requestBodyChangePinCodeDto == null) {
+
+        if (requestBodyChangePinCodeDto == null) {
             responseChangePinCodeDto.setErrorCode("21");
             responseChangePinCodeDto.setStatus(HttpStatus.BAD_REQUEST);
             responseChangePinCodeDto.setErrorMessage("Request Body cannot be null !!");

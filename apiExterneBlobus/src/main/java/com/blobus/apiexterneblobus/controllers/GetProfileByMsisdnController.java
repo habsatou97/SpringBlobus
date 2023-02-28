@@ -48,6 +48,7 @@ public class GetProfileByMsisdnController {
 
     @PostMapping("/changePinCode")
     ResponseEntity<ResponseChangePinCodeDto> changePinCode(
+
             @RequestBody RequestBodyChangePinCodeDto requestBodyChangePinCodeDto,
             @RequestParam String msisdn, @RequestParam CustomerType customerType,
             @RequestParam WalletType walletType,
@@ -55,7 +56,7 @@ public class GetProfileByMsisdnController {
             throws NoSuchPaddingException, IllegalBlockSizeException,
             IOException, NoSuchAlgorithmException, BadPaddingException,
             InvalidKeySpecException, InvalidKeyException, ChangePinCodeException {
-
+        System.out.println("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
         return ResponseEntity.ok(transferAccountService
                 .changePinCode(requestBodyChangePinCodeDto,msisdn,customerType,walletType, content_type));
     }

@@ -30,10 +30,11 @@ public class KeyController {
 
     @GetMapping
     public ResponseEntity<KeyDto> get() throws IOException {
-       return ResponseEntity.ok().body(keyGenerator.getPublicKeyFromFile());
+        System.out.println("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+        return ResponseEntity.ok().body(keyGenerator.getPublicKeyFromFile());
     }
 
-
+/*
     @PostMapping("crypt")
     public ResponseEntity<DecryptDto> encrypt(@RequestBody DecryptDto decryptDto)
                                      throws NoSuchAlgorithmException,
@@ -44,6 +45,8 @@ public class KeyController {
                                             BadPaddingException,
                                             InvalidKeySpecException,
                                             InvalidKeyException {
+        System.out.println("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+
         DecryptDto decryptDto1=new DecryptDto();
         decryptDto1.setEncryptedPinCode(keyGenerator.encrypt(decryptDto));
         return ResponseEntity.ok().body(decryptDto1);
@@ -56,7 +59,9 @@ public class KeyController {
             IOException,
             BadPaddingException,
             InvalidKeyException {
+        System.out.println("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+
         return keyGenerator.decrypt(decryptDto);
-    }
+    }*/
 }
 
