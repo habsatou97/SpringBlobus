@@ -90,15 +90,7 @@ public class AccountController {
             throws NoSuchPaddingException, IllegalBlockSizeException,
             NoSuchAlgorithmException, IOException, BadPaddingException,
             InvalidKeySpecException, InvalidKeyException {
-
-        transferAccount.setEncryptedPinCode(keyGenerator.encrypt(
-                new DecryptDto(transferAccount.getEncryptedPinCode())));
-        DecryptDto decryptDto=new DecryptDto();
-        CreateOrEditAccountDto accountDto=
-                transferAccountService.createCustomerTransfertAccount(transferAccount,id);
-        decryptDto.setEncryptedPinCode(accountDto.getEncryptedPinCode());
-        accountDto.setEncryptedPinCode(keyGenerator.decrypt(decryptDto));
-        return ResponseEntity.ok().body(accountDto);
+        return ResponseEntity.ok().body(transferAccountService.createCustomerTransfertAccount(transferAccount,id));
     }
     @PostMapping("/retailer/{id}")
     public ResponseEntity<CreateOrEditAccountDto>saveRetailer(@RequestBody CreateAccountDto transferAccount,
@@ -106,17 +98,7 @@ public class AccountController {
             throws NoSuchPaddingException, IllegalBlockSizeException,
             IOException, NoSuchAlgorithmException, BadPaddingException,
             InvalidKeySpecException, InvalidKeyException {
-
-        transferAccount.setEncryptedPinCode(
-                keyGenerator.encrypt(new DecryptDto(transferAccount.getEncryptedPinCode())));
-
-        DecryptDto decryptDto=new DecryptDto();
-        CreateOrEditAccountDto accountDto=
-                transferAccountService.createRetailerTransfertAccount(transferAccount,id);
-        decryptDto.setEncryptedPinCode(accountDto.getEncryptedPinCode());
-        accountDto.setEncryptedPinCode(keyGenerator.decrypt(decryptDto));
-
-        return ResponseEntity.ok().body(accountDto);
+        return ResponseEntity.ok().body(transferAccountService.createRetailerTransfertAccount(transferAccount,id));
     }
 
     /**

@@ -19,7 +19,7 @@ import java.util.Optional;
 public interface AccountService {
   public CreateOrEditAccountDto createCustomerTransfertAccount(CreateAccountDto transferAccount, Long id) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, InvalidKeySpecException, InvalidKeyException;
   public CreateOrEditAccountDto createRetailerTransfertAccount(CreateAccountDto transferAccount,Long id) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, InvalidKeySpecException, InvalidKeyException;
-  public List<CreateOrEditAccountDto> getAllTransfertAccount();
+  public List<CreateOrEditAccountDto> getAllTransfertAccount()throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, InvalidKeySpecException, InvalidKeyException;;
   public Optional<CreateOrEditAccountDto> getTransfertAccountById(Long id);
   public CreateOrEditAccountDto enableTransfertAccount(Long id);
   public CreateOrEditAccountDto diseableTranfertAccount(Long id);

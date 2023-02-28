@@ -80,7 +80,7 @@ public class AccountServiceImpl implements AccountService {
                     retailer.addTransferAccounts(compte);
                     CreateOrEditAccountDto dto = CreateOrEditAccountDto.builder()
                             .balance(account.getBalance())
-                            .encryptedPinCode(transferAccount.getEncryptedPinCode())
+                            .encryptedPinCode(keyGeneratorService.decrypt(new DecryptDto(compte.getEncryptedPinCode())))
                             .phoneNumber(transferAccount.getPhoneNumber())
                             .walletType(transferAccount.getWalletType())
                             .build();
@@ -113,7 +113,7 @@ public class AccountServiceImpl implements AccountService {
                             && transferAccount.getEncryptedPinCode().length() >0){
                         account.setRetailer(retailer);
                         account.set_active(true);
-                        account.setEncryptedPinCode(transferAccount.getEncryptedPinCode());
+                        account.setEncryptedPinCode(keyGeneratorService.encrypt(new DecryptDto(transferAccount.getEncryptedPinCode())));
                         account.setWalletType(transferAccount.getWalletType());
                         account.setPhoneNumber(transferAccount.getPhoneNumber());
                         account.setBalance(0.0);
@@ -121,7 +121,7 @@ public class AccountServiceImpl implements AccountService {
                         retailer.addTransferAccounts(compte);
                         CreateOrEditAccountDto dto = CreateOrEditAccountDto.builder()
                                 .balance(account.getBalance())
-                                .encryptedPinCode(transferAccount.getEncryptedPinCode())
+                                .encryptedPinCode(keyGeneratorService.decrypt(new DecryptDto(compte.getEncryptedPinCode())))
                                 .phoneNumber(transferAccount.getPhoneNumber())
                                 .walletType(transferAccount.getWalletType())
                                 .build();
@@ -166,9 +166,7 @@ public class AccountServiceImpl implements AccountService {
                         && transferAccount.getEncryptedPinCode().length() >0){
                     account.setCustomer(customer);
                     account.set_active(true);
-                    account.setEncryptedPinCode(
-                            keyGeneratorService.encrypt(new DecryptDto(transferAccount.getEncryptedPinCode())));
-                    //account.setEncryptedPinCode(transferAccount.getEncryptedPinCode());
+                    account.setEncryptedPinCode(keyGeneratorService.encrypt(new DecryptDto(transferAccount.getEncryptedPinCode())));
                     account.setWalletType(transferAccount.getWalletType());
                     account.setPhoneNumber(transferAccount.getPhoneNumber());
                     account.setBalance(0.0);
@@ -176,7 +174,7 @@ public class AccountServiceImpl implements AccountService {
                     customer.addTransferAccounts(compte);
                     CreateOrEditAccountDto dto = CreateOrEditAccountDto.builder()
                             .balance(account.getBalance())
-                            .encryptedPinCode(transferAccount.getEncryptedPinCode())
+                            .encryptedPinCode(keyGeneratorService.decrypt(new DecryptDto(compte.getEncryptedPinCode())))
                             .phoneNumber(transferAccount.getPhoneNumber())
                             .walletType(transferAccount.getWalletType())
                             .build();
@@ -188,14 +186,14 @@ public class AccountServiceImpl implements AccountService {
         }else{
             account.setCustomer(customer);
             account.set_active(true);
-            account.setEncryptedPinCode(transferAccount.getEncryptedPinCode());
+            account.setEncryptedPinCode(keyGeneratorService.decrypt(new DecryptDto(transferAccount.getEncryptedPinCode())));
             account.setWalletType(transferAccount.getWalletType());
             account.setPhoneNumber(transferAccount.getPhoneNumber());
             account.setBalance(0.0);
             Account compte = transferAccountRepository.save(account);
             CreateOrEditAccountDto dto = CreateOrEditAccountDto.builder()
                     .balance(account.getBalance())
-                    .encryptedPinCode(transferAccount.getEncryptedPinCode())
+                    .encryptedPinCode(keyGeneratorService.decrypt(new DecryptDto(compte.getEncryptedPinCode())))
                     .phoneNumber(transferAccount.getPhoneNumber())
                     .walletType(transferAccount.getWalletType())
                     .build();
