@@ -11,17 +11,13 @@ import com.blobus.apiexterneblobus.repositories.AccountRepository;
 import com.blobus.apiexterneblobus.repositories.UserRepository;
 import com.blobus.apiexterneblobus.services.interfaces.KeyGeneratorService;
 import com.blobus.apiexterneblobus.services.interfaces.TransactionService;
-import com.google.gson.Gson;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -96,10 +92,8 @@ public class TransactionServiceImpl implements TransactionService {
     }
     @Override
     //@Async("asyncExecutor")
-    public void BulkCashInTransaction(HttpServletRequest request, RequestBodyTransactionBulkDto requestBodyTransactionBulkDto) throws InterruptedException, JSONException {
-        LOGGER.info("Debut de la transaction");
-        BulkTransactionIsSuccess(request, requestBodyTransactionBulkDto);
-        //return null;
+    public List<ResponseCashInTransactionDto> BulkCashInTransaction(HttpServletRequest request, RequestBodyTransactionBulkDto requestBodyTransactionBulkDto) throws InterruptedException, JSONException {
+        return BulkTransactionIsSuccess(request, requestBodyTransactionBulkDto);
     }
 
     /**
@@ -232,7 +226,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Transactional
     // pour effectuer une transaction BulkCashIn (operation intermediaire)
-    private void BulkTransactionIsSuccess(HttpServletRequest request, RequestBodyTransactionBulkDto requestBodyTransactionBulkDto) throws InterruptedException, JSONException {
+    private List<ResponseCashInTransactionDto> BulkTransactionIsSuccess(HttpServletRequest request, RequestBodyTransactionBulkDto requestBodyTransactionBulkDto) throws InterruptedException, JSONException {
         // pour recuperer le compte du retailer
         Optional<Account> retailerAccountBulk = transferAccountRepository
                 .findByPhoneNumberAndWalletType(
@@ -344,7 +338,7 @@ public class TransactionServiceImpl implements TransactionService {
             );
         }
 
-        String xCallbackUrl = request.getHeader("x-callback-url");
+        /* String xCallbackUrl = request.getHeader("x-callback-url");
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -354,8 +348,8 @@ public class TransactionServiceImpl implements TransactionService {
         HttpEntity<String> requestHttp = new HttpEntity<String>(jsonList.toString(), headers);
 
         String responseEntity = restTemplate.postForObject(xCallbackUrl, requestHttp, String.class);
-        LOGGER.info("x-callback-url: "+ xCallbackUrl);
-        LOGGER.info("Fin de la transaction");
+        LOGGER.info("x-callback-url: "+ xCallbackUrl);*/
+        return responseCashInTransactionDtos;
     }
 
     //pour verifier si le solde du compte est suffisant

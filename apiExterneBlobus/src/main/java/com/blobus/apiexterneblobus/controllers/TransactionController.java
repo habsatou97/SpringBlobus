@@ -45,15 +45,8 @@ public class TransactionController {
         return  transactionService.getTransactionStatus(transactionId);
     }
     @PostMapping("/bulkcashins")
-    public void BulkCashInTransaction(HttpServletRequest request, @RequestBody RequestBodyTransactionBulkDto requestBodyTransactionBulkDto) throws ExecutionException, InterruptedException, JSONException {
-        transactionService.BulkCashInTransaction(request,requestBodyTransactionBulkDto);
-
-        //System.out.println("i am the first");
-
-        /* return ResponseCashInTransactionDto
-                .builder()
-                .status(PENDING)
-                .build();*/
+    public List<ResponseCashInTransactionDto> BulkCashInTransaction(HttpServletRequest request, @RequestBody RequestBodyTransactionBulkDto requestBodyTransactionBulkDto) throws ExecutionException, InterruptedException, JSONException {
+        return transactionService.BulkCashInTransaction(request,requestBodyTransactionBulkDto);
     }
 
     /**
@@ -66,33 +59,5 @@ public class TransactionController {
         return transactionService.getTransaction(transactionId);
     }
 
-    @GetMapping("/test-api-interne")
-    public ResponseCashInTransactionDto getApiExterne(HttpServletRequest request) throws JSONException {
-        String xCallbackUrl = request.getHeader("x-callback-url");
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        JSONObject JsonObject = new JSONObject();
-
-        ResponseCashInTransactionDto responseCashInTransactionDto =
-                ResponseCashInTransactionDto
-                        .builder()
-                        .status(TERMINATED)
-                        .build();
-
-        JsonObject.put("userName", "loumanekh");
-        JsonObject.put("name", "el");
-        JsonObject.put("surname","elel");
-        JsonObject.put("emailAddress", "el@gmail.com");
-        JsonObject.put("isActive","true");
-        JsonObject.put("password", "123elel");
-
-        HttpEntity<String> requestHttp =
-                new HttpEntity<String>(JsonObject.toString(), headers);
-
-        String responseEntityPerson = restTemplate.postForObject(xCallbackUrl, requestHttp, String.class);
-
-        return responseCashInTransactionDto;
-    }
 
 }
