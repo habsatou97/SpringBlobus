@@ -1,9 +1,6 @@
 package com.blobus.apiexterneblobus.controllers;
 
-import com.blobus.apiexterneblobus.dto.GetTransactionDto;
-import com.blobus.apiexterneblobus.dto.RequestBodyTransactionDto;
-import com.blobus.apiexterneblobus.dto.ResponseCashInTransactionDto;
-import com.blobus.apiexterneblobus.dto.TransactionDto;
+import com.blobus.apiexterneblobus.dto.*;
 import com.blobus.apiexterneblobus.services.interfaces.TransactionService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -48,8 +45,8 @@ public class TransactionController {
         return  transactionService.getTransactionStatus(transactionId);
     }
     @PostMapping("/bulkcashins")
-    public void BulkCashInTransaction(HttpServletRequest request, @RequestBody RequestBodyTransactionDto[] requestBodyTransactionDtos) throws ExecutionException, InterruptedException, JSONException {
-        transactionService.BulkCashInTransaction(request,requestBodyTransactionDtos);
+    public void BulkCashInTransaction(HttpServletRequest request, @RequestBody RequestBodyTransactionBulkDto requestBodyTransactionBulkDto) throws ExecutionException, InterruptedException, JSONException {
+        transactionService.BulkCashInTransaction(request,requestBodyTransactionBulkDto);
 
         //System.out.println("i am the first");
 

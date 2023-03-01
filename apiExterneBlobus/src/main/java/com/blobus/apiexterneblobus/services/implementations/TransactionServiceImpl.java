@@ -1,7 +1,6 @@
 package com.blobus.apiexterneblobus.services.implementations;
 
 import com.blobus.apiexterneblobus.dto.*;
-import com.blobus.apiexterneblobus.exception.GetTransactionException;
 import com.blobus.apiexterneblobus.exception.ResourceNotFoundException;
 import com.blobus.apiexterneblobus.models.Account;
 import com.blobus.apiexterneblobus.models.Bulk;
@@ -34,7 +33,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 import static com.blobus.apiexterneblobus.models.enums.ErrorCode.*;
 import static com.blobus.apiexterneblobus.models.enums.TransactionStatus.*;
@@ -98,9 +96,9 @@ public class TransactionServiceImpl implements TransactionService {
     }
     @Override
     //@Async("asyncExecutor")
-    public void BulkCashInTransaction(HttpServletRequest request, RequestBodyTransactionDto[] requestBodyTransactionDtos) throws InterruptedException, JSONException {
+    public void BulkCashInTransaction(HttpServletRequest request, RequestBodyTransactionBulkDto requestBodyTransactionBulkDto) throws InterruptedException, JSONException {
         LOGGER.info("Debut de la transaction");
-        BulkTransactionIsSuccess(request, requestBodyTransactionDtos);
+        BulkTransactionIsSuccess(request, requestBodyTransactionBulkDto);
         //return null;
     }
 
@@ -234,39 +232,41 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Transactional
     // pour effectuer une transaction BulkCashIn (operation intermediaire)
-    private void BulkTransactionIsSuccess(HttpServletRequest request, RequestBodyTransactionDto[] requestBodyTransactionDtos) throws InterruptedException, JSONException {
+    private void BulkTransactionIsSuccess(HttpServletRequest request, RequestBodyTransactionBulkDto requestBodyTransactionBulkDto) throws InterruptedException, JSONException {
         // pour recuperer le compte du retailer
         Optional<Account> retailerAccountBulk = transferAccountRepository
                 .findByPhoneNumberAndWalletType(
-                        requestBodyTransactionDtos[0].getRetailer().getPhoneNumber(),
-                        requestBodyTransactionDtos[0].getRetailer().getWalletType()
+                        requestBodyTransactionBulkDto.getRetailer().getPhoneNumber(),
+                        requestBodyTransactionBulkDto.getRetailer().getWalletType()
                 );
         List<ResponseCashInTransactionDto> responseCashInTransactionDtos = new ArrayList<>();
 
         if (retailerAccountBulk.isPresent()) {
+            if (codePinIsvalid(retailerAccountBulk.get(), requestBodyTransactionBulkDto.getRetailer().getEncryptedPinCode())) {
 
-            Bulk bulk = new Bulk(); // creation du Bulk du retailer
-            bulk = bulkRepository.save(bulk);
-            retailerAccountBulk.get().getRetailer().addBulks(bulk);
-            userRepository.save(retailerAccountBulk.get().getRetailer());
-            bulk.setRetailer(retailerAccountBulk.get().getRetailer());
-            bulk = bulkRepository.save(bulk);
+                Bulk bulk = new Bulk(); // creation du Bulk du retailer
+                bulk = bulkRepository.save(bulk);
+                retailerAccountBulk.get().getRetailer().addBulks(bulk);
+                userRepository.save(retailerAccountBulk.get().getRetailer());
+                bulk.setRetailer(retailerAccountBulk.get().getRetailer());
+                bulk = bulkRepository.save(bulk);
 
-            for (RequestBodyTransactionDto requestBodyTransactionDto : requestBodyTransactionDtos) {
-                Optional<Account> retailerAccount = transferAccountRepository
-                        .findByPhoneNumberAndWalletType(
-                                requestBodyTransactionDto.getRetailer().getPhoneNumber(),
-                                requestBodyTransactionDto.getRetailer().getWalletType()
-                        );
-                Optional<Account> customerAccount = transferAccountRepository
-                        .findByPhoneNumberAndWalletType(
-                                requestBodyTransactionDto.getCustomer().getPhoneNumber(),
-                                requestBodyTransactionDto.getCustomer().getWalletType()
-                        );
-
-
-                if (codePinIsvalid(retailerAccount.get(), requestBodyTransactionDto.getRetailer().getEncryptedPinCode())) {
+                for (AmountCustomerDto amountCustomerDto : requestBodyTransactionBulkDto.getAmountCustomer()) {
+                    Optional<Account> customerAccount = transferAccountRepository
+                            .findByPhoneNumberAndWalletType(
+                                    amountCustomerDto.getCustomer().getPhoneNumber(),
+                                    amountCustomerDto.getCustomer().getWalletType()
+                            );
                     if (customerAccount.isPresent()) {
+                        RequestBodyTransactionDto requestBodyTransactionDto = new RequestBodyTransactionDto();
+                        requestBodyTransactionDto.setAmount(amountCustomerDto.getAmount());
+                        requestBodyTransactionDto.setCustomer(amountCustomerDto.getCustomer());
+                        requestBodyTransactionDto.setRetailer(requestBodyTransactionBulkDto.getRetailer());
+                        requestBodyTransactionDto.setReference(requestBodyTransactionBulkDto.getReference());
+                        requestBodyTransactionDto.setTransactionType(requestBodyTransactionBulkDto.getTransactionType());
+                        requestBodyTransactionDto.setReceiveNotificatiion(requestBodyTransactionBulkDto.getReceiveNotificatiion());
+                        requestBodyTransactionDto.setRequestDate(requestBodyTransactionBulkDto.getRequestDate());
+
                         Transaction transaction = convertDtoToEntityTransaction(requestBodyTransactionDto);
                         if (balanceIsSufficient(transaction.getRetailerTransferAccount(), transaction.getAmount())) {
                             transaction.getRetailerTransferAccount().setBalance(transaction.getRetailerTransferAccount().getBalance() - transaction.getAmount());
@@ -301,38 +301,37 @@ public class TransactionServiceImpl implements TransactionService {
                             responseCashInTransactionDtos.add(
                                     ResponseCashInTransactionDto
                                             .builder()
-                                            .reference(requestBodyTransactionDto.getReference())
+                                            .reference(requestBodyTransactionBulkDto.getReference())
                                             .status(FAILED)
                                             .errorCode(BALANCE_INSUFFICIENT.getErrorCode())
                                             .errorMessage(BALANCE_INSUFFICIENT.getErrorMessage())
-                                            .customerPhoneNumber(requestBodyTransactionDto.getCustomer().getPhoneNumber())
+                                            .customerPhoneNumber(amountCustomerDto.getCustomer().getPhoneNumber())
                                             .build()
                             );
                         }
-                    } else {
+                   } else {
                         ResponseCashInTransactionDto responseCashInTransactionDto =
                                 ResponseCashInTransactionDto
                                         .builder()
-                                        .reference(requestBodyTransactionDto.getReference())
+                                        .reference(requestBodyTransactionBulkDto.getReference())
                                         .status(REJECTED)
                                         .errorCode(CUSTOMER_ACCOUNT_DOES_NOT_EXIST.getErrorCode())
                                         .errorMessage(CUSTOMER_ACCOUNT_DOES_NOT_EXIST.getErrorMessage())
-                                        .customerPhoneNumber(requestBodyTransactionDto.getCustomer().getPhoneNumber())
+                                        .customerPhoneNumber(amountCustomerDto.getCustomer().getPhoneNumber())
                                         .build();
                         responseCashInTransactionDtos.add(responseCashInTransactionDto);
                     }
-                } else {
-                    responseCashInTransactionDtos.add(
-                            ResponseCashInTransactionDto
-                                    .builder()
-                                    .reference(requestBodyTransactionDto.getReference())
-                                    .status(FAILED)
-                                    .errorCode(INVALID_PIN_CODE.getErrorCode())
-                                    .errorMessage(INVALID_PIN_CODE.getErrorMessage())
-                                    .build()
-                    );
-                    break;
                 }
+            } else {
+                responseCashInTransactionDtos.add(
+                        ResponseCashInTransactionDto
+                                .builder()
+                                .reference(requestBodyTransactionBulkDto.getReference())
+                                .status(FAILED)
+                                .errorCode(INVALID_PIN_CODE.getErrorCode())
+                                .errorMessage(INVALID_PIN_CODE.getErrorMessage())
+                                .build()
+                );
             }
         }else {
             responseCashInTransactionDtos.add(
@@ -355,8 +354,8 @@ public class TransactionServiceImpl implements TransactionService {
         HttpEntity<String> requestHttp = new HttpEntity<String>(jsonList.toString(), headers);
 
         String responseEntity = restTemplate.postForObject(xCallbackUrl, requestHttp, String.class);
-        //LOGGER.info("x-callback-url: "+ xCallbackUrl);
-        //LOGGER.info("Fin de la transaction");
+        LOGGER.info("x-callback-url: "+ xCallbackUrl);
+        LOGGER.info("Fin de la transaction");
     }
 
     //pour verifier si le solde du compte est suffisant
