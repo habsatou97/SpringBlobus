@@ -5,18 +5,13 @@ import com.blobus.apiexterneblobus.dto.CustomerReturnDto;
 import com.blobus.apiexterneblobus.models.Customer;
 import com.blobus.apiexterneblobus.repositories.UserRepository;
 import com.blobus.apiexterneblobus.services.interfaces.CustomerService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -42,10 +37,11 @@ public class CustomerController {
      * return list of customers
      * @return ResponseEntity<List<Customer>>
      */
+    @Operation(summary = "This operation allows to list all the  registred customers")
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     @Secured("hasRole('ADMIN')")
-    public ResponseEntity<List<CustomerEditCreateDto>> findAll(){
+    public ResponseEntity<List<CustomerEditCreateDto>> findAll(@RequestHeader("Authorization") String token){
         return ResponseEntity.ok().body(customerService.findAllDto());
     }
 
@@ -55,7 +51,8 @@ public class CustomerController {
      * @return
      */
     @GetMapping("{id}")
-    public ResponseEntity<CustomerReturnDto> findOne(@PathVariable Long id){
+    @Operation(summary = "This operation allows to get a customers by his ID")
+    public ResponseEntity<CustomerReturnDto> findOne(@Parameter(description = "The ID is required")@PathVariable Long id,@RequestHeader("Authorization") String token){
         return ResponseEntity.ok().body(customerService.findOneDto(id));
     }
 
@@ -63,8 +60,9 @@ public class CustomerController {
      * delete a specific customer
      * @param id
      */
+    @Operation(summary = "This operation allows to delete a customer by his ID")
     @DeleteMapping("{id}")
-    public ResponseEntity<Map<String,Boolean>> delete(@PathVariable Long id){
+    public ResponseEntity<Map<String,Boolean>> delete(@Parameter(description = "The ID is required") @PathVariable Long id, @RequestHeader("Authorization") String token){
         // create a map for the response
         Map<String,Boolean> response = new HashMap<>();
         // delete the customer
@@ -79,9 +77,10 @@ public class CustomerController {
      * @param customer
      * @return
      */
+    @Operation(summary = "This operation allows to save a new customer")
     @PostMapping
 //    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CustomerReturnDto> save(@RequestBody CustomerEditCreateDto customer) throws IllegalArgumentException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
+    public ResponseEntity<CustomerReturnDto> save(@RequestBody(required = true) CustomerEditCreateDto customer,@RequestHeader("Authorization") String token) throws IllegalArgumentException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
         return ResponseEntity.ok().body(customerService.saveDto(customer));
     }
 
@@ -91,8 +90,9 @@ public class CustomerController {
      * @param customer
      * @return
      */
+    @Operation(summary = "This operation allows to edit a customer")
     @PutMapping("{id}")
-    public ResponseEntity<CustomerEditCreateDto> edit(@PathVariable Long id,@RequestBody Customer customer){
+    public ResponseEntity<CustomerEditCreateDto> edit(@PathVariable Long id,@RequestBody Customer customer,@RequestHeader("Authorization") String token){
 
         return ResponseEntity.ok().body(customerService.editDto(id,customer));
     }

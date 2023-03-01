@@ -7,6 +7,10 @@ import com.blobus.apiexterneblobus.models.enums.CustomerType;
 import com.blobus.apiexterneblobus.models.enums.WalletType;
 import com.blobus.apiexterneblobus.services.implementations.AccountServiceImpl;
 import com.blobus.apiexterneblobus.services.implementations.KeyGeneratorImpl;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.links.Link;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -40,14 +44,16 @@ public class AccountController {
     private final KeyGeneratorImpl keyGenerator;
 
     @PostMapping("balance")
-    public ResponseEntity<AmountDto> getBalance(@RequestBody GetRetailerBalanceDto getRetailerBalanceDto)
+    @Operation(summary = "Set the account balance")
+    public ResponseEntity<AmountDto> getBalance( @RequestBody(required = true) GetRetailerBalanceDto getRetailerBalanceDto, @RequestHeader("Authorization") String token)
             throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         transferAccountService.getBalance(getRetailerBalanceDto);
         return ResponseEntity.ok().body(transferAccountService.getBalance(getRetailerBalanceDto));
     }
 
     @GetMapping
-    public ResponseEntity<List<CreateOrEditAccountDto>>getAll()
+    @Operation(summary = "Get all the existing accounts")
+    public ResponseEntity<List<CreateOrEditAccountDto>>getAll(@RequestHeader("Authorization") String token)
             throws NoSuchPaddingException, IllegalBlockSizeException,
             IOException, NoSuchAlgorithmException,
             BadPaddingException, InvalidKeyException {
@@ -65,7 +71,8 @@ public class AccountController {
 
     }
     @GetMapping("{id}")
-    public ResponseEntity<CreateOrEditAccountDto> getOne(@PathVariable Long id)
+    @Operation(summary = "Get the account by its ID")
+    public ResponseEntity<CreateOrEditAccountDto> getOne(@Parameter(description = "The id is required",required = true)@PathVariable Long id,@RequestHeader("Authorization") String token)
             throws NoSuchPaddingException, IllegalBlockSizeException,
             IOException, NoSuchAlgorithmException,
             BadPaddingException, InvalidKeyException {
@@ -77,24 +84,28 @@ public class AccountController {
 
         return ResponseEntity.ok().body(accountDto);
     }
+    @Operation(summary = "Get the account msisdn(PhoneNumber) by its ID")
     @RequestMapping(value = "phoneNumber/{id}",method = RequestMethod.GET)
-    public String getPhoneNumber(@PathVariable Long id)
+    public String getPhoneNumber(@Parameter(description = "The id is reuired for this opertaion")@PathVariable Long id,@RequestHeader("Authorization") String token)
     {
         return transferAccountService.getAccountPhoneNumber(id);
     }
 
+    @Operation(summary = "This operation allows to create a transfert account for a customer that its ID is given in parameter ")
     @PostMapping("customer/{id}")
     public ResponseEntity<CreateOrEditAccountDto>saveCustomer(
-            @RequestBody CreateAccountDto transferAccount,
-            @PathVariable Long id)
+            @Parameter(description = "A request body is required")
+            @RequestBody(required = true) CreateAccountDto transferAccount,
+            @PathVariable Long id,@RequestHeader("Authorization") String token)
             throws NoSuchPaddingException, IllegalBlockSizeException,
             NoSuchAlgorithmException, IOException, BadPaddingException,
             InvalidKeySpecException, InvalidKeyException {
         return ResponseEntity.ok().body(transferAccountService.createCustomerTransfertAccount(transferAccount,id));
     }
+    @Operation(summary = "This operation allows to create a transfert account for a retailer that its ID is given in parameter ")
     @PostMapping("/retailer/{id}")
-    public ResponseEntity<CreateOrEditAccountDto>saveRetailer(@RequestBody CreateAccountDto transferAccount,
-                                                              @PathVariable Long id)
+    public ResponseEntity<CreateOrEditAccountDto>saveRetailer(@Parameter(description = "A request body is required")@RequestBody CreateAccountDto transferAccount,
+                                                              @PathVariable Long id,@RequestHeader("Authorization") String token)
             throws NoSuchPaddingException, IllegalBlockSizeException,
             IOException, NoSuchAlgorithmException, BadPaddingException,
             InvalidKeySpecException, InvalidKeyException {
@@ -114,8 +125,12 @@ public class AccountController {
      * @throws InvalidKeySpecException
      * @throws InvalidKeyException
      */
+
+
+    @Operation(summary = "This operation allows to update a transfert account by its ID ")
     @RequestMapping(value = "{id}",method = RequestMethod.PUT)
-    public ResponseEntity<CreateOrEditAccountDto> update(@RequestBody EditAccountDto transferAccount, @PathVariable Long id) throws
+    public ResponseEntity<CreateOrEditAccountDto> update(@RequestBody EditAccountDto transferAccount, @Parameter(name = "id",description = "To update an account, the id is required ")
+    @PathVariable Long id,@RequestHeader("Authorization") String token) throws
             NoSuchPaddingException,
             IllegalBlockSizeException,
             NoSuchAlgorithmException,
@@ -137,8 +152,11 @@ public class AccountController {
 
         return ResponseEntity.ok().body(accountDto);
        }
+    @Operation(summary = "This operation allows to enable  a transfert account by its ID ")
     @RequestMapping(value = "enable/{id}",method = RequestMethod.PUT)
-    public ResponseEntity<CreateOrEditAccountDto> enable(@PathVariable Long id) throws
+    public ResponseEntity<CreateOrEditAccountDto> enable(@Parameter(name = "id",description = "To enable an account, the id is required ")
+
+                                                            @PathVariable Long id,@RequestHeader("Authorization") String token) throws
             NoSuchPaddingException,
             IllegalBlockSizeException,
             IOException,
@@ -152,8 +170,11 @@ public class AccountController {
     return ResponseEntity.ok().body(accountDto);
    }
 
+    @Operation(summary = "This operation allows to disable  a transfert account by its ID ")
     @RequestMapping( value = "disable/{id}",method = RequestMethod.PUT)
-     public ResponseEntity<CreateOrEditAccountDto> disable(@PathVariable Long id)
+     public ResponseEntity<CreateOrEditAccountDto> disable(@Parameter(name = "id",description = "To disable an account, the id is required ")
+
+                                                               @PathVariable Long id,@RequestHeader("Authorization") String token)
             throws NoSuchPaddingException,
             IllegalBlockSizeException,
             IOException,
@@ -168,9 +189,11 @@ public class AccountController {
 
        return ResponseEntity.ok().body(accountDto);
     }
-
+    @Operation(summary = "This operation allows to delete a transfert account by its ID ")
     @RequestMapping(value = "{id}",method = RequestMethod.DELETE)
-    public ResponseEntity<Map<String,Boolean>> delete(@PathVariable Long id)
+    public ResponseEntity<Map<String,Boolean>> delete(@Parameter(name = "id",description = "To delete an account, the id is required ")
+
+                                                          @PathVariable Long id,@RequestHeader("Authorization") String token)
     {
         Map<String,Boolean> response = new HashMap<>();
         transferAccountService.deleteTransfertAccountById(id);
@@ -186,9 +209,14 @@ public class AccountController {
      * @param id
      * @return
      */
+    @Operation(summary = "This operation allows to edit an account's balance by its ID ")
     @PutMapping("/edit/balance/{id}")
-    public ResponseEntity<BalanceDto> updatedBalance(@RequestBody BalanceDto balanceDto,
-                                                     @PathVariable("id") Long id){
+    public ResponseEntity<BalanceDto> updatedBalance(@RequestBody(required = true) BalanceDto balanceDto,
+                                                     @Parameter(name = "id",description = "To edit an account's balance, the id is required ")
+
+                                                     @PathVariable(value = "id",required = true) Long id,@RequestHeader("Authorization") String token)
+
+    {
         return ResponseEntity.ok(transferAccountService.updatedBalance(balanceDto,id));
     }
 
@@ -198,10 +226,13 @@ public class AccountController {
      * @param account
      * @return
      */
+    @Operation(summary = "This operation allows to update a retailer account balance by its ID ")
     @PutMapping("/edit/retailer/{id}")
     public ResponseEntity<CreateOrEditAccountDto> updatedRetailerTransferAccount(
-            @PathVariable("id") Long id,
-            @RequestBody EditAccountDto account) throws NoSuchPaddingException,
+            @Parameter(name = "id",description = "To update a retailer account, the id is required ")@PathVariable("id") Long id,
+            @RequestBody(required = true) EditAccountDto account,
+            @Parameter(name = "Authorization",description = "Access Token")
+            @RequestHeader("Authorization") String token) throws NoSuchPaddingException,
             IllegalBlockSizeException, NoSuchAlgorithmException,
             IOException, BadPaddingException,
             InvalidKeySpecException, InvalidKeyException {

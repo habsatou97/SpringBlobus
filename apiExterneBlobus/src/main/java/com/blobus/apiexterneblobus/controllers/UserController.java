@@ -4,20 +4,15 @@ import com.blobus.apiexterneblobus.dto.UserDto;
 import com.blobus.apiexterneblobus.dto.UserWithNineaDto;
 import com.blobus.apiexterneblobus.repositories.UserRepository;
 import com.blobus.apiexterneblobus.services.implementations.UserServiceImpl;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,8 +38,9 @@ public class UserController {
      * Ce endPoint permet de visualiser l'ensemble des utilisateurs de l'api.
      * @return ResponseEntity<List<UserDto>>
      */
+    @Operation(summary = "This operation allows to get all the users of the API ")
     @GetMapping
-    public ResponseEntity<List<UserDto>> getAllUsers(){
+    public ResponseEntity<List<UserDto>> getAllUsers(@RequestHeader(required = true,name = "Authorization")String token){
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
@@ -54,8 +50,10 @@ public class UserController {
      * @param id
      * @return
      */
+    @Operation(summary = "This operation allows to get a user by his ID")
     @GetMapping("{id}")
-    public ResponseEntity<Optional<UserDto>> getOne(@PathVariable("id") Long id){
+    public ResponseEntity<Optional<UserDto>> getOne(@Parameter(description = "An ID is required to process this operation") @PathVariable("id") Long id,
+                                                    @RequestHeader(required = true,name = "Authorization")String token){
         return ResponseEntity.ok(userService.getOneUser(id));
     }
 
@@ -64,8 +62,9 @@ public class UserController {
      *
      * @return ResponseEntity<List<UserDto>>
      */
+    @Operation(summary = "This operation allows to get all users retailers")
     @GetMapping("retailers")
-    public ResponseEntity<List<UserDto>> getAllRetailer(){
+    public ResponseEntity<List<UserDto>> getAllRetailer(@RequestHeader(required = true,name = "Authorization")String token){
         return ResponseEntity.ok(userService.getAllRetailer());
     }
 
@@ -75,8 +74,10 @@ public class UserController {
      * @param user
      * @return
      */
+    @Operation(summary = "This operation allows to get all users retailers")
     @PostMapping
-    public ResponseEntity<UserDto> addUser(@RequestBody UserWithNineaDto user){
+    public ResponseEntity<UserDto> addUser(@RequestBody(required = true) UserWithNineaDto user,
+                                           @RequestHeader(required = true,name = "Authorization")String token){
         return ResponseEntity.ok(userService.addSingleUser(user));
     }
 
@@ -86,10 +87,11 @@ public class UserController {
      * @param id
      * @return ResponseEntity<UserDto>
      */
+    @Operation(summary = "This operation allows to update an user by his ID")
     @PutMapping("{id}")
     public ResponseEntity<UserDto> updateUser(
             @RequestBody UserWithNineaDto user,
-            @PathVariable("id") Long id){
+            @Parameter(description = "The ID of the user to update is required")@PathVariable("id") Long id,@RequestHeader(required = true,name = "Authorization")String token){
 
         return ResponseEntity.ok(userService.updateSingleUser(user,id));
     }
@@ -99,8 +101,9 @@ public class UserController {
      * @param id
      * @return
      */
+    @Operation(summary = "This operation allows to delete an user by his ID")
     @DeleteMapping("{id}")
-    public  ResponseEntity<Map<String,Boolean>> deleteUser(@PathVariable("id") Long id){
+    public  ResponseEntity<Map<String,Boolean>> deleteUser(@Parameter(description = "The ID of the user to delete is required")@PathVariable("id") Long id,@RequestHeader(required = true,name = "Authorization")String token){
 
         Map<String,Boolean> response = new HashMap<>();
         userService.deleteUser(id);

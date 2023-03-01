@@ -5,17 +5,14 @@ import com.blobus.apiexterneblobus.dto.RequestBodyTransactionDto;
 import com.blobus.apiexterneblobus.dto.ResponseCashInTransactionDto;
 import com.blobus.apiexterneblobus.dto.TransactionDto;
 import com.blobus.apiexterneblobus.services.interfaces.TransactionService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.http.*;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.w3c.dom.stylesheets.LinkStyle;
 
@@ -31,8 +28,10 @@ import static com.blobus.apiexterneblobus.models.enums.TransactionStatus.TERMINA
 @RequestMapping("api/ewallet/v1/retailer/")
 public class TransactionController {
     private final TransactionService transactionService;
+    @Operation(summary = "This operation allows to do a cashIn transaction")
     @PostMapping ("/cashins")
-    public ResponseEntity<ResponseCashInTransactionDto> CashInTransaction(@RequestBody RequestBodyTransactionDto requestBodyTransactionDto){
+    public ResponseEntity<ResponseCashInTransactionDto> CashInTransaction(@RequestBody(required = true) RequestBodyTransactionDto requestBodyTransactionDto,
+                                                                          @RequestHeader(name = "Authorization") String token){
         return ResponseEntity.ok(
                 transactionService.CashInTransaction(requestBodyTransactionDto)
                 );
@@ -43,12 +42,14 @@ public class TransactionController {
      * @param transactionId
      * @return
      */
+    @Operation(summary = "This operation allows to get the transaction STATUS by its transactionId")
     @GetMapping("/transactions/{transactionId}/status")
-    public TransactionDto getTransactionStatus(@PathVariable("transactionId") Long transactionId){
+    public TransactionDto getTransactionStatus(@Parameter(description = "The transactionId is required")@PathVariable("transactionId") Long transactionId,@RequestHeader(name = "Authorization") String token){
         return  transactionService.getTransactionStatus(transactionId);
     }
+    @Operation(summary = "The BulkcashIn operation allows to do many CashIntransactions in a single request ")
     @PostMapping("/bulkcashins")
-    public void BulkCashInTransaction(HttpServletRequest request, @RequestBody RequestBodyTransactionDto[] requestBodyTransactionDtos) throws ExecutionException, InterruptedException, JSONException {
+    public void BulkCashInTransaction(HttpServletRequest request, @RequestBody RequestBodyTransactionDto[] requestBodyTransactionDtos,@RequestHeader(name = "Authorization") String token) throws ExecutionException, InterruptedException, JSONException {
         transactionService.BulkCashInTransaction(request,requestBodyTransactionDtos);
 
         //System.out.println("i am the first");
@@ -64,38 +65,11 @@ public class TransactionController {
      * @param transactionId
      * @return
      */
+    @Operation(summary = "This operation allows to get a transaction by its ID ")
     @GetMapping("/transactions/{transactionId}")
-    public GetTransactionDto getTransaction(@PathVariable("transactionId") Long transactionId){
+    public GetTransactionDto getTransaction(@Parameter(description = "The transactionId is required")@PathVariable("transactionId") Long transactionId,@RequestHeader(name = "Authorization") String token){
         return transactionService.getTransaction(transactionId);
     }
 
-    @GetMapping("/test-api-interne")
-    public ResponseCashInTransactionDto getApiExterne(HttpServletRequest request) throws JSONException {
-        String xCallbackUrl = request.getHeader("x-callback-url");
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        JSONObject JsonObject = new JSONObject();
-
-        ResponseCashInTransactionDto responseCashInTransactionDto =
-                ResponseCashInTransactionDto
-                        .builder()
-                        .status(TERMINATED)
-                        .build();
-
-        JsonObject.put("userName", "loumanekh");
-        JsonObject.put("name", "el");
-        JsonObject.put("surname","elel");
-        JsonObject.put("emailAddress", "el@gmail.com");
-        JsonObject.put("isActive","true");
-        JsonObject.put("password", "123elel");
-
-        HttpEntity<String> requestHttp =
-                new HttpEntity<String>(JsonObject.toString(), headers);
-
-        String responseEntityPerson = restTemplate.postForObject(xCallbackUrl, requestHttp, String.class);
-
-        return responseCashInTransactionDto;
-    }
 
 }

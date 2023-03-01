@@ -5,6 +5,9 @@ import com.blobus.apiexterneblobus.dto.DecryptDto;
 import com.blobus.apiexterneblobus.dto.KeyDto;
 import com.blobus.apiexterneblobus.services.interfaces.KeyGeneratorService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -29,8 +32,12 @@ public class KeyController {
     private final KeyGeneratorService keyGenerator;
 
     @GetMapping
+    @Operation(summary = "This operation allow to get the public Key that is use for the pin code encryption")
+    ///@ApiResponse(responseCode = "201",description = "Key returned sucessfully with its size and type")
+    //@ApiResponse(responseCode = "400",description = "Invalid request")
+    //@Parameter(description = "This request need no parameters")
+
     public ResponseEntity<KeyDto> get() throws IOException {
-        System.out.println("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
         return ResponseEntity.ok().body(keyGenerator.getPublicKeyFromFile());
     }
 
