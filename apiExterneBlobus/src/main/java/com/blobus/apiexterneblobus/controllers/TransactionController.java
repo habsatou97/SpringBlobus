@@ -1,9 +1,6 @@
 package com.blobus.apiexterneblobus.controllers;
 
-import com.blobus.apiexterneblobus.dto.GetTransactionDto;
-import com.blobus.apiexterneblobus.dto.RequestBodyTransactionDto;
-import com.blobus.apiexterneblobus.dto.ResponseCashInTransactionDto;
-import com.blobus.apiexterneblobus.dto.TransactionDto;
+import com.blobus.apiexterneblobus.dto.*;
 import com.blobus.apiexterneblobus.services.interfaces.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -49,15 +46,8 @@ public class TransactionController {
     }
     @Operation(summary = "The BulkcashIn operation allows to do many CashIntransactions in a single request ")
     @PostMapping("/bulkcashins")
-    public void BulkCashInTransaction(HttpServletRequest request, @RequestBody RequestBodyTransactionDto[] requestBodyTransactionDtos,@RequestHeader(name = "Authorization") String token) throws ExecutionException, InterruptedException, JSONException {
-        transactionService.BulkCashInTransaction(request,requestBodyTransactionDtos);
-
-        //System.out.println("i am the first");
-
-        /* return ResponseCashInTransactionDto
-                .builder()
-                .status(PENDING)
-                .build();*/
+    public List<ResponseCashInTransactionDto> BulkCashInTransaction(HttpServletRequest request, @RequestBody RequestBodyTransactionBulkDto requestBodyTransactionBulkDto, @RequestHeader(name = "Authorization") String token) throws ExecutionException, InterruptedException, JSONException {
+        return transactionService.BulkCashInTransaction(request,requestBodyTransactionBulkDto);
     }
 
     /**
